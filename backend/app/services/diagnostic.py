@@ -491,18 +491,25 @@ class DiagnosticService:
             return None
     
     async def _get_performance_data(self, url: str, db: AsyncSession) -> Dict:
-        """Get performance data for a URL."""
+        """Get performance data for a URL with device-specific metrics."""
         try:
-            # Get Core Web Vitals data
-            cwv_data = await self.cwv_service.analyze_core_web_vitals(url=url)
+            # Get Core Web Vitals data for all devices
+            all_devices_cwv = await self.cwv_service.get_crux_data_all_devices(url)
             
-            # Get PageSpeed Insights data
-            pagespeed_data = await self.pagespeed_client.analyze_url(url)
+            # Get PageSpeed Insights data for mobile and desktop
+            mobile_pagespeed = await self.pagespeed_client.analyze_url(url, strategy='mobile')
+            desktop_pagespeed = await self.pagespeed_client.analyze_url(url, strategy='desktop')
+            
+            # Get single CWV for backward compatibility
+            cwv_data = await self.cwv_service.analyze_core_web_vitals(url=url)
             
             return {
                 "core_web_vitals": cwv_data.dict() if cwv_data else {},
-                "pagespeed_insights": pagespeed_data,
-                "performance_score": self._calculate_performance_score(cwv_data, pagespeed_data)
+                "all_devices_cwv": all_devices_cwv,
+                "mobile_pagespeed": mobile_pagespeed,
+                "desktop_pagespeed": desktop_pagespeed,
+                "pagespeed_insights": mobile_pagespeed,  # Default to mobile for backward compatibility
+                "performance_score": self._calculate_performance_score(cwv_data, mobile_pagespeed)
             }
             
         except Exception as e:
@@ -795,7 +802,7 @@ class DiagnosticService:
             }
     
     def _format_performance_data(self, performance_data: Dict) -> Dict:
-        """Format performance data for response."""
+        """Format performance data for response with device-specific metrics."""
         if "error" in performance_data:
             return {
                 "status": "error",
@@ -803,12 +810,95 @@ class DiagnosticService:
                 "performance_score": 0
             }
         
-        return {
+        # Extract device-specific data from all_devices_cwv
+        all_devices = performance_data.get("all_devices_cwv", {})
+        mobile_pagespeed = performance_data.get("mobile_pagespeed", {})
+        desktop_pagespeed = performance_data.get("desktop_pagespeed", {})
+        
+        # Helper function to extract metrics from CrUX data
+        def extract_device_metrics(device_data, pagespeed_data):
+            if not device_data:
+                return None
+                
+            metrics = {}
+            
+            # Extract Core Web Vitals from CrUX data
+            for metric_name, metric_data in device_data.items():
+                if isinstance(metric_data, dict) and "p75" in metric_data:
+                    if metric_name.upper() == "LCP":
+                        metrics["largest_contentful_paint"] = metric_data["p75"] / 1000  # Convert to seconds
+                    elif metric_name.upper() == "FID":
+                        metrics["first_input_delay"] = metric_data["p75"]
+                    elif metric_name.upper() == "CLS":
+                        metrics["cumulative_layout_shift"] = metric_data["p75"]
+                    elif metric_name.upper() == "INP":
+                        metrics["interaction_to_next_paint"] = metric_data["p75"]
+                    elif metric_name.upper() == "TTFB":
+                        metrics["time_to_first_byte"] = metric_data["p75"]
+                    elif metric_name.upper() == "FCP":
+                        metrics["first_contentful_paint"] = metric_data["p75"] / 1000
+                        
+            # Add PageSpeed score if available
+            if pagespeed_data and "lighthouseResult" in pagespeed_data:
+                lighthouse_score = pagespeed_data["lighthouseResult"].get("categories", {}).get("performance", {}).get("score", 0)
+                metrics["page_speed_score"] = lighthouse_score * 100
+                
+                # Extract additional metrics from Lighthouse
+                audits = pagespeed_data["lighthouseResult"].get("audits", {})
+                if "speed-index" in audits:
+                    metrics["speed_index"] = audits["speed-index"].get("numericValue", 0) / 1000
+                if "total-blocking-time" in audits:
+                    metrics["total_blocking_time"] = audits["total-blocking-time"].get("numericValue", 0)
+                if "interactive" in audits:
+                    metrics["time_to_interactive"] = audits["interactive"].get("numericValue", 0) / 1000
+                    
+            return metrics if metrics else None
+        
+        # Extract field data metrics (from CrUX)
+        def extract_field_metrics(device_data):
+            if not device_data:
+                return None
+                
+            field_metrics = {}
+            for metric_name, metric_data in device_data.items():
+                if isinstance(metric_data, dict) and "p75" in metric_data:
+                    if metric_name.upper() == "LCP":
+                        field_metrics["largest_contentful_paint"] = metric_data["p75"] / 1000
+                    elif metric_name.upper() == "FID":
+                        field_metrics["first_input_delay"] = metric_data["p75"]
+                    elif metric_name.upper() == "CLS":
+                        field_metrics["cumulative_layout_shift"] = metric_data["p75"]
+                    elif metric_name.upper() == "INP":
+                        field_metrics["inp"] = metric_data["p75"]
+                    elif metric_name.upper() == "TTFB":
+                        field_metrics["ttfb"] = metric_data["p75"]
+                    elif metric_name.upper() == "FCP":
+                        field_metrics["first_contentful_paint"] = metric_data["p75"] / 1000
+                        
+            return field_metrics if field_metrics else None
+        
+        # Structure device-specific response
+        formatted_response = {
             "status": "available",
             "performance_score": performance_data.get("performance_score", 0),
             "core_web_vitals": performance_data.get("core_web_vitals", {}),
             "pagespeed_insights": performance_data.get("pagespeed_insights", {})
         }
+        
+        # Add device-specific metrics that frontend expects
+        if "mobile" in all_devices:
+            formatted_response["mobile_metrics"] = extract_device_metrics(all_devices["mobile"], mobile_pagespeed)
+            formatted_response["mobile_field_data"] = extract_field_metrics(all_devices["mobile"])
+            
+        if "desktop" in all_devices:
+            formatted_response["desktop_metrics"] = extract_device_metrics(all_devices["desktop"], desktop_pagespeed)
+            formatted_response["desktop_field_data"] = extract_field_metrics(all_devices["desktop"])
+            
+        if "tablet" in all_devices:
+            formatted_response["tablet_metrics"] = extract_device_metrics(all_devices["tablet"], None)
+            formatted_response["tablet_field_data"] = extract_field_metrics(all_devices["tablet"])
+        
+        return formatted_response
     
     def _calculate_performance_score(
         self,

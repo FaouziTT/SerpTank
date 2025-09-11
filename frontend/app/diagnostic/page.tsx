@@ -211,9 +211,10 @@ function DiagnosticPage() {
     // Map backend issue fields to frontend expected structure and categorize by type
     const mapIssue = (issue: any) => ({
       ...issue,
-      title: issue.title || issue.description?.split('.')[0] || issue.category || 'Unknown Issue',
-      affected_pages: issue.affected_urls || [currentProject?.url || '/'],
-      recommendation: issue.recommendation || 'No recommendation available'
+      title: issue.title || issue.description?.split('.')[0] || issue.category || 'Issue Found',
+      affected_pages: issue.affected_urls || issue.affected_pages || [currentProject?.url || '/'],
+      recommendation: issue.recommendation || issue.solution || 'Review this issue and implement appropriate fixes',
+      severity: issue.severity || 'Medium'
     });
     
     const technicalIssues = allIssues
@@ -236,14 +237,16 @@ function DiagnosticPage() {
     
     // Calculate scores from real backend data
     const technicalScore = report.crawlability?.crawlability_score || 
-                          (report.crawlability?.status === 'COMPLETED' ? 85 : 40);
-    const performanceScore = report.performance?.performance_score || 0;
+                          (report.crawlability?.status === 'COMPLETED' ? 85 : 
+                           report.crawlability?.status === 'FAILED' ? 20 : 40);
+    const performanceScore = report.performance?.performance_score || 
+                           report.performance?.core_web_vitals?.lab_data?.performance_score || 0;
     
-    // Calculate content score based on SEO factors and content issues
-    const contentScore = Math.max(0, 100 - (contentIssues.length * 8));
+    // Calculate content score based on SEO factors and content issues  
+    const contentScore = Math.max(20, 100 - (contentIssues.length * 12));
     
     // Calculate UX score based on performance and UX issues  
-    const uxScore = Math.max(0, performanceScore - (uxIssues.length * 10));
+    const uxScore = Math.max(10, Math.min(performanceScore - (uxIssues.length * 8), 100));
     
     // Count issues by severity
     const criticalIssues = allIssues.filter((i: any) => 
@@ -273,12 +276,17 @@ function DiagnosticPage() {
         ux_issues: uxIssues,
         performance_metrics: {
           page_speed_score: performanceScore,
-          // Extract Core Web Vitals from backend performance data
-          first_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'FCP')?.value / 1000 || 0,
-          largest_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'LCP')?.value / 1000 || 0,
-          cumulative_layout_shift: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'CLS')?.value || 0,
-          total_blocking_time: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'TBT')?.value || 0,
-          time_to_interactive: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'TTI')?.value / 1000 || 0,
+          // Extract Core Web Vitals from backend performance data with fallbacks
+          first_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'FCP')?.value / 1000 || 
+                                report.performance?.core_web_vitals?.fcp || 0,
+          largest_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'LCP')?.value / 1000 || 
+                                  report.performance?.core_web_vitals?.lcp || 0,
+          cumulative_layout_shift: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'CLS')?.value || 
+                                 report.performance?.core_web_vitals?.cls || 0,
+          total_blocking_time: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'TBT')?.value || 
+                             report.performance?.core_web_vitals?.tbt || 0,
+          time_to_interactive: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'TTI')?.value / 1000 || 
+                             report.performance?.core_web_vitals?.tti || 0,
         },
         seo_metrics: {
           // Extract real crawl data
@@ -286,38 +294,84 @@ function DiagnosticPage() {
           crawlability_score: report.crawlability?.crawlability_score || 0,
           last_crawl: report.crawlability?.last_crawl || null,
         },
-        // Add fields needed by performance tabs
-        field_data_available: !!report.performance?.core_web_vitals?.field_data,
-        mobile_field_data_available: !!report.performance?.core_web_vitals?.field_data,
-        desktop_field_data_available: !!report.performance?.core_web_vitals?.field_data,
-        tablet_field_data_available: false, // Backend doesn't provide tablet data yet
-        mobile_performance_metrics: report.performance?.core_web_vitals?.lab_data ? {
+        // Add fields needed by performance tabs with comprehensive detection
+        field_data_available: !!(report.performance?.core_web_vitals?.field_data || 
+                                 report.performance?.mobile_field_data || 
+                                 report.performance?.desktop_field_data),
+        mobile_field_data_available: !!(report.performance?.core_web_vitals?.field_data || 
+                                       report.performance?.mobile_field_data),
+        desktop_field_data_available: !!(report.performance?.core_web_vitals?.field_data || 
+                                        report.performance?.desktop_field_data),
+        tablet_field_data_available: !!(report.performance?.tablet_field_data), // Check if backend provides tablet data
+        mobile_performance_metrics: report.performance?.core_web_vitals?.lab_data || report.performance?.mobile_metrics ? {
           page_speed_score: performanceScore,
-          first_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'FCP')?.value / 1000 || 0,
-          largest_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'LCP')?.value / 1000 || 0,
-          cumulative_layout_shift: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'CLS')?.value || 0,
-          total_blocking_time: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'TBT')?.value || 0,
-          time_to_interactive: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'TTI')?.value / 1000 || 0,
+          first_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'FCP')?.value / 1000 || 
+                                report.performance?.mobile_metrics?.fcp || 0,
+          largest_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'LCP')?.value / 1000 || 
+                                  report.performance?.mobile_metrics?.lcp || 0,
+          cumulative_layout_shift: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'CLS')?.value || 
+                                 report.performance?.mobile_metrics?.cls || 0,
+          total_blocking_time: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'TBT')?.value || 
+                             report.performance?.mobile_metrics?.tbt || 0,
+          time_to_interactive: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'TTI')?.value / 1000 || 
+                             report.performance?.mobile_metrics?.tti || 0,
         } : null,
-        desktop_performance_metrics: report.performance?.core_web_vitals?.lab_data ? {
+        desktop_performance_metrics: report.performance?.core_web_vitals?.lab_data || report.performance?.desktop_metrics ? {
           page_speed_score: performanceScore,
-          first_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'FCP')?.value / 1000 || 0,
-          largest_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'LCP')?.value / 1000 || 0,
-          cumulative_layout_shift: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'CLS')?.value || 0,
-          total_blocking_time: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'TBT')?.value || 0,
-          time_to_interactive: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name === 'TTI')?.value / 1000 || 0,
+          first_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'FCP')?.value / 1000 || 
+                                report.performance?.desktop_metrics?.fcp || 0,
+          largest_contentful_paint: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'LCP')?.value / 1000 || 
+                                  report.performance?.desktop_metrics?.lcp || 0,
+          cumulative_layout_shift: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'CLS')?.value || 
+                                 report.performance?.desktop_metrics?.cls || 0,
+          total_blocking_time: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'TBT')?.value || 
+                             report.performance?.desktop_metrics?.tbt || 0,
+          time_to_interactive: report.performance?.core_web_vitals?.lab_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'TTI')?.value / 1000 || 
+                             report.performance?.desktop_metrics?.tti || 0,
         } : null,
-        mobile_field_performance_metrics: report.performance?.core_web_vitals?.field_data ? {
-          // Extract field data metrics if available
-          largest_contentful_paint: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name === 'LCP')?.value / 1000 || 0,
-          cumulative_layout_shift: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name === 'CLS')?.value || 0,
-          first_input_delay: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name === 'FID')?.value || 0,
+        mobile_field_performance_metrics: report.performance?.core_web_vitals?.field_data || report.performance?.mobile_field_data ? {
+          // Extract field data metrics with multiple fallback sources
+          largest_contentful_paint: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'LCP')?.value / 1000 || 
+                                   report.performance?.mobile_field_data?.lcp || 0,
+          cumulative_layout_shift: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'CLS')?.value || 
+                                 report.performance?.mobile_field_data?.cls || 0,
+          first_input_delay: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'FID')?.value || 
+                           report.performance?.mobile_field_data?.fid || 0,
+          inp: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'INP')?.value || 
+               report.performance?.mobile_field_data?.inp || 0,
         } : null,
-        desktop_field_performance_metrics: report.performance?.core_web_vitals?.field_data ? {
-          // Extract field data metrics if available  
-          largest_contentful_paint: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name === 'LCP')?.value / 1000 || 0,
-          cumulative_layout_shift: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name === 'CLS')?.value || 0,
-          first_input_delay: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name === 'FID')?.value || 0,
+        desktop_field_performance_metrics: report.performance?.core_web_vitals?.field_data || report.performance?.desktop_field_data ? {
+          // Extract field data metrics with multiple fallback sources
+          largest_contentful_paint: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'LCP')?.value / 1000 || 
+                                   report.performance?.desktop_field_data?.lcp || 0,
+          cumulative_layout_shift: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'CLS')?.value || 
+                                 report.performance?.desktop_field_data?.cls || 0,
+          first_input_delay: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'FID')?.value || 
+                           report.performance?.desktop_field_data?.fid || 0,
+          inp: report.performance?.core_web_vitals?.field_data?.metrics?.find((m: any) => m.name?.toUpperCase() === 'INP')?.value || 
+               report.performance?.desktop_field_data?.inp || 0,
+        } : null,
+        
+        // Add tablet performance metrics
+        tablet_performance_metrics: report.performance?.tablet_metrics ? {
+          page_speed_score: report.performance?.tablet_metrics?.page_speed_score || 0,
+          first_contentful_paint: report.performance?.tablet_metrics?.first_contentful_paint || 0,
+          largest_contentful_paint: report.performance?.tablet_metrics?.largest_contentful_paint || 0,
+          cumulative_layout_shift: report.performance?.tablet_metrics?.cumulative_layout_shift || 0,
+          total_blocking_time: report.performance?.tablet_metrics?.total_blocking_time || 0,
+          time_to_interactive: report.performance?.tablet_metrics?.time_to_interactive || 0,
+          interaction_to_next_paint: report.performance?.tablet_metrics?.interaction_to_next_paint || 0,
+          time_to_first_byte: report.performance?.tablet_metrics?.time_to_first_byte || 0,
+          speed_index: report.performance?.tablet_metrics?.speed_index || 0,
+        } : null,
+        tablet_field_performance_metrics: report.performance?.tablet_field_data ? {
+          // Extract field data metrics for tablet
+          largest_contentful_paint: report.performance?.tablet_field_data?.largest_contentful_paint || 0,
+          cumulative_layout_shift: report.performance?.tablet_field_data?.cumulative_layout_shift || 0,
+          first_input_delay: report.performance?.tablet_field_data?.first_input_delay || 0,
+          inp: report.performance?.tablet_field_data?.inp || 0,
+          ttfb: report.performance?.tablet_field_data?.ttfb || 0,
+          first_contentful_paint: report.performance?.tablet_field_data?.first_contentful_paint || 0,
         } : null,
       },
       // Include original backend data for debugging/compatibility
@@ -1072,16 +1126,16 @@ function PerformanceMetrics({ data }: { data: any }) {
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Interaction to Next Paint (INP)</span>
-            <span className="text-sm font-bold">{data.inp || 'N/A'}ms</span>
+            <span className="text-sm font-bold">{data.inp || data.interaction_to_next_paint || 'N/A'}ms</span>
           </div>
-          <Progress value={data.inp ? (data.inp < 200 ? 100 : data.inp < 500 ? 50 : 20) : 0} />
+          <Progress value={(data.inp || data.interaction_to_next_paint) ? ((data.inp || data.interaction_to_next_paint) < 200 ? 100 : (data.inp || data.interaction_to_next_paint) < 500 ? 50 : 20) : 0} />
         </div>
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium">Time to First Byte (TTFB)</span>
-            <span className="text-sm font-bold">{data.ttfb || 'N/A'}ms</span>
+            <span className="text-sm font-bold">{data.ttfb || data.time_to_first_byte || 'N/A'}ms</span>
           </div>
-          <Progress value={data.ttfb ? (data.ttfb < 800 ? 100 : data.ttfb < 1800 ? 50 : 20) : 0} />
+          <Progress value={(data.ttfb || data.time_to_first_byte) ? ((data.ttfb || data.time_to_first_byte) < 800 ? 100 : (data.ttfb || data.time_to_first_byte) < 1800 ? 50 : 20) : 0} />
         </div>
         <div>
           <div className="flex items-center justify-between mb-2">
@@ -1091,6 +1145,17 @@ function PerformanceMetrics({ data }: { data: any }) {
           <Progress value={(data.speed_index || data.si) ? ((data.speed_index || data.si) < 3.4 ? 100 : (data.speed_index || data.si) < 5.8 ? 50 : 20) : 0} />
         </div>
       </div>
+      
+      {/* Additional metrics if available from backend */}
+      {(data.first_input_delay || data.fid) && (
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">First Input Delay (FID)</span>
+            <span className="text-sm font-bold">{data.first_input_delay || data.fid}ms</span>
+          </div>
+          <Progress value={(data.first_input_delay || data.fid) < 100 ? 100 : (data.first_input_delay || data.fid) < 300 ? 50 : 20} />
+        </div>
+      )}
     </>
   );
 }
