@@ -1,0 +1,23 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="favicon32" cx="35%" cy="25%" r="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="35%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E1B4B;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="accent32" cx="65%" cy="75%" r="85%">
+      <stop offset="0%" style="stop-color:#A855F7;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#5B21B6;stop-opacity:1" />
+    </radialGradient>
+    <filter id="glow32">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+  <g transform="translate(16, 16)">
+    <circle cx="0" cy="0" r="12" fill="url(#favicon32)" filter="url(#glow32)"/>
+    <circle cx="0" cy="0" r="9" fill="url(#accent32)" opacity="0.8"/>
+    <circle cx="0" cy="0" r="6" fill="url(#favicon32)" opacity="0.7"/>
+    <circle cx="0" cy="0" r="3" fill="rgba(255,255,255,0.6)"/>
+  </g>
+</svg>

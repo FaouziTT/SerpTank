@@ -1,0 +1,71 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients for modern look -->
+    <linearGradient id="tankGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="searchGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EF4444;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Shadow filter -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="4" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.15)"/>
+    </filter>
+  </defs>
+  
+  <!-- Main Container Tank -->
+  <g transform="translate(200, 200)" filter="url(#shadow)">
+    <!-- Tank body -->
+    <rect x="-80" y="-60" width="160" height="120" rx="25" fill="url(#tankGradient)" opacity="0.9"/>
+    
+    <!-- Tank top cap -->
+    <ellipse cx="0" cy="-60" rx="80" ry="15" fill="url(#tankGradient)"/>
+    
+    <!-- Tank bottom cap -->
+    <ellipse cx="0" cy="60" rx="80" ry="15" fill="url(#tankGradient)" opacity="0.7"/>
+    
+    <!-- Tank shine/highlight -->
+    <rect x="-70" y="-50" width="20" height="100" rx="10" fill="rgba(255,255,255,0.3)"/>
+    
+    <!-- Volume indicator lines -->
+    <line x1="-60" y1="-30" x2="60" y2="-30" stroke="rgba(255,255,255,0.4)" stroke-width="2" opacity="0.6"/>
+    <line x1="-60" y1="0" x2="60" y2="0" stroke="rgba(255,255,255,0.4)" stroke-width="2" opacity="0.6"/>
+    <line x1="-60" y1="30" x2="60" y2="30" stroke="rgba(255,255,255,0.4)" stroke-width="2" opacity="0.6"/>
+    
+    <!-- Search magnifying glass integrated -->
+    <g transform="translate(30, -20)">
+      <circle cx="0" cy="0" r="18" fill="none" stroke="url(#searchGradient)" stroke-width="4"/>
+      <circle cx="0" cy="0" r="12" fill="url(#searchGradient)" opacity="0.2"/>
+      <line x1="12" y1="12" x2="24" y2="24" stroke="url(#searchGradient)" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    
+    <!-- SEO data visualization elements -->
+    <g transform="translate(-30, 15)">
+      <!-- Bar chart inside tank -->
+      <rect x="0" y="0" width="4" height="20" fill="url(#accentGradient)" opacity="0.8"/>
+      <rect x="8" y="-5" width="4" height="25" fill="url(#accentGradient)" opacity="0.8"/>
+      <rect x="16" y="5" width="4" height="15" fill="url(#accentGradient)" opacity="0.8"/>
+      <rect x="24" y="-10" width="4" height="30" fill="url(#accentGradient)" opacity="0.8"/>
+    </g>
+    
+    <!-- Ranking arrows -->
+    <g transform="translate(0, -85)">
+      <polygon points="0,-10 8,0 -8,0" fill="url(#searchGradient)"/>
+      <polygon points="0,-5 4,5 -4,5" fill="url(#accentGradient)" opacity="0.7"/>
+    </g>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="url(#tankGradient)">SerpTank</text>
+  <text x="200" y="355" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#64748B">SEO Decision Engine</text>
+</svg>

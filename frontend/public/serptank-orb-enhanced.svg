@@ -1,0 +1,217 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Premium multi-stop gradients for depth -->
+    <radialGradient id="coreOrbEnhanced" cx="35%" cy="25%" r="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="15%" style="stop-color:#F8FAFC;stop-opacity:0.6" />
+      <stop offset="35%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="55%" style="stop-color:#6366F1;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E1B4B;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Secondary layer with better depth -->
+    <radialGradient id="secondaryOrbEnhanced" cx="65%" cy="75%" r="85%">
+      <stop offset="0%" style="stop-color:#A855F7;stop-opacity:0.9" />
+      <stop offset="30%" style="stop-color:#8B5CF6;stop-opacity:0.95" />
+      <stop offset="60%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5B21B6;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Tertiary layer with warm accents -->
+    <radialGradient id="tertiaryOrbEnhanced" cx="20%" cy="80%" r="70%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:0.7" />
+      <stop offset="40%" style="stop-color:#EC4899;stop-opacity:0.8" />
+      <stop offset="70%" style="stop-color:#8B5CF6;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Enhanced particle gradients -->
+    <radialGradient id="particleCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#8B5CF6;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#6366F1;stop-opacity:0.6" />
+    </radialGradient>
+    
+    <radialGradient id="particleAccent" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:0.8" />
+    </radialGradient>
+    
+    <!-- Inner bright core gradient -->
+    <radialGradient id="innerCore" cx="40%" cy="30%" r="60%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#F8FAFC;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#E2E8F0;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <!-- Advanced filters -->
+    <filter id="premiumGlow" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="25" result="coloredBlur"/>
+      <feOffset dx="0" dy="0" result="offsetBlur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.8"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="deepGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.6"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Sophisticated blur filters -->
+    <filter id="blur100">
+      <feGaussianBlur stdDeviation="25"/>
+    </filter>
+    
+    <filter id="blur80">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+    
+    <filter id="blur60">
+      <feGaussianBlur stdDeviation="15"/>
+    </filter>
+    
+    <filter id="blur40">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    
+    <filter id="blur20">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    
+    <!-- Mesh pattern for subtle texture -->
+    <pattern id="orbTexture" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="rgba(255,255,255,0.02)"/>
+      <circle cx="4" cy="4" r="0.5" fill="rgba(139,92,246,0.08)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Enhanced orb container centered -->
+  <g transform="translate(200, 200)">
+    
+    <!-- Outer glow halo -->
+    <circle cx="0" cy="0" r="150" fill="url(#coreOrbEnhanced)" filter="url(#blur100)" opacity="0.3">
+      <animateTransform attributeName="transform" type="scale" 
+                        values="1;1.05;1" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Core orb - main layer with enhanced blur -->
+    <circle cx="0" cy="0" r="120" fill="url(#coreOrbEnhanced)" filter="url(#blur80)" opacity="1">
+      <animateTransform attributeName="transform" type="scale" 
+                        values="1;1.08;1" dur="4s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0;360" dur="60s" repeatCount="indefinite" additive="sum"/>
+    </circle>
+    
+    <!-- Secondary layer with enhanced rotation -->
+    <circle cx="0" cy="0" r="90" fill="url(#secondaryOrbEnhanced)" filter="url(#blur60)" opacity="0.85">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0;180;360" dur="25s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" 
+                        values="1;1.15;1" dur="18s" repeatCount="indefinite" additive="sum"/>
+    </circle>
+    
+    <!-- Tertiary layer with counter-rotation -->
+    <circle cx="0" cy="0" r="65" fill="url(#tertiaryOrbEnhanced)" filter="url(#blur40)" opacity="0.7">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="360;180;0" dur="20s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" 
+                        values="1.1;1;1.1" dur="12s" repeatCount="indefinite" additive="sum"/>
+    </circle>
+    
+    <!-- Texture overlay -->
+    <circle cx="0" cy="0" r="120" fill="url(#orbTexture)" opacity="0.4"/>
+    
+    <!-- Enhanced inner bright core with multiple layers -->
+    <circle cx="0" cy="0" r="35" fill="url(#innerCore)" filter="url(#blur20)" opacity="0.8">
+      <animateTransform attributeName="transform" type="scale" 
+                        values="1;1.4;1" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="20" fill="rgba(255,255,255,0.6)" filter="url(#blur20)" opacity="0.5">
+      <animateTransform attributeName="transform" type="scale" 
+                        values="1;1.2;1" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Enhanced particle system with varied behaviors -->
+    <!-- Primary particles -->
+    <circle cx="0" cy="0" r="3" fill="url(#particleCore)" filter="url(#deepGlow)">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; 30,-65; 0,0" dur="15s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0.8;0" dur="15s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" 
+                        values="0;1;0.5;0" dur="15s" repeatCount="indefinite" additive="sum"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="2.5" fill="url(#particleAccent)" filter="url(#deepGlow)">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; -35,-50; 0,0" dur="18s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.8;1;0" dur="18s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" 
+                        values="0;1.2;0.8;0" dur="18s" repeatCount="indefinite" additive="sum"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="4" fill="url(#particleCore)" filter="url(#deepGlow)">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; 45,-40; 0,0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0.9;0" dur="12s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" 
+                        values="0;1;0.6;0" dur="12s" repeatCount="indefinite" additive="sum"/>
+    </circle>
+    
+    <!-- Secondary particles with different colors -->
+    <circle cx="0" cy="0" r="2" fill="#F59E0B" opacity="0.8" filter="url(#deepGlow)">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; -25,-75; 0,0" dur="20s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.8;0.6;0" dur="20s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="1.5" fill="#10B981" opacity="0.7" filter="url(#deepGlow)">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; 20,-80; 0,0" dur="16s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.7;0.9;0" dur="16s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="2.5" fill="#EC4899" opacity="0.9" filter="url(#deepGlow)">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; 50,-30; 0,0" dur="14s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.9;0.7;0" dur="14s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Micro particles for added richness -->
+    <circle cx="0" cy="0" r="1" fill="#6366F1" opacity="0.6">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; -15,-85; 0,0" dur="22s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.6;0.4;0" dur="22s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="0.8" fill="#8B5CF6" opacity="0.5">
+      <animateTransform attributeName="transform" type="translate" 
+                        values="0,0; 40,-60; 0,0" dur="25s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0.5;0.7;0" dur="25s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Orbital rings for sophistication -->
+    <circle cx="0" cy="0" r="80" fill="none" stroke="rgba(139,92,246,0.2)" stroke-width="1" opacity="0.3">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="0;360" dur="40s" repeatCount="indefinite"/>
+    </circle>
+    
+    <circle cx="0" cy="0" r="100" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="0.5" opacity="0.2">
+      <animateTransform attributeName="transform" type="rotate" 
+                        values="360;0" dur="50s" repeatCount="indefinite"/>
+    </circle>
+    
+  </g>
+</svg>

@@ -1,0 +1,80 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Static gradients without animations for print -->
+    <radialGradient id="staticCore" cx="35%" cy="25%" r="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="15%" style="stop-color:#F8FAFC;stop-opacity:0.6" />
+      <stop offset="35%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="55%" style="stop-color:#6366F1;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E1B4B;stop-opacity:1" />
+    </radialGradient>
+    
+    <radialGradient id="staticSecondary" cx="65%" cy="75%" r="85%">
+      <stop offset="0%" style="stop-color:#A855F7;stop-opacity:0.9" />
+      <stop offset="30%" style="stop-color:#8B5CF6;stop-opacity:0.95" />
+      <stop offset="60%" style="stop-color:#7C3AED;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5B21B6;stop-opacity:1" />
+    </radialGradient>
+    
+    <radialGradient id="staticTertiary" cx="20%" cy="80%" r="70%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:0.7" />
+      <stop offset="40%" style="stop-color:#EC4899;stop-opacity:0.8" />
+      <stop offset="70%" style="stop-color:#8B5CF6;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
+    </radialGradient>
+    
+    <radialGradient id="staticInner" cx="40%" cy="30%" r="60%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#F8FAFC;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#E2E8F0;stop-opacity:0.2" />
+    </radialGradient>
+    
+    <!-- Print-optimized filters -->
+    <filter id="staticGlow">
+      <feGaussianBlur stdDeviation="15"/>
+    </filter>
+    
+    <filter id="staticBlur60">
+      <feGaussianBlur stdDeviation="15"/>
+    </filter>
+    
+    <filter id="staticBlur40">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+    
+    <filter id="staticBlur20">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  
+  <!-- Static orb for print materials -->
+  <g transform="translate(200, 200)">
+    
+    <!-- Core orb -->
+    <circle cx="0" cy="0" r="120" fill="url(#staticCore)" filter="url(#staticGlow)" opacity="1"/>
+    
+    <!-- Secondary layer -->
+    <circle cx="0" cy="0" r="90" fill="url(#staticSecondary)" filter="url(#staticBlur60)" opacity="0.85"/>
+    
+    <!-- Tertiary layer -->
+    <circle cx="0" cy="0" r="65" fill="url(#staticTertiary)" filter="url(#staticBlur40)" opacity="0.7"/>
+    
+    <!-- Inner bright core -->
+    <circle cx="0" cy="0" r="35" fill="url(#staticInner)" filter="url(#staticBlur20)" opacity="0.8"/>
+    <circle cx="0" cy="0" r="20" fill="rgba(255,255,255,0.6)"/>
+    
+    <!-- Static particles positioned optimally -->
+    <circle cx="30" cy="-65" r="3" fill="#8B5CF6" opacity="0.8"/>
+    <circle cx="-35" cy="-50" r="2.5" fill="#F59E0B" opacity="0.9"/>
+    <circle cx="45" cy="-40" r="4" fill="#6366F1" opacity="0.8"/>
+    <circle cx="-25" cy="-75" r="2" fill="#EC4899" opacity="0.7"/>
+    <circle cx="20" cy="-80" r="1.5" fill="#10B981" opacity="0.8"/>
+    <circle cx="50" cy="-30" r="2.5" fill="#EC4899" opacity="0.9"/>
+    
+    <!-- Orbital rings for sophistication -->
+    <circle cx="0" cy="0" r="80" fill="none" stroke="rgba(139,92,246,0.2)" stroke-width="1" opacity="0.3"/>
+    <circle cx="0" cy="0" r="100" fill="none" stroke="rgba(99,102,241,0.15)" stroke-width="0.5" opacity="0.2"/>
+    
+  </g>
+</svg>

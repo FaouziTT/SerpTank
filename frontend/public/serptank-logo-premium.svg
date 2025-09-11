@@ -1,0 +1,228 @@
+<svg width="600" height="600" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Premium gradient definitions -->
+    <radialGradient id="premiumCore" cx="40%" cy="30%" r="80%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.8" />
+      <stop offset="20%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#6366F1;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#4338CA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E1B4B;stop-opacity:1" />
+    </radialGradient>
+    
+    <linearGradient id="premiumAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#EF4444;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#EC4899;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="glassEffect" cx="30%" cy="20%" r="70%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.4" />
+      <stop offset="40%" style="stop-color:#FFFFFF;stop-opacity:0.1" />
+      <stop offset="100%" style="stop-color:#FFFFFF;stop-opacity:0" />
+    </radialGradient>
+    
+    <linearGradient id="dataStream" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10B981;stop-opacity:0.8" />
+      <stop offset="25%" style="stop-color:#06D6A0;stop-opacity:0.9" />
+      <stop offset="50%" style="stop-color:#F59E0B;stop-opacity:1" />
+      <stop offset="75%" style="stop-color:#EF4444;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#EC4899;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <radialGradient id="neuralNetwork" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#06D6A0;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#10B981;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:0.6" />
+    </radialGradient>
+    
+    <!-- Advanced filters -->
+    <filter id="premiumShadow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
+      <feOffset dx="0" dy="8" result="offset"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.4"/>
+      </feComponentTransfer>
+      <feMerge> 
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/> 
+      </feMerge>
+    </filter>
+    
+    <filter id="innerGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.6"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="premiumGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feOffset dx="0" dy="0" result="offsetBlur"/>
+      <feFlood flood-color="#8B5CF6" flood-opacity="0.3"/>
+      <feComposite in2="offsetBlur" operator="in"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Mesh gradient pattern -->
+    <pattern id="meshPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect width="20" height="20" fill="rgba(139,92,246,0.05)"/>
+      <circle cx="10" cy="10" r="1" fill="rgba(139,92,246,0.1)"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background mesh -->
+  <rect width="600" height="600" fill="url(#meshPattern)"/>
+  
+  <!-- Main logo container -->
+  <g transform="translate(300, 300)">
+    
+    <!-- Outer glow ring -->
+    <circle cx="0" cy="0" r="160" fill="none" stroke="url(#premiumAccent)" stroke-width="2" opacity="0.3" filter="url(#premiumGlow)"/>
+    <circle cx="0" cy="0" r="140" fill="none" stroke="url(#premiumCore)" stroke-width="1" opacity="0.2"/>
+    
+    <!-- Main container body with premium effects -->
+    <g filter="url(#premiumShadow)">
+      <!-- Base container structure -->
+      <path d="M-80,-100 Q-80,-120 -60,-120 L60,-120 Q80,-120 80,-100 L80,100 Q80,120 60,120 L-60,120 Q-80,120 -80,100 Z" 
+            fill="url(#premiumCore)" opacity="0.95"/>
+      
+      <!-- Glass overlay effect -->
+      <path d="M-80,-100 Q-80,-120 -60,-120 L60,-120 Q80,-120 80,-100 L80,100 Q80,120 60,120 L-60,120 Q-80,120 -80,100 Z" 
+            fill="url(#glassEffect)"/>
+      
+      <!-- Premium highlights -->
+      <path d="M-70,-110 Q-70,-115 -65,-115 L65,-115 Q70,-115 70,-110 L70,-100 Q70,-95 65,-95 L-65,-95 Q-70,-95 -70,-100 Z" 
+            fill="rgba(255,255,255,0.4)"/>
+      <path d="M-70,95 Q-70,100 -65,100 L65,100 Q70,100 70,95 L70,110 Q70,115 65,115 L-65,115 Q-70,115 -70,110 Z" 
+            fill="rgba(255,255,255,0.2)"/>
+    </g>
+    
+    <!-- Advanced data visualization core -->
+    <g filter="url(#innerGlow)">
+      <!-- Central neural network pattern -->
+      <circle cx="0" cy="0" r="50" fill="url(#neuralNetwork)" opacity="0.3"/>
+      
+      <!-- Data flow connections -->
+      <g stroke="url(#dataStream)" stroke-width="2" fill="none" opacity="0.8">
+        <path d="M-40,-40 Q0,0 40,-40"/>
+        <path d="M-40,40 Q0,0 40,40"/>
+        <path d="M-40,0 Q0,-20 40,0"/>
+        <path d="M0,-40 Q-20,0 0,40"/>
+        <path d="M0,-40 Q20,0 0,40"/>
+      </g>
+      
+      <!-- Data nodes -->
+      <circle cx="0" cy="0" r="8" fill="url(#neuralNetwork)" filter="url(#premiumGlow)"/>
+      <circle cx="-40" cy="-40" r="4" fill="#10B981"/>
+      <circle cx="40" cy="-40" r="4" fill="#F59E0B"/>
+      <circle cx="-40" cy="40" r="4" fill="#EF4444"/>
+      <circle cx="40" cy="40" r="4" fill="#EC4899"/>
+      <circle cx="-40" cy="0" r="3" fill="#06D6A0"/>
+      <circle cx="40" cy="0" r="3" fill="#8B5CF6"/>
+      <circle cx="0" cy="-40" r="3" fill="#6366F1"/>
+      <circle cx="0" cy="40" r="3" fill="#4338CA"/>
+    </g>
+    
+    <!-- Premium search interface -->
+    <g transform="translate(60, -60)">
+      <!-- Search orb with premium effects -->
+      <circle cx="0" cy="0" r="25" fill="url(#neuralNetwork)" filter="url(#premiumGlow)"/>
+      <circle cx="0" cy="0" r="20" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+      <circle cx="0" cy="0" r="15" fill="rgba(255,255,255,0.2)"/>
+      
+      <!-- Search lens -->
+      <circle cx="0" cy="0" r="12" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="3"/>
+      <line x1="8" y1="8" x2="18" y2="18" stroke="rgba(255,255,255,0.9)" stroke-width="4" stroke-linecap="round"/>
+      
+      <!-- Search particles -->
+      <circle cx="-15" cy="-15" r="1.5" fill="#10B981" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="20" cy="-10" r="1" fill="#F59E0B" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.2;0.6" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- Advanced analytics display -->
+    <g transform="translate(-55, 15)">
+      <!-- Holographic display panel -->
+      <rect x="0" y="0" width="50" height="30" rx="5" fill="rgba(0,0,0,0.7)" stroke="rgba(16,185,129,0.4)" stroke-width="1"/>
+      <rect x="2" y="2" width="46" height="26" rx="3" fill="rgba(16,185,129,0.1)"/>
+      
+      <!-- Data metrics -->
+      <text x="25" y="12" text-anchor="middle" font-family="SF Pro Display, Arial" font-size="7" fill="#10B981" font-weight="600">SERP</text>
+      <text x="25" y="20" text-anchor="middle" font-family="SF Pro Display, Arial" font-size="5" fill="#06D6A0">ANALYTICS</text>
+      <text x="25" y="26" text-anchor="middle" font-family="SF Pro Display, Arial" font-size="4" fill="#F59E0B">ACTIVE</text>
+      
+      <!-- Status indicators -->
+      <circle cx="8" cy="8" r="2" fill="#10B981">
+        <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="42" cy="8" r="2" fill="#F59E0B">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- Premium ranking indicators -->
+    <g transform="translate(0, -130)">
+      <!-- Ranking crown -->
+      <path d="M-15,-10 L-5,5 L0,-5 L5,5 L15,-10 L10,-15 L-10,-15 Z" fill="url(#premiumAccent)" filter="url(#premiumGlow)"/>
+      <path d="M-10,-12 L-3,2 L0,-3 L3,2 L10,-12 L8,-14 L-8,-14 Z" fill="rgba(255,255,255,0.3)"/>
+      
+      <!-- Achievement stars -->
+      <g transform="translate(-20, -5)">
+        <path d="M0,-3 L1,0 L3,0 L1,2 L2,4 L0,3 L-2,4 L-1,2 L-3,0 L-1,0 Z" fill="#F59E0B"/>
+      </g>
+      <g transform="translate(20, -5)">
+        <path d="M0,-3 L1,0 L3,0 L1,2 L2,4 L0,3 L-2,4 L-1,2 L-3,0 L-1,0 Z" fill="#F59E0B"/>
+      </g>
+    </g>
+    
+    <!-- Enterprise-grade base platform -->
+    <g transform="translate(0, 140)">
+      <ellipse cx="0" cy="0" rx="120" ry="20" fill="rgba(0,0,0,0.1)"/>
+      <ellipse cx="0" cy="-2" rx="110" ry="15" fill="rgba(139,92,246,0.05)"/>
+      <ellipse cx="0" cy="-4" rx="100" ry="10" fill="rgba(139,92,246,0.02)"/>
+    </g>
+  </g>
+  
+  <!-- Premium typography -->
+  <g transform="translate(300, 480)">
+    <!-- Main brand text with premium effects -->
+    <text x="0" y="0" text-anchor="middle" font-family="SF Pro Display, system-ui" font-size="48" font-weight="700" fill="url(#premiumCore)" filter="url(#premiumShadow)">SerpTank</text>
+    
+    <!-- Tagline with sophisticated styling -->
+    <text x="0" y="30" text-anchor="middle" font-family="SF Pro Display, system-ui" font-size="14" font-weight="500" fill="#64748B" letter-spacing="0.5px">SEO DECISION SUPERIORITY ENGINE</text>
+    
+    <!-- Premium accent line -->
+    <line x1="-80" y1="45" x2="80" y2="45" stroke="url(#premiumAccent)" stroke-width="2" opacity="0.6"/>
+    <line x1="-60" y1="48" x2="60" y2="48" stroke="url(#premiumAccent)" stroke-width="1" opacity="0.3"/>
+  </g>
+  
+  <!-- Floating premium particles -->
+  <g opacity="0.4">
+    <circle cx="100" cy="150" r="2" fill="#10B981">
+      <animate attributeName="cy" values="150;130;150" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="500" cy="200" r="1.5" fill="#F59E0B">
+      <animate attributeName="cy" values="200;180;200" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="450" r="1" fill="#EC4899">
+      <animate attributeName="cy" values="450;430;450" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="450" cy="100" r="2.5" fill="#8B5CF6">
+      <animate attributeName="cy" values="100;80;100" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="80" cy="350" r="1.5" fill="#EF4444">
+      <animate attributeName="cy" values="350;330;350" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>
