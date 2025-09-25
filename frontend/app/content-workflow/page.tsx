@@ -1,8 +1,10 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +18,7 @@ import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAutoRefresh } from '@/lib/hooks/use-auto-refresh';
-import { 
+import {
   FileText,
   Plus,
   Search,
@@ -34,7 +36,8 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  Download
 } from 'lucide-react';
 import { dedupedApi as api } from '@/lib/api-deduped';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -197,30 +200,39 @@ function ContentWorkflowPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Content Workflow</h1>
-            <p className="text-muted-foreground">
-              Create, optimize, and manage your SEO content
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['content-workflow'] })}
-              disabled={isFetching}
-            >
-              <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
-            </Button>
-            <Button onClick={() => setShowCreateModal(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Content
-            </Button>
-          </div>
-        </div>
+        <div className="space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="Content Workflow"
+          description="Create, optimize, and manage your SEO content"
+          badge={{
+            icon: <FileText className="mr-1 h-3 w-3" />,
+            text: "Content Management",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => queryClient.invalidateQueries({ queryKey: ['content-workflow'] })}
+                disabled={isFetching}
+                className="bg-card/80 backdrop-blur-sm border-border/50"
+              >
+                <RefreshCw className={`h-4 w-4 ${isFetching ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button onClick={() => setShowCreateModal(true)} variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Plus className="mr-2 h-4 w-4" />
+                Create
+              </Button>
+              <Button variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          }
+        />
 
         {/* Filters */}
         <Card>
@@ -489,7 +501,7 @@ function ContentWorkflowPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </div>
     </DashboardLayout>
   );
 }

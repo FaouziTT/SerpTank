@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +27,7 @@ import {
   RefreshCw,
   ExternalLink
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { LineChart as RechartsLineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, PieChart, Pie, Cell } from 'recharts';
 import { formatCurrency, formatPercentage } from '@/lib/utils';
 import { dedupedApi as api } from '@/lib/api-deduped';
@@ -280,12 +282,10 @@ function ProfitabilityPage() {
     return (
       <DashboardLayout>
         <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Profitability Analysis</h1>
-            <p className="text-muted-foreground">
-              Track your SEO ROI and revenue attribution
-            </p>
-          </div>
+          <DashboardPageHeader
+            title="Profitability"
+            description="Track your SEO ROI and revenue attribution"
+          />
           <LoadingState 
             message="Loading profitability data..." 
             size="lg" 
@@ -302,12 +302,10 @@ function ProfitabilityPage() {
     return (
       <DashboardLayout>
         <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Profitability Analysis</h1>
-            <p className="text-muted-foreground">
-              Track your SEO ROI and revenue attribution
-            </p>
-          </div>
+          <DashboardPageHeader
+            title="Profitability"
+            description="Track your SEO ROI and revenue attribution"
+          />
           {!isGA4Configured ? (
             <Card>
               <CardHeader>
@@ -362,47 +360,50 @@ function ProfitabilityPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Profitability Engine</h1>
-            <p className="text-muted-foreground">
-              Track ROI and optimize your SEO investment returns
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-              <SelectTrigger className="w-[180px]">
-                <Calendar className="mr-2 h-4 w-4" />
-                <SelectValue placeholder="Select period" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="week">Last 7 Days</SelectItem>
-                <SelectItem value="month">Last 30 Days</SelectItem>
-                <SelectItem value="quarter">Last Quarter</SelectItem>
-                <SelectItem value="year">Last Year</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Export Report
-            </Button>
-            <Button variant="outline" size="sm"
-              onClick={() => {
-                queryClient.invalidateQueries({ queryKey: ['roi-analysis'] });
-                queryClient.invalidateQueries({ queryKey: ['revenue-attribution'] });
-              }}
-            >
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh Data
-            </Button>
-            <Button>
-              <Calculator className="mr-2 h-4 w-4" />
-              ROI Calculator
-            </Button>
-          </div>
-        </div>
+        <div className="space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="Profitability"
+          description="Track ROI and optimize your SEO investment returns with advanced profitability insights"
+          badge={{
+            icon: <DollarSign className="mr-1 h-3 w-3" />,
+            text: "ROI Analytics",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                <SelectTrigger className="w-[180px]">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <SelectValue placeholder="Select period" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="week">Last 7 Days</SelectItem>
+                  <SelectItem value="month">Last 30 Days</SelectItem>
+                  <SelectItem value="quarter">Last Quarter</SelectItem>
+                  <SelectItem value="year">Last Year</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button variant="outline" size="sm">
+                <Download className="mr-2 h-4 w-4" />
+                Export Report
+              </Button>
+              <Button variant="outline" size="sm"
+                onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ['roi-analysis'] });
+                  queryClient.invalidateQueries({ queryKey: ['revenue-attribution'] });
+                }}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh Data
+              </Button>
+              <Button>
+                <Calculator className="mr-2 h-4 w-4" />
+                ROI Calculator
+              </Button>
+            </div>
+          }
+        />
 
         {/* Key Metrics */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -758,7 +759,7 @@ function ProfitabilityPage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
+        </div>
     </DashboardLayout>
   );
 }

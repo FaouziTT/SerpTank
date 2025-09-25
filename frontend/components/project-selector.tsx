@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Check, ChevronsUpDown, Plus, Building2 } from 'lucide-react';
+import { Check, ChevronsUpDown, Plus, Building2, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,6 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { useProject } from '@/lib/project-context';
+import { Organization } from '@/types/api';
 import { Separator } from '@/components/ui/separator';
 import { EntityModal } from '@/components/ui/entity-modal';
 import { Input } from '@/components/ui/input';
@@ -47,7 +48,12 @@ export function ProjectSelector() {
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
-  // Popover states
+  // Hierarchical popover states
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [popoverView, setPopoverView] = useState<'organizations' | 'projects'>('organizations');
+  const [viewingOrg, setViewingOrg] = useState<Organization | null>(null);
+
+  // Legacy popover states (keeping for compatibility)
   const [orgPopoverOpen, setOrgPopoverOpen] = useState(false);
   const [projectPopoverOpen, setProjectPopoverOpen] = useState(false);
 
@@ -223,140 +229,139 @@ export function ProjectSelector() {
 
   return (
     <div className="flex items-center space-x-2">
-      {/* Organization Selector */}
-      <Popover open={orgPopoverOpen} onOpenChange={setOrgPopoverOpen}>
-        <PopoverAnchor asChild>
+      {/* Hierarchical Context Switcher */}
+      <Popover
+        open={popoverOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            // Reset the view when the popover closes
+            setPopoverView('organizations');
+            setViewingOrg(null);
+          }
+          setPopoverOpen(open);
+        }}
+      >
+        <PopoverTrigger asChild>
           <Button
-            ref={orgTriggerRef}
-            variant="outline"
+            variant="ghost"
             role="combobox"
-            className="w-[200px] justify-between"
-            onClick={() => setOrgPopoverOpen(true)}
+            className="w-full justify-between text-left px-3 py-4"
           >
-            <div className="flex items-center">
-              <Building2 className="mr-2 h-4 w-4" />
-              {currentOrganization?.name || 'Select organization'}
+            <div className="flex items-center truncate">
+              <Building2 className="mr-2 h-4 w-4 shrink-0" />
+              <span className="font-semibold truncate">
+                {currentOrganization?.name || 'Select Organization'}
+              </span>
+              <span className="mx-2 text-muted-foreground">/</span>
+              <span className="truncate text-muted-foreground">
+                {currentProject?.name || 'Select Project'}
+              </span>
             </div>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        </PopoverAnchor>
-        <PopoverContent 
-          className="p-0" 
-          side="bottom"
-          align="start" 
-          sideOffset={4}
-          alignOffset={0}
-          style={{ width: orgTriggerWidth ? `${orgTriggerWidth}px` : 200 }}
-        >
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-0" side="bottom" align="start">
           <Command>
-            <CommandInput placeholder="Search organization..." />
-            <CommandEmpty>No organization found.</CommandEmpty>
-            <CommandGroup>
-              {organizations.map((org) => (
-                <CommandItem
-                  key={org.id}
-                  value={org.id.toString()}
-                  onSelect={() => {
-                    setCurrentOrganization(org);
-                    setOrgPopoverOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      'mr-2 h-4 w-4',
-                      currentOrganization?.id === org.id ? 'opacity-100' : 'opacity-0'
-                    )}
-                  />
-                  {org.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-            <Separator />
-            <CommandGroup>
-              <CommandItem
-                value="create-org"
-                className="cursor-pointer hover:bg-accent"
-                onSelect={(value) => {
-                  console.log('Create Organization clicked', value);
-                  setOrgFormData({ name: '', description: '' });
-                  setOrgModalOpen(true);
-                  setOrgPopoverOpen(false);
-                }}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Create Organization
-              </CommandItem>
-            </CommandGroup>
+            {popoverView === 'organizations' ? (
+              // Organization List View
+              <>
+                <CommandInput placeholder="Search organizations..." />
+                <CommandEmpty>No organization found.</CommandEmpty>
+                <CommandGroup>
+                  {organizations.map((org) => (
+                    <CommandItem
+                      key={org.id}
+                      value={org.id.toString()}
+                      onSelect={() => {
+                        setViewingOrg(org);
+                        setPopoverView('projects');
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          'mr-2 h-4 w-4',
+                          currentOrganization?.id === org.id ? 'opacity-100' : 'opacity-0'
+                        )}
+                      />
+                      {org.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+                <Separator />
+                <CommandGroup>
+                  <CommandItem
+                    value="create-org"
+                    className="cursor-pointer hover:bg-accent"
+                    onSelect={() => {
+                      setOrgFormData({ name: '', description: '' });
+                      setOrgModalOpen(true);
+                      setPopoverOpen(false);
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Organization
+                  </CommandItem>
+                </CommandGroup>
+              </>
+            ) : (
+              // Project List View
+              <>
+                <CommandGroup>
+                  <CommandItem onSelect={() => setPopoverView('organizations')}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Organizations
+                  </CommandItem>
+                </CommandGroup>
+                <Separator />
+                <CommandGroup heading={viewingOrg?.name}>
+                  <CommandInput placeholder="Search projects..." />
+                  <CommandEmpty>No project found.</CommandEmpty>
+                  {projects
+                    .filter(p => p.organization_id === viewingOrg?.id)
+                    .map((project) => (
+                      <CommandItem
+                        key={project.id}
+                        value={project.id.toString()}
+                        onSelect={() => {
+                          setCurrentOrganization(viewingOrg);
+                          setCurrentProject(project);
+                          setPopoverOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            currentProject?.id === project.id ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        {project.name}
+                      </CommandItem>
+                    ))}
+                </CommandGroup>
+                <Separator />
+                <CommandGroup>
+                  <CommandItem
+                    value="create-project"
+                    className="cursor-pointer hover:bg-accent"
+                    onSelect={() => {
+                      // Ensure we have the viewing org context for project creation
+                      if (viewingOrg && !currentOrganization) {
+                        setCurrentOrganization(viewingOrg);
+                      }
+                      setProjectFormData({ name: '', description: '', url: '' });
+                      setProjectModalOpen(true);
+                      setPopoverOpen(false);
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Project
+                  </CommandItem>
+                </CommandGroup>
+              </>
+            )}
           </Command>
         </PopoverContent>
       </Popover>
-
-      {/* Project Selector */}
-      {currentOrganization && (
-        <Popover open={projectPopoverOpen} onOpenChange={setProjectPopoverOpen}>
-          <PopoverAnchor asChild>
-            <Button
-              ref={projectTriggerRef}
-              variant="outline"
-              role="combobox"
-              className="w-[200px] justify-between"
-              onClick={() => setProjectPopoverOpen(true)}
-            >
-              {currentProject?.name || 'Select project'}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverAnchor>
-          <PopoverContent 
-            className="p-0" 
-            side="bottom"
-            align="start" 
-            sideOffset={4}
-            alignOffset={0}
-            style={{ width: projectTriggerWidth ? `${projectTriggerWidth}px` : 200 }}
-          >
-            <Command>
-              <CommandInput placeholder="Search project..." />
-              <CommandEmpty>No project found.</CommandEmpty>
-              <CommandGroup>
-                {projects.map((project) => (
-                  <CommandItem
-                    key={project.id}
-                    value={project.id.toString()}
-                    onSelect={() => {
-                      setCurrentProject(project);
-                      setProjectPopoverOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn(
-                        'mr-2 h-4 w-4',
-                        currentProject?.id === project.id ? 'opacity-100' : 'opacity-0'
-                      )}
-                    />
-                    {project.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-              <Separator />
-              <CommandGroup>
-                <CommandItem
-                  value="create-project"
-                  className="cursor-pointer hover:bg-accent"
-                  onSelect={(value) => {
-                    console.log('Create Project clicked', value);
-                    setProjectFormData({ name: '', description: '', url: '' });
-                    setProjectModalOpen(true);
-                    setProjectPopoverOpen(false);
-                  }}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Project
-                </CommandItem>
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      )}
 
       {/* Organization Creation Modal */}
       <EntityModal

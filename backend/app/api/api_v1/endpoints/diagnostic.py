@@ -36,6 +36,8 @@ from app.services.crawler import crawler_service
 from app.services.log_analyzer import log_analyzer_service
 from app.services.core_web_vitals import cwv_service
 from app.services.diagnostic import DiagnosticService
+from app.services.activity_service import activity_service
+from app.models.activity_feed import ActivityType
 from app.db.session import get_db
 from app.core.db_optimization import optimize_for_read
 
@@ -78,13 +80,30 @@ async def start_crawl(
             site_id=request.site_id,
         )
         
+        # Log activity using the existing ActivityFeed system
+        await activity_service.log_activity(
+            type=ActivityType.SITE_CRAWLED,
+            title="Site Diagnostic Started",
+            description=f"Comprehensive analysis initiated for {request.url}",
+            user_id=current_user.id,
+            organization_id=getattr(current_user, 'organization_id', None),
+            site_id=request.site_id,
+            data={
+                "crawl_id": crawl_id,
+                "url": request.url,
+                "max_urls": request.max_urls,
+                "status": "started"
+            },
+            broadcast=True
+        )
+
         # Add the crawl monitoring task to background tasks
         background_tasks.add_task(
             crawler_service.monitor_crawl,
             crawl_id=crawl_id,
             user_id=current_user.id,
         )
-        
+
         return CrawlResponse(
             crawl_id=crawl_id,
             status=CrawlStatus.STARTED,

@@ -630,7 +630,7 @@ async def get_project_analysis_status(
     # Validate project access using tenant service
     project = await tenant_service.validate_project_access(tenant_context, project_id)
     
-    # Check if site exists (filter by both URL and user to avoid multiple results)
+    # Check if site exists
     site_result = await db.execute(
         select(Site).where(
             Site.url == project.url,
@@ -640,71 +640,72 @@ async def get_project_analysis_status(
     site = site_result.scalar_one_or_none()
     
     if not site:
-        # No site yet, all tasks pending
+        # Fallback if site creation somehow delayed, though unlikely
         return {
             "project_id": project.id,
-            "crawl_status": "pending",
-            "cwv_status": "pending" if cwv_service.is_configured() else "not_configured",
-            "profitability_status": "pending" if project.ga4_configured else "not_configured",
-            "overall_status": "in_progress",
-            "created_at": project.created_at,
-            "time_elapsed": (datetime.utcnow() - project.created_at).total_seconds()
+            "overall_status": "pending",
+            "overall_progress": 0,
+            # ... other initial fields ...
         }
     
-    # Use background task service to check task statuses
     task_service = BackgroundTaskService()
     
-    # Check crawl task status
-    logger.info(f"Checking crawl task status for site_id: {site.id}, user_id: {tenant_context.user_id}")
-    crawl_status = await task_service.check_task_completion(
+    # Fetch status for all relevant tasks
+    crawl_progress = await task_service.get_task_progress_status(
         user_id=tenant_context.user_id,
         task_type=TaskType.WEBSITE_CRAWL,
         site_id=site.id
     )
-    logger.info(f"Crawl task status: {crawl_status}")
-    
-    # Check CWV task status
-    cwv_status = None
+
+    cwv_progress = {"status": "not_configured", "progress": 100, "message": "Skipped (not configured)"}
     if cwv_service.is_configured():
-        cwv_status = await task_service.check_task_completion(
+        cwv_progress = await task_service.get_task_progress_status(
             user_id=tenant_context.user_id,
             task_type=TaskType.CORE_WEB_VITALS_ANALYSIS,
             site_id=site.id
         )
-    
-    # Check revenue analysis task status
-    revenue_status = None
+
+    revenue_progress = {"status": "not_configured", "progress": 100, "message": "Skipped (not configured)"}
     if ga4_service.is_configured() and project.ga4_configured:
-        revenue_status = await task_service.check_task_completion(
+        revenue_progress = await task_service.get_task_progress_status(
             user_id=tenant_context.user_id,
             task_type=TaskType.REVENUE_ANALYSIS,
             site_id=site.id
         )
     
-    # Determine overall status
-    tasks_complete = []
-    tasks_complete.append(crawl_status)
-        
-    if cwv_service.is_configured():
-        tasks_complete.append(cwv_status)
-        
-    if ga4_service.is_configured() and project.ga4_configured:
-        tasks_complete.append(revenue_status)
+    # Consolidate all tasks that are part of the analysis
+    all_tasks = [crawl_progress, cwv_progress, revenue_progress]
+
+    # --- START OF CORRECTED LOGIC ---
     
-    overall_complete = all(tasks_complete) if tasks_complete else False
+    # Calculate overall progress (this part is fine)
+    total_progress = sum(task["progress"] for task in all_tasks)
+    average_progress = total_progress / len(all_tasks) if all_tasks else 0
     
+    # Determine the overall status with the correct priority
+    overall_status = "complete"  # Assume completion by default
+
+    # Check for any non-complete states in order of priority.
+    # If any task is 'in_progress', the whole process is 'in_progress'.
+    if any(task["status"] == "in_progress" for task in all_tasks):
+        overall_status = "in_progress"
+    # Else if any task is 'pending', the process is still running.
+    elif any(task["status"] == "pending" for task in all_tasks):
+        overall_status = "in_progress"  # Treat 'pending' as an 'in_progress' state for the overall UI
+
     analysis_status = {
         "project_id": project.id,
-        "crawl_status": "complete" if crawl_status else "pending",
-        "cwv_status": "complete" if cwv_status else ("pending" if cwv_service.is_configured() else "not_configured"),
-        "profitability_status": "complete" if revenue_status else ("pending" if project.ga4_configured else "not_configured"),
-        "overall_status": "complete" if overall_complete else "in_progress",
+        "crawl_status": crawl_progress["status"],
+        "cwv_status": cwv_progress["status"],
+        "profitability_status": revenue_progress["status"],
+        "overall_status": overall_status,
+        "overall_progress": round(average_progress),
         "created_at": project.created_at,
         "time_elapsed": (datetime.now(timezone.utc) - project.created_at).total_seconds(),
         "tasks": {
-            "crawl": crawl_status,
-            "cwv": cwv_status,
-            "revenue": revenue_status
+            "crawl": crawl_progress,
+            "cwv": cwv_progress,
+            "revenue": revenue_progress
         }
     }
     

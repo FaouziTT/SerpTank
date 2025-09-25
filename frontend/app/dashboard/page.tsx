@@ -2,13 +2,13 @@
 
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MagneticButton } from '@/components/ui/magnetic-button';
 import { CTAButton } from '@/components/ui/cta-button';
 import { SimpleMagneticWrapper } from '@/components/ui/simple-magnetic-wrapper';
-import { SEOOrb } from '@/components/ui/seo-orb';
 import { 
   Activity, 
   TrendingUp, 
@@ -64,9 +64,6 @@ function DashboardPage() {
   // Crawler status for current project
   const { crawlerStatus, isActive: isCrawlerActive, dismissStatus } = useCrawlerStatus(currentProject?.id?.toString());
   
-  // Parallax transforms for background elements
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const orbScale = useTransform(scrollY, [0, 500], [1, 0.8]);
   
   // Check if user needs onboarding
   useOnboardingCheck();
@@ -275,46 +272,6 @@ function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative noise-overlay">
-      {/* Background gradient mesh */}
-      <div className="fixed inset-0 gradient-mesh opacity-20 dark:opacity-10" />
-      
-      {/* Enhanced floating 3D orb */}
-      <motion.div
-        className="fixed right-[-300px] top-1/4 w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] pointer-events-none"
-        style={{ y: heroY, scale: orbScale }}
-      >
-        <SEOOrb className="scale-100 opacity-30" />
-      </motion.div>
-      
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-32 -left-32 w-64 h-64 bg-primary/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-accent/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </div>
-      
       <DashboardLayout>
         <div className="space-y-8 relative z-10">
           {/* Crawler Loading Banner */}
@@ -370,110 +327,77 @@ function DashboardPage() {
             </motion.div>
           )}
 
-          {/* Header with refresh button */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex items-center justify-between"
-          >
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-              >
-                <Badge variant="secondary" className="mb-4 animate-slide-up-fade">
-                  <Sparkles className="mr-1 h-3 w-3" />
-                  AI-Powered Dashboard
-                </Badge>
-              </motion.div>
-              
-              <motion.h1 
-                className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter mb-4 leading-[0.9]"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <span className="block">Your SEO</span>
-                <span className="block text-gradient-electric">Command Center</span>
-              </motion.h1>
-              
-              <motion.p 
-                className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
-                Real-time insights and AI-powered recommendations to dominate search results
-              </motion.p>
-            </div>
-            
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex items-center gap-4"
-            >
-              <div className="flex items-center gap-2">
-                {/* Live indicator */}
+          {/* Optimized Header - Research-based 2025 standards */}
+          <DashboardPageHeader
+            title="Your SEO Command Center"
+            description="Real-time insights and AI-powered recommendations to dominate search results"
+            badge={{
+              icon: <Sparkles className="mr-1 h-3 w-3" />,
+              text: "AI-Powered Dashboard",
+              variant: "secondary"
+            }}
+            actions={
+              <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse neon-glow-green" />
-                  <span className="text-sm text-green-600 font-medium">Live</span>
+                  {/* Live indicator */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse neon-glow-green" />
+                    <span className="text-sm text-green-600 font-medium">Live</span>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    Last updated: {formatRelativeTime(dashboardData.lastSync)}
+                  </span>
+                  {(isFetching || isRefreshing) && (
+                    <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
+                  )}
                 </div>
-                <span className="text-xs text-muted-foreground">
-                  Last updated: {formatRelativeTime(dashboardData.lastSync)}
-                </span>
-                {(isFetching || isRefreshing) && (
-                  <RefreshCw className="h-4 w-4 animate-spin text-muted-foreground" />
-                )}
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Select
-                  value={interval.toString()}
-                  onValueChange={handleIntervalChange}
-                  disabled={!autoRefreshEnabled}
-                >
-                  <SelectTrigger className="h-10 w-[160px] bg-card/80 backdrop-blur-sm border-border/50">
-                    <Clock className="mr-2 h-4 w-4" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="30000">30 seconds</SelectItem>
-                    <SelectItem value="60000">1 minute</SelectItem>
-                    <SelectItem value="300000">5 minutes</SelectItem>
-                    <SelectItem value="600000">10 minutes</SelectItem>
-                    <SelectItem value="1800000">30 minutes</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                <SimpleMagneticWrapper>
-                  <MagneticButton
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
-                    className={`${autoRefreshEnabled ? 'neon-glow-blue' : 'opacity-50'} bg-card/80 backdrop-blur-sm`}
-                    magneticStrength={0}
+
+                <div className="flex items-center gap-2">
+                  <Select
+                    value={interval.toString()}
+                    onValueChange={handleIntervalChange}
+                    disabled={!autoRefreshEnabled}
                   >
-                    {autoRefreshEnabled ? 'Auto' : 'Manual'}
-                  </MagneticButton>
-                </SimpleMagneticWrapper>
-                
-                <SimpleMagneticWrapper>
-                  <CTAButton
-                    size="sm"
-                    onClick={handleRefresh}
-                    disabled={isRefreshing || isFetching}
-                    className="gap-2"
-                  >
-                    <RefreshCw className={`h-4 w-4 ${isRefreshing || isFetching ? 'animate-spin' : ''}`} />
-                    Refresh
-                  </CTAButton>
-                </SimpleMagneticWrapper>
+                    <SelectTrigger className="h-10 w-[160px] bg-card/80 backdrop-blur-sm border-border/50">
+                      <Clock className="mr-2 h-4 w-4" />
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="30000">30 seconds</SelectItem>
+                      <SelectItem value="60000">1 minute</SelectItem>
+                      <SelectItem value="300000">5 minutes</SelectItem>
+                      <SelectItem value="600000">10 minutes</SelectItem>
+                      <SelectItem value="1800000">30 minutes</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <SimpleMagneticWrapper>
+                    <MagneticButton
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
+                      className={`${autoRefreshEnabled ? 'neon-glow-blue' : 'opacity-50'} bg-card/80 backdrop-blur-sm`}
+                      magneticStrength={0}
+                    >
+                      {autoRefreshEnabled ? 'Auto' : 'Manual'}
+                    </MagneticButton>
+                  </SimpleMagneticWrapper>
+
+                  <SimpleMagneticWrapper>
+                    <CTAButton
+                      size="sm"
+                      onClick={handleRefresh}
+                      disabled={isRefreshing || isFetching}
+                      className="gap-2"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isRefreshing || isFetching ? 'animate-spin' : ''}`} />
+                      Refresh
+                    </CTAButton>
+                  </SimpleMagneticWrapper>
+                </div>
               </div>
-            </motion.div>
-          </motion.div>
+            }
+          />
 
         {/* Show setup progress if initial setup is not complete */}
         {!isSetupComplete && setupStatus && currentProject && (
@@ -899,7 +823,6 @@ function DashboardPage() {
           </motion.div>
         </div>
       </DashboardLayout>
-    </div>
   );
 }
 

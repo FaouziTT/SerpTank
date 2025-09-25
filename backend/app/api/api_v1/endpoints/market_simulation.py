@@ -209,6 +209,7 @@ async def analyze_competitors(
     to inform strategic decision-making and scenario planning.
     """
     try:
+        # Call the new strategic competitor analysis method
         analysis_results = await market_simulation_service.analyze_competitors(
             competitor_domains=analysis_request.competitor_domains,
             keywords=analysis_request.keywords,
@@ -218,20 +219,14 @@ async def analyze_competitors(
             db=db
         )
         
-        # Generate competitive intelligence insights
-        competitive_insights = await market_simulation_service.generate_competitive_insights(
-            analysis_results=analysis_results,
-            market_segment=analysis_request.market_segment
-        )
-        
+        # The analysis_results already contains all needed data in the correct format
+        # Return the data in the format expected by the frontend
         return {
             "analysis_id": str(uuid.uuid4()),
-            "competitor_analysis": analysis_results,
-            "competitive_insights": competitive_insights,
-            "market_opportunities": analysis_results.get("opportunities", []),
-            "threat_assessment": analysis_results.get("threats", []),
-            "strategic_recommendations": competitive_insights.get("recommendations", []),
-            "confidence_score": analysis_results.get("confidence_score", 0.8),
+            "competitor_analysis": analysis_results.get("competitor_analysis", {}),
+            "competitive_insights": analysis_results.get("competitive_insights", {}),
+            "market_opportunities": analysis_results.get("market_opportunities", []),
+            "analysis_metadata": analysis_results.get("analysis_metadata", {}),
             "created_at": datetime.utcnow().isoformat()
         }
         

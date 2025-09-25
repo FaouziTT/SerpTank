@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   Building2, 
   Globe, 
@@ -436,99 +436,122 @@ function ProjectStep({ data, updateData, onNext, onBack }: StepProps) {
 function GoogleConnectionStep({ data, updateData, onNext, onBack }: StepProps) {
   const [loading, setLoading] = useState(false);
   const [isVerifyingOAuth, setIsVerifyingOAuth] = useState(false);
+  const [showCompletePanel, setShowCompletePanel] = useState(false);
   const [searchConsoleConnected, setSearchConsoleConnected] = useState(false);
   const [analyticsConnected, setAnalyticsConnected] = useState(false);
   const { toast } = useToast();
-  const pollingInterval = useRef<NodeJS.Timeout | null>(null);
-
-  const stopPolling = () => {
-    if (pollingInterval.current) {
-      clearInterval(pollingInterval.current);
-      pollingInterval.current = null;
-    }
-  };
 
   const checkGoogleStatus = useCallback(async (isInitialCheck = false) => {
-    // On the very first check after OAuth, we don't want to show errors, just check status.
-    if (isInitialCheck) {
-      setIsVerifyingOAuth(true);
-    }
-
     try {
       const response = await api.oauth.status();
       const requirements = response.data.project_creation_requirements;
       const searchConsoleStatus = requirements?.search_console?.valid || false;
       const analyticsStatus = requirements?.analytics?.valid || false;
-      
+
+      console.log('OAuth Status Check:', {
+        search_console: searchConsoleStatus,
+        analytics: analyticsStatus,
+        allConnected: searchConsoleStatus && analyticsStatus
+      });
+
       setSearchConsoleConnected(searchConsoleStatus);
       setAnalyticsConnected(analyticsStatus);
-      
+
       const allConnected = searchConsoleStatus && analyticsStatus;
       updateData({ googleConnected: allConnected });
-      
+
       if (allConnected) {
+        console.log('All Google services connected! Stopping verification...');
         toast({
           title: 'All Set!',
           description: 'Both Google services connected successfully.',
         });
-        setIsVerifyingOAuth(false); // End the verifying state
-        stopPolling(); // Stop checking once we succeed
-        setTimeout(() => onNext(), 1500); // Proceed
+        setIsVerifyingOAuth(false); // This will stop the polling effect
+        setShowCompletePanel(true); // Show the complete panel with manual continue button
       }
+      // No 'else' here; let the polling continue if not connected
     } catch (error) {
       console.error('Failed to check OAuth status:', error);
-      // If the API itself fails, we can stop and show an error.
-      setIsVerifyingOAuth(false);
-      stopPolling();
+      setIsVerifyingOAuth(false); // Stop on error
       toast({
         title: 'Error Checking Status',
         description: 'Could not verify the connection to Google. Please try again.',
         variant: 'destructive'
       });
     }
-  }, [updateData, toast, onNext]);
+  }, [updateData, toast]);
 
   // Initial status check on component mount
   useEffect(() => {
     checkGoogleStatus();
   }, []);
 
-  // Handle OAuth Return
+  // Handle OAuth Return - Simplified callback detection only
+  const searchParams = useSearchParams();
+
+  // Effect 1: Handle OAuth callback detection (separate from polling)
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('oauth_success') === 'true') {
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
+    const oauthSuccess = searchParams.get('oauth_success');
+    const oauthError = searchParams.get('oauth_error');
+
+    if (oauthSuccess === 'true') {
+      console.log('OAuth success detected, starting verification process...');
+
       toast({
         title: 'Google Account Linked!',
         description: 'Finalizing connection, this may take a moment...',
       });
-      
-      setIsVerifyingOAuth(true); // Immediately enter the verifying state
-      
-      // Start polling immediately to check for status updates
-      checkGoogleStatus(true);
-      pollingInterval.current = setInterval(() => checkGoogleStatus(), 3000); // Poll every 3 seconds
 
-      // Add a timeout to prevent polling forever if something goes wrong
-      const verificationTimeout = setTimeout(() => {
-        stopPolling();
+      setIsVerifyingOAuth(true);
+
+      // Clean up the URL
+      const url = new URL(window.location.href);
+      url.searchParams.delete('oauth_success');
+      url.searchParams.delete('oauth_error');
+      window.history.replaceState({}, document.title, url.toString());
+    } else if (oauthError) {
+      console.error('OAuth error detected:', oauthError);
+      toast({
+        title: 'OAuth Error',
+        description: `Authentication failed: ${oauthError}`,
+        variant: 'destructive',
+      });
+    }
+  }, [searchParams, toast]);
+
+  // Effect 2: State-driven polling mechanism
+  useEffect(() => {
+    if (isVerifyingOAuth) {
+      console.log('Starting OAuth verification polling...');
+
+      const interval = setInterval(() => {
+        console.log('Polling OAuth status...');
+        checkGoogleStatus();
+      }, 3000);
+
+      const timeout = setTimeout(() => {
+        console.log('OAuth polling timeout reached');
         setIsVerifyingOAuth(false);
-        if (!data.googleConnected) { // Check one last time from component state
-          toast({
-            title: 'Verification Timed Out',
-            description: 'We could not confirm the connection. Please try connecting again.',
-            variant: 'destructive',
-          });
-        }
-      }, 45000); // Set a generous timeout (e.g., 45 seconds)
+        toast({
+          title: 'Connection Timeout',
+          description: 'The connection is taking longer than expected. Please try again.',
+          variant: 'destructive',
+        });
+      }, 30000); // 30-second timeout
+
+      // Initial check after a brief delay
+      const initialCheck = setTimeout(() => {
+        console.log('Starting initial OAuth status check...');
+        checkGoogleStatus(true);
+      }, 2000);
 
       return () => {
-        clearTimeout(verificationTimeout);
-        stopPolling();
+        clearInterval(interval);
+        clearTimeout(timeout);
+        clearTimeout(initialCheck);
       };
     }
-  }, []); // This effect should only run once on component mount
+  }, [isVerifyingOAuth, checkGoogleStatus, toast]);
 
   const handleConnectBoth = async () => {
     if (loading) return;
@@ -877,40 +900,69 @@ function CrawlLoadingScreen({ projectId }: { projectId: number }) {
       const status = response.data;
       console.log('Analysis status response:', status);
       
-      // Transform backend response to frontend-expected format
-      const transformedTasks: { [key: string]: { status: string; message: string; progress: number } } = {
-        'Website Crawl': {
-          status: status.crawl_status === 'complete' ? 'completed' : 
-                status.crawl_status === 'pending' ? 'pending' : 'in_progress',
-          message: status.crawl_status === 'complete' ? 'Crawling completed successfully' :
-                  status.crawl_status === 'pending' ? 'Starting website crawl...' : 
-                  'Crawling your website...',
-          progress: status.crawl_status === 'complete' ? 100 : 
-                  status.crawl_status === 'pending' ? 0 : 50 // In-progress is 50%
-        },
-        'Core Web Vitals': {
-          status: status.cwv_status === 'complete' ? 'completed' : 
-                status.cwv_status === 'not_configured' ? 'completed' :
-                status.cwv_status === 'pending' ? 'pending' : 'in_progress',
-          message: status.cwv_status === 'complete' ? 'Performance analysis completed' :
-                  status.cwv_status === 'not_configured' ? 'Skipped (not configured)' :
-                  status.cwv_status === 'pending' ? 'Starting performance analysis...' : 
-                  'Analyzing website performance...',
-          progress: status.cwv_status === 'complete' || status.cwv_status === 'not_configured' ? 100 : 
-                  status.cwv_status === 'pending' ? 0 : 50 // In-progress is 50%
-        }
-      };
+      // Use the new backend response format with detailed progress
+      const transformedTasks: { [key: string]: { status: string; message: string; progress: number } } = {};
 
-      // Add profitability task if configured
-      if (status.profitability_status !== 'not_configured') {
+      // Website Crawl task
+      if (status.tasks?.crawl) {
+        transformedTasks['Website Crawl'] = {
+          status: status.tasks.crawl.status === 'completed' ? 'completed' :
+                  status.tasks.crawl.status === 'in_progress' ? 'in_progress' : 'pending',
+          message: status.tasks.crawl.message || 'Processing website crawl...',
+          progress: status.tasks.crawl.progress || 0
+        };
+      } else {
+        // Fallback for old format
+        transformedTasks['Website Crawl'] = {
+          status: status.crawl_status === 'completed' ? 'completed' :
+                  status.crawl_status === 'pending' ? 'pending' : 'in_progress',
+          message: status.crawl_status === 'completed' ? 'Crawling completed successfully' :
+                  status.crawl_status === 'pending' ? 'Starting website crawl...' : 'Crawling your website...',
+          progress: status.crawl_status === 'completed' ? 100 :
+                   status.crawl_status === 'pending' ? 0 : 50
+        };
+      }
+
+      // Core Web Vitals task
+      if (status.tasks?.cwv) {
+        transformedTasks['Core Web Vitals'] = {
+          status: status.tasks.cwv.status === 'completed' ? 'completed' :
+                  status.tasks.cwv.status === 'in_progress' ? 'in_progress' :
+                  status.tasks.cwv.status === 'not_configured' ? 'completed' : 'pending',
+          message: status.tasks.cwv.message || 'Processing performance analysis...',
+          progress: status.tasks.cwv.progress || 0
+        };
+      } else {
+        // Fallback for old format
+        transformedTasks['Core Web Vitals'] = {
+          status: status.cwv_status === 'completed' ? 'completed' :
+                  status.cwv_status === 'not_configured' ? 'completed' :
+                  status.cwv_status === 'pending' ? 'pending' : 'in_progress',
+          message: status.cwv_status === 'completed' ? 'Performance analysis completed' :
+                   status.cwv_status === 'not_configured' ? 'Skipped (not configured)' :
+                   status.cwv_status === 'pending' ? 'Starting performance analysis...' : 'Analyzing website performance...',
+          progress: status.cwv_status === 'completed' || status.cwv_status === 'not_configured' ? 100 :
+                   status.cwv_status === 'pending' ? 0 : 50
+        };
+      }
+
+      // Revenue analysis task (only if configured)
+      if (status.tasks?.revenue && status.profitability_status !== 'not_configured') {
         transformedTasks['Profitability Analysis'] = {
-          status: status.profitability_status === 'complete' ? 'completed' : 
-                status.profitability_status === 'pending' ? 'pending' : 'in_progress',
-          message: status.profitability_status === 'complete' ? 'Revenue analysis completed' :
-                  status.profitability_status === 'pending' ? 'Starting revenue analysis...' : 
-                  'Analyzing revenue data...',
-          progress: status.profitability_status === 'complete' ? 100 : 
-                  status.profitability_status === 'pending' ? 0 : 50 // In-progress is 50%
+          status: status.tasks.revenue.status === 'completed' ? 'completed' :
+                  status.tasks.revenue.status === 'in_progress' ? 'in_progress' : 'pending',
+          message: status.tasks.revenue.message || 'Processing revenue analysis...',
+          progress: status.tasks.revenue.progress || 0
+        };
+      } else if (status.profitability_status !== 'not_configured') {
+        // Fallback for old format
+        transformedTasks['Profitability Analysis'] = {
+          status: status.profitability_status === 'completed' ? 'completed' :
+                  status.profitability_status === 'pending' ? 'pending' : 'in_progress',
+          message: status.profitability_status === 'completed' ? 'Revenue analysis completed' :
+                   status.profitability_status === 'pending' ? 'Starting revenue analysis...' : 'Analyzing revenue data...',
+          progress: status.profitability_status === 'completed' ? 100 :
+                   status.profitability_status === 'pending' ? 0 : 50
         };
       }
 
@@ -949,24 +1001,26 @@ function CrawlLoadingScreen({ projectId }: { projectId: number }) {
         }, 2000);
       }
 
-      // New, more responsive progress calculation
-      let totalProgress = 0;
-      const taskValues = Object.values(transformedTasks);
+      // Use backend-calculated overall progress if available, otherwise calculate from tasks
+      let currentProgress;
+      if (status.overall_progress !== undefined) {
+        currentProgress = Math.round(status.overall_progress);
+      } else {
+        // Fallback: calculate from individual tasks
+        let totalProgress = 0;
+        const taskValues = Object.values(transformedTasks);
+        taskValues.forEach(task => {
+          totalProgress += task.progress;
+        });
+        currentProgress = Math.round(totalProgress / taskValues.length);
+      }
 
-      // Sum the progress of each individual task
-      taskValues.forEach(task => {
-        totalProgress += task.progress;
-      });
-
-      // Calculate the average progress across all tasks
-      const currentProgress = Math.round(totalProgress / taskValues.length);
-      
       setProgress(prevProgress => {
         // Only update progress if it's moving forward, preventing flicker
         return currentProgress > prevProgress ? currentProgress : prevProgress;
       });
 
-      console.log('Total task progress:', totalProgress, 'Average progress:', currentProgress, 'Overall status:', status.overall_status);
+      console.log('Current progress:', currentProgress, 'Overall status:', status.overall_status);
 
       // Trigger grand finale when all tasks are complete
       if (status.overall_status === 'complete' && !isGrandFinale) {
@@ -1030,13 +1084,30 @@ function CrawlLoadingScreen({ projectId }: { projectId: number }) {
                 ease: "easeInOut"
               }}
             >
-              <SEOOrb className="w-full h-full" colorTheme="electric" />
+              <img
+                src="/serptank-orb-logo.svg"
+                alt="SerpTank Orb"
+                className="w-full h-full"
+              />
             </motion.div>
+            {/* Multi-layered colored fade finale */}
             <motion.div
-              className="absolute inset-0 bg-gradient-radial from-primary/20 via-accent/10 to-transparent"
+              className="absolute inset-0 bg-gradient-radial from-blue-500/30 via-purple-500/20 to-transparent"
               initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 3, opacity: 1 }}
-              transition={{ delay: 1, duration: 1.5 }}
+              animate={{ scale: 4, opacity: [0, 0.8, 0] }}
+              transition={{ delay: 0.8, duration: 2.2, ease: "easeOut" }}
+            />
+            <motion.div
+              className="absolute inset-0 bg-gradient-radial from-primary/40 via-accent/25 to-emerald-400/10"
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 3, opacity: [0, 1, 0.3] }}
+              transition={{ delay: 1, duration: 1.8, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute inset-0 bg-gradient-conic from-primary via-accent to-purple-500"
+              initial={{ scale: 0, opacity: 0, rotate: 0 }}
+              animate={{ scale: 2, opacity: [0, 0.6, 0], rotate: 180 }}
+              transition={{ delay: 1.5, duration: 1.5, ease: "easeOut" }}
             />
           </motion.div>
         )}
@@ -1101,44 +1172,80 @@ function CrawlLoadingScreen({ projectId }: { projectId: number }) {
             ease: "easeInOut"
           }}
         >
-          {/* Thinking pulse rings */}
+          {/* Thinking pulse layers with SerpTank logo */}
           {progress < 100 && (
             <>
+              {/* Outer pulsing logo layer */}
               <motion.div
-                className="absolute inset-0 border-2 border-primary/30 rounded-full"
+                className="absolute inset-0 opacity-20"
                 animate={{
-                  scale: [1, 1.5, 2],
-                  opacity: [0.5, 0.2, 0]
+                  scale: [1, 1.8, 2.2],
+                  opacity: [0.3, 0.15, 0]
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 2.5,
                   repeat: Infinity,
                   ease: "easeOut"
                 }}
-              />
+              >
+                <img
+                  src="/serptank-orb-logo.svg"
+                  alt="SerpTank Orb"
+                  className="w-full h-full"
+                />
+              </motion.div>
+
+              {/* Middle pulsing logo layer */}
               <motion.div
-                className="absolute inset-0 border-2 border-accent/30 rounded-full"
+                className="absolute inset-0 opacity-30"
                 animate={{
-                  scale: [1, 1.3, 1.8],
-                  opacity: [0.5, 0.3, 0]
+                  scale: [1, 1.4, 1.8],
+                  opacity: [0.4, 0.2, 0]
                 }}
                 transition={{
                   duration: 2,
                   repeat: Infinity,
                   ease: "easeOut",
-                  delay: 0.5
+                  delay: 0.3
                 }}
-              />
+              >
+                <img
+                  src="/serptank-orb-logo.svg"
+                  alt="SerpTank Orb"
+                  className="w-full h-full"
+                />
+              </motion.div>
+
+              {/* Inner pulsing logo layer */}
+              <motion.div
+                className="absolute inset-0 opacity-40"
+                animate={{
+                  scale: [1, 1.2, 1.5],
+                  opacity: [0.5, 0.3, 0]
+                }}
+                transition={{
+                  duration: 1.8,
+                  repeat: Infinity,
+                  ease: "easeOut",
+                  delay: 0.6
+                }}
+              >
+                <img
+                  src="/serptank-orb-logo.svg"
+                  alt="SerpTank Orb"
+                  className="w-full h-full"
+                />
+              </motion.div>
             </>
           )}
           
-          {/* Main SEOOrb */}
+          {/* Main SerpTank Logo */}
           <motion.div
             ref={orbRef}
             className="relative z-10"
             animate={{
               rotate: [0, 360],
-              filter: progress < 100 
+              filter: progress < 100
                 ? ["brightness(1) saturate(1)", "brightness(1.2) saturate(1.1)", "brightness(1) saturate(1)"]
                 : ["brightness(1.5) saturate(1.2)"]
             }}
@@ -1147,7 +1254,11 @@ function CrawlLoadingScreen({ projectId }: { projectId: number }) {
               filter: { duration: 3, repeat: progress < 100 ? Infinity : 0, ease: "easeInOut" }
             }}
           >
-            <SEOOrb className="w-full h-full" colorTheme={progress >= 100 ? "electric" : "neon"} />
+            <img
+              src="/serptank-orb-logo.svg"
+              alt="SerpTank Orb"
+              className="w-full h-full"
+            />
           </motion.div>
 
           {/* Intelligence gathering effect */}
@@ -1561,19 +1672,13 @@ export function OnboardingWizard() {
   useEffect(() => {
     const savedData = sessionStorage.getItem('onboarding_data');
     const savedStep = sessionStorage.getItem('onboarding_step');
-    
+
     if (savedData && savedStep === 'google') {
       setData(JSON.parse(savedData));
       setCurrentStep(3); // Google connection step
-      
-      // Check if we're returning from OAuth callback
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('oauth_success') === 'true') {
-        // Clear the URL parameter
-        window.history.replaceState({}, document.title, window.location.pathname);
-        // Don't set googleConnected here - let the status check handle it
-        // This prevents race conditions
-      }
+
+      // Don't clean URL parameters here - let GoogleConnectionStep handle OAuth detection
+      // This prevents race conditions where URL params are cleaned before detection
     }
   }, []);
 

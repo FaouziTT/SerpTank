@@ -30,38 +30,51 @@ export function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 flex h-20 items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-xl px-6">
-      {/* Subtle background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.01] via-accent/[0.01] to-transparent pointer-events-none" />
-      
-      <motion.div 
-        className="flex items-center space-x-6 flex-1 relative"
+    <header className="sticky top-0 z-50 flex h-20 items-center justify-between border-b border-border/40 bg-background/90 backdrop-blur-xl px-6 relative shadow-sm shadow-border/20" style={{ gridTemplateColumns: '256px 1fr' }}>
+      {/* Enhanced shell background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.015] via-accent/[0.015] to-primary/[0.008] pointer-events-none" />
+      {/* Subtle depth enhancement */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
+      <motion.div
+        className="flex items-center space-x-6 flex-1 relative z-10"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
+        style={{ marginLeft: '24px' }} // Align with sidebar content padding (px-6 = 24px)
       >
-        <ProjectSelector />
-        <SearchBar className="max-w-md bg-card/80 backdrop-blur-sm border-border/50" placeholder="Search everywhere..." />
+        {/* Clean project selection with consistent spacing */}
+        <div className="flex items-center">
+          <ProjectSelector />
+        </div>
+
+        {/* Enhanced search with reduced prominence to not compete with logo */}
+        <SearchBar
+          className="max-w-sm bg-card/70 backdrop-blur-sm border-border/40 shadow-sm hover:border-primary/20 transition-all duration-300 text-sm"
+          placeholder="Search projects, insights..."
+        />
       </motion.div>
       
-      <motion.div 
-        className="flex items-center space-x-4 relative"
+      <motion.div
+        className="flex items-center space-x-4 relative z-10"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <ThemeToggle />
-        
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/80 hover:neon-glow-blue"
-            >
-              <Bell className="h-5 w-5" />
-            </Button>
-          </PopoverTrigger>
+        {/* Secondary actions with refined hierarchy */}
+        <div className="flex items-center space-x-3">
+          <ThemeToggle />
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="bg-card/60 backdrop-blur-sm border border-border/50 hover:bg-primary/10 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background"
+              >
+                <Bell className="h-5 w-5" />
+              </Button>
+            </PopoverTrigger>
           <PopoverContent align="end" className="w-80 bg-card/80 backdrop-blur-xl border-border/50">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -76,12 +89,12 @@ export function Header() {
           </PopoverContent>
         </Popover>
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              className="flex items-center space-x-3 bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/80 hover:neon-glow-blue px-4 py-2"
-            >
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center space-x-3 bg-card/60 backdrop-blur-sm border border-border/50 hover:bg-primary/10 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background"
+              >
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-primary-foreground font-bold neon-glow-blue">
                 {user?.username?.[0]?.toUpperCase() || 'U'}
               </div>
@@ -168,7 +181,8 @@ export function Header() {
               <span className="font-medium">Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+          </DropdownMenu>
+        </div>
       </motion.div>
     </header>
   );

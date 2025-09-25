@@ -136,7 +136,6 @@ async def create_strategic_entry(
 
 
 @router.get("/strategic-ledger", response_model=Dict[str, List[StrategicLedgerEntry]])
-@cache(expire=1800, key_builder=lambda func, *args, **kwargs: f"strategic_ledger:{kwargs.get('current_user').id}:{kwargs.get('category', 'all')}")
 async def get_strategic_ledger(
     category: Optional[str] = Query(None, description="Filter by category"),
     limit: int = Query(50, description="Maximum number of entries to return"),
@@ -189,7 +188,6 @@ async def get_strategic_ledger(
 
 
 @router.post("/generate-intelligence", response_model=Dict[str, Any])
-@cache(expire=3600, key_builder=lambda func, *args, **kwargs: f"intelligence:{hash(str(kwargs.get('request').__dict__))}:{kwargs.get('current_user').id}")
 async def generate_strategic_intelligence(
     request: IntelligenceGenerationRequest,
     background_tasks: BackgroundTasks,
@@ -329,7 +327,6 @@ async def provide_learning_feedback(
 
 
 @router.get("/personalized-recommendations", response_model=Dict[str, Any])
-@cache(expire=1800, key_builder=lambda func, *args, **kwargs: f"recommendations:{kwargs.get('current_user').id}:{kwargs.get('recommendation_type', 'all')}")
 async def get_personalized_recommendations(
     recommendation_type: str = Query("strategic", description="Type of recommendations to generate"),
     priority_filter: Optional[str] = Query(None, description="Filter by priority level"),
@@ -401,7 +398,6 @@ async def get_personalized_recommendations(
 
 
 @router.get("/competitive-intelligence", response_model=Dict[str, Any])
-@cache(expire=3600, key_builder=lambda func, *args, **kwargs: f"competitive_intel:{kwargs.get('current_user').id}:{kwargs.get('analysis_depth', 'standard')}")
 async def get_competitive_intelligence(
     competitor_domains: List[str] = Query(..., description="Competitor domains to analyze"),
     analysis_depth: str = Query("standard", description="Analysis depth: basic, standard, comprehensive"),
@@ -475,7 +471,6 @@ async def get_competitive_intelligence(
 
 
 @router.get("/learning-analytics", response_model=Dict[str, Any])
-@cache(expire=1800, key_builder=lambda func, *args, **kwargs: f"learning_analytics:{kwargs.get('current_user').id}")
 async def get_learning_analytics(
     time_period: str = Query("30d", description="Time period for analytics: 7d, 30d, 90d"),
     include_predictions: bool = Query(True, description="Include learning predictions"),

@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
+import {
   Brain,
   Sparkles,
   Target,
@@ -22,8 +23,10 @@ import {
   Globe,
   Zap,
   Shield,
-  RefreshCw
+  RefreshCw,
+  Download
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { api } from '@/lib/api-client';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useProject } from '@/lib/project-context';
@@ -75,23 +78,23 @@ function SGEReadinessPage() {
   // Transform backend data to match frontend expectations
   const transformSGEData = (data: any) => {
     if (!data) return null;
-    
+
     // Calculate scores from backend data
     const triggers = data.triggers || {};
     const citations = data.citations || {};
     const gaps = data.gaps || {};
-    
-    // Calculate overall score based on available metrics
-    const entityCoverage = triggers.entity_coverage || 65;
-    const schemaScore = triggers.schema_markup_score || 45;
-    const conversationalScore = gaps.conversational_content_score || 58;
-    const citationScore = citations.citation_likelihood || 68;
-    
+
+    // Use real data from backend without fallbacks
+    const entityCoverage = triggers.entity_coverage ?? 0;
+    const schemaScore = triggers.schema_markup_score ?? 0;
+    const conversationalScore = gaps.conversational_content_score ?? 0;
+    const citationScore = citations.citation_likelihood ?? 0;
+
     const overallScore = Math.round((entityCoverage + schemaScore + conversationalScore + citationScore) / 4);
     const contentScore = Math.round((conversationalScore + citationScore) / 2);
     const technicalScore = schemaScore;
     const authorityScore = entityCoverage;
-    
+
     return {
       overall_score: overallScore,
       content_score: contentScore,
@@ -103,81 +106,56 @@ function SGEReadinessPage() {
         entity_coverage: entityCoverage,
         schema_implementation: schemaScore,
         conversational_content: conversationalScore,
-        featured_snippet_ready: triggers.featured_snippet_ready || 72,
-        voice_search_optimized: triggers.voice_search_optimized || 60,
+        featured_snippet_ready: triggers.featured_snippet_ready ?? 0,
+        voice_search_optimized: triggers.voice_search_optimized ?? 0,
         ai_citation_likelihood: citationScore,
       },
       raw: data,
     };
   };
   
-  // Mock data
-  const mockSGEData = {
-    overall_score: 72,
-    content_score: 78,
-    technical_score: 68,
-    authority_score: 70,
-    recommendations: [
-      {
-        type: 'content',
-        priority: 'high',
-        title: 'Enhance Conversational Content',
-        description: 'Add more Q&A style content and conversational language to better match SGE preferences',
-        impact_score: 85,
-        effort_score: 60,
-      },
-      {
-        type: 'technical',
-        priority: 'high',
-        title: 'Implement Structured Data',
-        description: 'Add FAQ and HowTo schema markup to improve entity recognition',
-        impact_score: 90,
-        effort_score: 40,
-      },
-      {
-        type: 'authority',
-        priority: 'medium',
-        title: 'Increase Entity Mentions',
-        description: 'Build stronger topical authority by mentioning related entities and concepts',
-        impact_score: 70,
-        effort_score: 50,
-      },
-    ],
-    opportunities: [
-      {
-        type: 'featured_snippets',
-        title: 'Featured Snippet Opportunities',
-        description: '23 keywords have featured snippet potential',
-        potential_impact: 'High traffic increase',
-        implementation_steps: [
-          'Identify target queries',
-          'Create structured answers',
-          'Optimize content format',
-        ],
-      },
-      {
-        type: 'conversational_gaps',
-        title: 'Conversational Query Gaps',
-        description: '45 long-tail conversational queries without content',
-        potential_impact: 'Capture SGE traffic',
-        implementation_steps: [
-          'Create FAQ pages',
-          'Add conversational sections',
-          'Target voice search queries',
-        ],
-      },
-    ],
-    metrics: {
-      entity_coverage: 65,
-      schema_implementation: 45,
-      conversational_content: 58,
-      featured_snippet_ready: 72,
-      voice_search_optimized: 60,
-      ai_citation_likelihood: 68,
-    },
-  };
+  // Transform and use only live data
+  const data = transformSGEData(sgeData);
 
-  const data = transformSGEData(sgeData) || mockSGEData;
+  // Handle no data case
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+          <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-semibold">Loading SGE Analysis</h3>
+            <p className="text-muted-foreground">
+              Analyzing your website's Search Generative Experience readiness...
+            </p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (!data) {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col items-center justify-center h-[60vh] space-y-4">
+          <AlertTriangle className="h-8 w-8 text-destructive" />
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-semibold">No SGE Data Available</h3>
+            <p className="text-muted-foreground">
+              Run an SGE analysis to see your website's readiness for AI-powered search.
+            </p>
+            <Button
+              onClick={() => startAnalysis.mutate()}
+              className="mt-4"
+            >
+              <Brain className="mr-2 h-4 w-4" />
+              Start SGE Analysis
+            </Button>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const radarData = [
     { metric: 'Entity Coverage', value: data.metrics.entity_coverage },
@@ -207,32 +185,44 @@ function SGEReadinessPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">SGE Readiness</h1>
-            <p className="text-muted-foreground">
-              Prepare your site for AI-powered search experiences
-            </p>
-          </div>
-          <Button 
-            onClick={() => startAnalysis.mutate()}
-            disabled={isAnalyzing}
-          >
-            {isAnalyzing ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
-              </>
-            ) : (
-              <>
-                <Brain className="mr-2 h-4 w-4" />
-                Analyze SGE Readiness
-              </>
-            )}
-          </Button>
-        </div>
+        <div className="relative space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="SGE Readiness"
+          description="Prepare your site for AI-powered search experiences"
+          badge={{
+            icon: <Brain className="mr-1 h-3 w-3" />,
+            text: "AI-Powered Analysis",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={() => startAnalysis.mutate()}
+                disabled={isAnalyzing}
+                variant="outline"
+                size="sm"
+                className="bg-card/80 backdrop-blur-sm border-border/50"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <Brain className="mr-2 h-4 w-4" />
+                    Analyze
+                  </>
+                )}
+              </Button>
+              <Button variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          }
+        />
 
         {/* Score Overview */}
         <div className="grid gap-4 md:grid-cols-4">
@@ -526,34 +516,27 @@ function SGEReadinessPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="rounded-lg bg-primary/5 p-4">
-                    <h4 className="font-semibold mb-2">Conversational Query Analysis</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Your content answers 68% of common conversational queries in your niche. 
-                      Focus on creating Q&A content for the remaining 32% to improve SGE visibility.
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-primary/5 p-4">
-                    <h4 className="font-semibold mb-2">Entity Recognition Status</h4>
-                    <p className="text-sm text-muted-foreground">
-                      AI models recognize your brand as an authority in 3 out of 5 core topics. 
-                      Strengthen content around  &quot;technical SEO&quot; and  &quot;local search optimization&quot; 
-                      to improve entity associations.
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-primary/5 p-4">
-                    <h4 className="font-semibold mb-2">Future-Proofing Score</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Based on current trends, your content has a 72% likelihood of being 
-                      cited in AI-generated responses. Implement structured data and increase 
-                      conversational content to reach 85%+.
-                    </p>
-                  </div>
+                  {data.raw?.gaps?.insights?.map((insight: any, index: number) => (
+                    <div key={index} className="rounded-lg bg-primary/5 p-4">
+                      <h4 className="font-semibold mb-2">{insight.title || 'AI Insight'}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {insight.description || insight.content || 'No insight data available from backend.'}
+                      </p>
+                    </div>
+                  )) || (
+                    <div className="rounded-lg bg-primary/5 p-4">
+                      <h4 className="font-semibold mb-2">No AI Insights Available</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Run an SGE analysis to generate AI-powered insights based on your website's data.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
     </DashboardLayout>
   );

@@ -136,6 +136,9 @@ class Settings(BaseSettings):
     
     # PageSpeed Insights API
     GOOGLE_PAGESPEED_API_KEY: Optional[str] = None
+
+    # Chrome UX Report API
+    GOOGLE_CRUX_API_KEY: Optional[str] = None
     
     # Programmable Search Element Control API
     GOOGLE_PROGRAMMABLE_SEARCH_API_KEY: Optional[str] = None

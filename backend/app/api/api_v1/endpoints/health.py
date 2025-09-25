@@ -168,6 +168,7 @@ async def detailed_health_check(
     # Check external API configuration
     api_configs = {
         "Google PageSpeed API": settings.GOOGLE_PAGESPEED_API_KEY,
+        "Google CrUX API": settings.GOOGLE_CRUX_API_KEY,
         "OpenAI API": settings.OPENAI_API_KEY,
         "SERP API": settings.SERPAPI_KEY,
     }

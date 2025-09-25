@@ -1,8 +1,74 @@
 'use client';
 
 import { useState } from 'react';
+
+// Types for Knowledge Engine data structures
+interface KnowledgeEntry {
+  id?: string;
+  entry_id?: string;
+  title?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+  content?: string;
+  description?: string;
+  tags?: string[];
+  insights?: string[] | Array<{ description?: string; content?: string }>;
+  key_insights?: string[] | Array<{ description?: string; content?: string }>;
+  created_at?: string;
+}
+
+interface KnowledgeCategory {
+  name: string;
+  count: number;
+}
+
+interface OptimizationOpportunity {
+  title?: string;
+  description?: string;
+  content?: string;
+}
+
+interface LearningInsight {
+  description?: string;
+  content?: string;
+}
+
+interface IntelligenceData {
+  entries?: KnowledgeEntry[];
+  knowledge_connections?: KnowledgeEntry[];
+  strategic_ledger?: { entries: KnowledgeEntry[] };
+  summary?: {
+    total_entries?: number;
+    categories?: Record<string, number>;
+  };
+  learning_insights?: Record<string, LearningInsight | string>;
+}
+
+interface RecommendationsData {
+  recommendations?: Array<any>;
+  length?: number;
+}
+
+interface AnalyticsData {
+  category_distribution?: Record<string, number>;
+  total_insights?: number;
+  insights_count?: number;
+  learning_metrics?: {
+    total_insights?: number;
+  };
+  performance_metrics?: {
+    learning_effectiveness?: number;
+  };
+  learning_score?: number;
+  model_effectiveness?: {
+    user_satisfaction?: number;
+  };
+  optimization_opportunities?: OptimizationOpportunity[];
+}
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +76,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { 
+import {
   BookOpen,
   Search,
   Plus,
@@ -31,6 +97,7 @@ import {
   RefreshCw,
   Loader2
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { dedupedApi as api } from '@/lib/api-deduped';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useProject } from '@/lib/project-context';
@@ -40,11 +107,20 @@ import { ErrorState } from '@/components/ui/error-state';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAutoRefresh } from '@/lib/hooks/use-auto-refresh';
 
+// Type guards for data validation
+const isValidKnowledgeEntry = (entry: any): entry is KnowledgeEntry => {
+  return entry && (entry.id || entry.entry_id) && (entry.title || entry.name);
+};
+
+const isValidOptimizationOpportunity = (opportunity: any): opportunity is OptimizationOpportunity => {
+  return opportunity && (opportunity.title || opportunity.description || opportunity.content);
+};
+
 function KnowledgeEnginePage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [generateTopic, setGenerateTopic] = useState('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [generateTopic, setGenerateTopic] = useState<string>('');
   const { currentProject } = useProject();
   const queryClient = useQueryClient();
 
@@ -56,12 +132,14 @@ function KnowledgeEnginePage() {
   );
 
   // Fetch competitive intelligence
-  const { data: intelligence, isLoading: intelligenceLoading } = useQuery({
+  const { data: intelligence, isLoading: intelligenceLoading } = useQuery<IntelligenceData | null>({
     queryKey: ['competitive-intelligence'],
-    queryFn: async () => {
+    queryFn: async (): Promise<IntelligenceData | null> => {
       try {
-        const response = await api.knowledgeEngine.getCompetitiveIntelligence();
-        return response.data;
+        // Use project domain as default competitor domain for analysis
+        const defaultDomains = currentProject?.domain ? [currentProject.domain] : ['example.com'];
+        const response = await api.knowledgeEngine.getCompetitiveIntelligence(defaultDomains);
+        return response.data as IntelligenceData;
       } catch (error) {
         console.error('Failed to fetch competitive intelligence:', error);
         return null;
@@ -71,12 +149,12 @@ function KnowledgeEnginePage() {
   });
 
   // Fetch personalized recommendations
-  const { data: recommendations, isLoading: recommendationsLoading } = useQuery({
+  const { data: recommendations, isLoading: recommendationsLoading } = useQuery<RecommendationsData | null>({
     queryKey: ['personalized-recommendations'],
-    queryFn: async () => {
+    queryFn: async (): Promise<RecommendationsData | null> => {
       try {
         const response = await api.knowledgeEngine.getPersonalizedRecommendations();
-        return response.data;
+        return response.data as RecommendationsData;
       } catch (error) {
         console.error('Failed to fetch recommendations:', error);
         return null;
@@ -86,12 +164,12 @@ function KnowledgeEnginePage() {
   });
 
   // Fetch learning analytics
-  const { data: analytics, isLoading: analyticsLoading } = useQuery({
+  const { data: analytics, isLoading: analyticsLoading } = useQuery<AnalyticsData | null>({
     queryKey: ['learning-analytics'],
-    queryFn: async () => {
+    queryFn: async (): Promise<AnalyticsData | null> => {
       try {
         const response = await api.knowledgeEngine.getLearningAnalytics();
-        return response.data;
+        return response.data as AnalyticsData;
       } catch (error) {
         console.error('Failed to fetch learning analytics:', error);
         return null;
@@ -101,7 +179,7 @@ function KnowledgeEnginePage() {
   });
 
   // Generate intelligence mutation
-  const generateIntelligence = useMutation({
+  const generateIntelligence = useMutation<any, Error, string>({
     mutationFn: async (topic: string) => {
       // Transform frontend request to match backend expectations
       const response = await api.knowledgeEngine.generateIntelligence({
@@ -114,21 +192,21 @@ function KnowledgeEnginePage() {
       });
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['competitive-intelligence'] });
       setGenerateTopic('');
     },
   });
 
   // Knowledge synthesis mutation
-  const synthesizeKnowledge = useMutation({
+  const synthesizeKnowledge = useMutation<any, Error, string>({
     mutationFn: async (query: string) => {
       const sources = [
         intelligence,
         recommendations,
         analytics,
       ].filter(Boolean);
-      
+
       const response = await api.knowledgeEngine.synthesizeKnowledge({
         sources,
         query,
@@ -139,59 +217,31 @@ function KnowledgeEnginePage() {
 
   const isLoading = intelligenceLoading || recommendationsLoading || analyticsLoading;
 
-  // Mock data
-  const mockKnowledge = {
-    entries: [
-      {
-        id: '1',
-        title: 'Core Web Vitals Optimization Strategy',
-        category: 'Technical SEO',
-        tags: ['performance', 'CWV', 'page speed'],
-        content: 'Comprehensive guide on optimizing Core Web Vitals...',
-        insights: [
-          'LCP improvements led to 15% better rankings',
-          'Mobile performance is critical for user retention',
-        ],
-        created_at: '2024-01-10T10:00:00Z',
-      },
-      {
-        id: '2',
-        title: 'Content Clustering Best Practices',
-        category: 'Content Strategy',
-        tags: ['content', 'clustering', 'topical authority'],
-        content: 'How to build topical authority through content clusters...',
-        insights: [
-          'Topic clusters improved organic traffic by 40%',
-          'Internal linking is key to cluster success',
-        ],
-        created_at: '2024-01-12T14:00:00Z',
-      },
-      {
-        id: '3',
-        title: 'Local SEO Checklist 2024',
-        category: 'Local SEO',
-        tags: ['local', 'GMB', 'citations'],
-        content: 'Complete checklist for local SEO optimization...',
-        insights: [
-          'GMB optimization drives 70% of local traffic',
-          'Review management is crucial for rankings',
-        ],
-        created_at: '2024-01-14T09:00:00Z',
-      },
-    ],
-    categories: [
-      { name: 'Technical SEO', count: 24 },
-      { name: 'Content Strategy', count: 18 },
-      { name: 'Local SEO', count: 12 },
-      { name: 'Link Building', count: 8 },
-      { name: 'Analytics', count: 15 },
-    ],
-    insights: {
-      total_entries: 156,
-      total_insights: 412,
-      contributors: 8,
-      last_updated: '2024-01-15T16:00:00Z',
-    },
+  // Get live data from backend
+  const getKnowledgeEntries = (): KnowledgeEntry[] => {
+    const allEntries = [
+      ...(intelligence?.entries || []),
+      ...(intelligence?.knowledge_connections || []),
+      ...(intelligence?.strategic_ledger?.entries || [])
+    ];
+    return allEntries.filter(isValidKnowledgeEntry);
+  };
+
+  const getKnowledgeCategories = (): KnowledgeCategory[] => {
+    if (analytics?.category_distribution) {
+      return Object.entries(analytics.category_distribution).map(([name, count]) => ({ name, count: count as number }));
+    }
+    if (intelligence?.summary?.categories) {
+      return Object.entries(intelligence.summary.categories).map(([name, count]) => ({ name, count: count as number }));
+    }
+    return [];
+  };
+
+  const getTotalEntries = (): number => {
+    return intelligence?.summary?.total_entries ||
+           analytics?.total_insights ||
+           intelligence?.entries?.length ||
+           0;
   };
 
   if (!currentProject) {
@@ -208,34 +258,38 @@ function KnowledgeEnginePage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Knowledge Engine</h1>
-            <p className="text-muted-foreground">
-              AI-powered competitive intelligence and strategic insights
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                queryClient.invalidateQueries({ queryKey: ['competitive-intelligence'] });
-                queryClient.invalidateQueries({ queryKey: ['personalized-recommendations'] });
-                queryClient.invalidateQueries({ queryKey: ['learning-analytics'] });
-              }}
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-          </div>
-        </div>
+        <div className="relative space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="Knowledge Engine"
+          description="AI-powered competitive intelligence and strategic insights"
+          badge={{
+            icon: <Brain className="mr-1 h-3 w-3" />,
+            text: "AI-Powered Intelligence",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ['competitive-intelligence'] });
+                  queryClient.invalidateQueries({ queryKey: ['personalized-recommendations'] });
+                  queryClient.invalidateQueries({ queryKey: ['learning-analytics'] });
+                }}
+                className="bg-card/80 backdrop-blur-sm border-border/50"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          }
+        />
 
         {/* Stats - Use real data if available */}
         <div className="grid gap-4 md:grid-cols-4">
@@ -248,7 +302,7 @@ function KnowledgeEnginePage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {intelligence?.entries?.length || intelligence?.items?.length || analytics?.total_entries || mockKnowledge.insights.total_entries}
+                {getTotalEntries()}
               </div>
               <p className="text-xs text-muted-foreground">
                 Knowledge base entries
@@ -264,7 +318,7 @@ function KnowledgeEnginePage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {analytics?.insights_count || mockKnowledge.insights.total_insights}
+                {analytics?.insights_count || analytics?.learning_metrics?.total_insights || 0}
               </div>
               <p className="text-xs text-muted-foreground">
                 AI-powered insights
@@ -296,7 +350,9 @@ function KnowledgeEnginePage() {
             </CardHeader>
             <CardContent>
               <div className="text-lg font-bold">
-                {analytics?.performance_metrics?.learning_effectiveness || analytics?.learning_score || 85}%
+                {analytics?.performance_metrics?.learning_effectiveness ||
+                 analytics?.learning_score ||
+                 (analytics?.model_effectiveness?.user_satisfaction ? Math.round(analytics.model_effectiveness.user_satisfaction * 100) : 0)}%
               </div>
               <p className="text-xs text-muted-foreground">
                 Knowledge utilization
@@ -367,9 +423,9 @@ function KnowledgeEnginePage() {
                   onClick={() => setSelectedCategory('all')}
                 >
                   <span>All Categories</span>
-                  <Badge variant="secondary">{mockKnowledge.insights.total_entries}</Badge>
+                  <Badge variant="secondary">{getTotalEntries()}</Badge>
                 </Button>
-                {mockKnowledge.categories.map((category) => (
+                {getKnowledgeCategories().map((category) => (
                   <Button
                     key={category.name}
                     variant={selectedCategory === category.name ? 'secondary' : 'ghost'}
@@ -377,7 +433,7 @@ function KnowledgeEnginePage() {
                     onClick={() => setSelectedCategory(category.name)}
                   >
                     <span>{category.name}</span>
-                    <Badge variant="secondary">{category.count}</Badge>
+                    <Badge variant="secondary">{category.count as React.ReactNode}</Badge>
                   </Button>
                 ))}
               </div>
@@ -394,60 +450,70 @@ function KnowledgeEnginePage() {
               </TabsList>
 
               <TabsContent value="recent" className="space-y-4">
-                {mockKnowledge.entries.map((entry) => (
-                  <Card key={entry.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-lg">{entry.title}</CardTitle>
-                          <div className="flex items-center gap-2 mt-1">
-                            <Badge variant="secondary">{entry.category}</Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {formatDate(entry.created_at)}
-                            </span>
+                {getKnowledgeEntries().length > 0 ? (
+                  getKnowledgeEntries().map((entry: KnowledgeEntry, index: number) => (
+                    <Card key={entry.id || entry.entry_id || index} className="hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-lg">{entry.title || entry.name || 'Knowledge Entry'}</CardTitle>
+                            <div className="flex items-center gap-2 mt-1">
+                              <Badge variant="secondary">{entry.category || entry.type || 'General'}</Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {entry.created_at ? formatDate(entry.created_at) : 'Recently'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button variant="ghost" size="sm">
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <Link2 className="h-4 w-4" />
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex gap-1">
-                          <Button variant="ghost" size="sm">
-                            <Share2 className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Link2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {entry.content.substring(0, 150)}...
-                      </p>
-                      
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {entry.tags.map((tag, i) => (
-                          <Badge key={i} variant="outline" className="text-xs">
-                            #{tag}
-                          </Badge>
-                        ))}
-                      </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {(entry.content || entry.description || 'No content available').substring(0, 150)}...
+                        </p>
 
-                      {entry.insights.length > 0 && (
-                        <div className="rounded-lg bg-primary/5 p-3">
-                          <p className="text-xs font-medium mb-2 flex items-center gap-1">
-                            <Lightbulb className="h-3 w-3" />
-                            Key Insights
-                          </p>
-                          <ul className="space-y-1">
-                            {entry.insights.map((insight, i) => (
-                              <li key={i} className="text-xs text-muted-foreground">
-                                • {insight}
-                              </li>
+                        {entry.tags && entry.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {entry.tags.map((tag: string, i: number) => (
+                              <Badge key={i} variant="outline" className="text-xs">
+                                #{tag}
+                              </Badge>
                             ))}
-                          </ul>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
+                          </div>
+                        )}
+
+                        {(entry.insights || entry.key_insights) && (
+                          <div className="rounded-lg bg-primary/5 p-3">
+                            <p className="text-xs font-medium mb-2 flex items-center gap-1">
+                              <Lightbulb className="h-3 w-3" />
+                              Key Insights
+                            </p>
+                            <ul className="space-y-1">
+                              {(entry.insights || entry.key_insights || []).map((insight: string | { description?: string; content?: string }, i: number) => (
+                                <li key={i} className="text-xs text-muted-foreground">
+                                  • {typeof insight === 'string' ? insight : (insight as { description?: string; content?: string })?.description || (insight as { description?: string; content?: string })?.content || 'No insight'}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <EmptyState
+                    icon={Brain}
+                    title="No Knowledge Entries"
+                    description="Generate intelligence or create strategic entries to populate your knowledge base."
+                  />
+                )}
               </TabsContent>
 
               <TabsContent value="insights" className="space-y-4">
@@ -463,41 +529,37 @@ function KnowledgeEnginePage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="rounded-lg border p-4">
-                        <h4 className="font-semibold mb-2 flex items-center gap-2">
-                          <TrendingUp className="h-4 w-4 text-green-500" />
-                          Performance Patterns
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Content optimized using insights from the knowledge base shows 
-                          35% better performance on average. Technical SEO improvements 
-                          have the highest correlation with ranking improvements.
-                        </p>
-                      </div>
-                      
-                      <div className="rounded-lg border p-4">
-                        <h4 className="font-semibold mb-2 flex items-center gap-2">
-                          <MessageSquare className="h-4 w-4 text-blue-500" />
-                          Common Themes
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Your team frequently documents insights about: page speed optimization (18%), 
-                          content quality (15%), and user experience (12%). Consider creating 
-                          standardized processes for these areas.
-                        </p>
-                      </div>
-
-                      <div className="rounded-lg border p-4">
-                        <h4 className="font-semibold mb-2 flex items-center gap-2">
-                          <Sparkles className="h-4 w-4 text-primary" />
-                          Knowledge Gaps
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          Limited documentation found for: video SEO, voice search optimization, 
-                          and international SEO. These areas represent opportunities for 
-                          knowledge expansion.
-                        </p>
-                      </div>
+                      {analytics?.optimization_opportunities?.map((opportunity: OptimizationOpportunity, index: number) => (
+                        <div key={index} className="rounded-lg border p-4">
+                          <h4 className="font-semibold mb-2 flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4 text-green-500" />
+                            {opportunity.title || 'Optimization Opportunity'}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {opportunity.description || opportunity.content || 'No description available'}
+                          </p>
+                        </div>
+                      )) || intelligence?.learning_insights && Object.entries(intelligence.learning_insights).map(([key, insight]: [string, LearningInsight | string], index: number) => (
+                        <div key={index} className="rounded-lg border p-4">
+                          <h4 className="font-semibold mb-2 flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4 text-blue-500" />
+                            {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {typeof insight === 'string' ? insight : (insight as LearningInsight)?.description || 'No insight available'}
+                          </p>
+                        </div>
+                      )) || (
+                        <div className="rounded-lg border p-4">
+                          <h4 className="font-semibold mb-2 flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            No AI Insights Available
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            Generate intelligence or run analytics to get AI-powered insights and recommendations.
+                          </p>
+                        </div>
+                      )}
                     </div>
                     
                     {/* Generate Intelligence */}
@@ -556,7 +618,7 @@ function KnowledgeEnginePage() {
             )}
           </div>
         </div>
-      </div>
+        </div>
     </DashboardLayout>
   );
 }

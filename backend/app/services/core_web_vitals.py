@@ -28,11 +28,16 @@ class CoreWebVitalsService:
     
     def __init__(self):
         self.pagespeed_api_key = settings.GOOGLE_PAGESPEED_API_KEY
+        self.crux_api_key = settings.GOOGLE_CRUX_API_KEY
         self.pagespeed_base_url = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
         
     def is_configured(self) -> bool:
         """Check if PageSpeed Insights API is configured."""
         return bool(self.pagespeed_api_key)
+
+    def is_crux_configured(self) -> bool:
+        """Check if Chrome UX Report API is configured."""
+        return bool(self.crux_api_key)
     
     async def get_crux_data_all_devices(self, url: str) -> Dict[str, Any]:
         """Get CrUX data for all device types."""
@@ -51,6 +56,9 @@ class CoreWebVitalsService:
     async def _get_crux_data_for_device(self, url: str, form_factor: Optional[str]) -> Dict[str, Any]:
         """Get CrUX data for a specific device type."""
         # This is a refactored version of _get_crux_data that accepts form factor
+        if not self.is_crux_configured():
+            return {"data_available": False, "reason": "Chrome UX Report API key not configured"}
+
         try:
             crux_api_url = "https://chromeuxreport.googleapis.com/v1/records:queryRecord"
             normalized_url = url.rstrip('/')
@@ -59,7 +67,6 @@ class CoreWebVitalsService:
                 "url": normalized_url,
                 "metrics": [
                     "largest_contentful_paint",
-                    "first_input_delay", 
                     "cumulative_layout_shift",
                     "experimental_time_to_first_byte",
                     "first_contentful_paint",
@@ -71,7 +78,7 @@ class CoreWebVitalsService:
             if form_factor:
                 request_body["formFactor"] = form_factor
             
-            params = {"key": self.pagespeed_api_key}
+            params = {"key": self.crux_api_key}
             
             async with httpx.AsyncClient(timeout=30.0) as client:
                 response = await client.post(crux_api_url, json=request_body, params=params)
@@ -85,8 +92,10 @@ class CoreWebVitalsService:
                     return {"data_available": False, "reason": "API access denied - check API key permissions"}
                 
                 if response.status_code == 400:
-                    logger.warning(f"CrUX API bad request (400) for URL: {normalized_url}")
-                    return {"data_available": False, "reason": "Invalid request to CrUX API"}
+                    error_details = response.text
+                    logger.warning(f"CrUX API bad request (400) for URL: {normalized_url}. Error: {error_details}")
+                    logger.warning(f"Request body was: {request_body}")
+                    return {"data_available": False, "reason": f"Invalid request to CrUX API: {error_details}"}
                 
                 response.raise_for_status()
                 return self._parse_crux_response(response.json())

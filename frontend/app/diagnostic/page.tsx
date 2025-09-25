@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -39,8 +40,7 @@ import { SEOAnalysisChart } from '@/components/ui/seo-analysis-chart';
 import { PerformanceHistogramChart } from '@/components/ui/performance-histogram-chart';
 import { CrawlerProgress } from '@/components/ui/crawler-progress';
 import { useCrawlerProgress } from '@/lib/hooks/use-crawler-progress';
-import { SEOOrb } from '@/components/ui/seo-orb';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MagneticButton } from '@/components/ui/magnetic-button';
 import { CTAButton } from '@/components/ui/cta-button';
 import { SimpleMagneticWrapper } from '@/components/ui/simple-magnetic-wrapper';
@@ -55,10 +55,6 @@ function DiagnosticPage() {
   const [trendsProgress, setTrendsProgress] = useState(0);
   const [trendsStage, setTrendsStage] = useState('');
   
-  // Parallax and scroll effects
-  const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const orbScale = useTransform(scrollY, [0, 500], [1, 0.8]);
   const { currentProject } = useProject();
   const queryClient = useQueryClient();
   
@@ -461,117 +457,50 @@ function DiagnosticPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative noise-overlay">
-      {/* Background gradient mesh */}
-      <div className="fixed inset-0 gradient-mesh opacity-20 dark:opacity-10" />
-      
-      {/* Enhanced floating 3D orb */}
-      <motion.div
-        className="fixed right-[-300px] top-1/4 w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] pointer-events-none"
-        style={{ y: heroY, scale: orbScale }}
-      >
-        <SEOOrb className="scale-100 opacity-30" />
-      </motion.div>
-      
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-32 -left-32 w-64 h-64 bg-primary/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-accent/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </div>
-
       <DashboardLayout>
         <div className="space-y-8 relative z-10">
-          {/* Enhanced Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="flex items-center justify-between"
-          >
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-              >
-                <Badge variant="secondary" className="mb-4 animate-slide-up-fade">
-                  <Sparkles className="mr-1 h-3 w-3" />
-                  AI-Powered Diagnostics
-                </Badge>
-              </motion.div>
-              
-              <motion.h1 
-                className="text-5xl sm:text-6xl font-bold tracking-tighter mb-4 leading-[0.9]"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                <span className="block">Site</span>
-                <span className="block text-gradient-electric">Diagnostic</span>
-              </motion.h1>
-              
-              <motion.p 
-                className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
-                Comprehensive AI-powered analysis of your site&apos;s health and performance
-              </motion.p>
-            </div>
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={isScanning}
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export Report
-            </Button>
-            <Button
-              onClick={() => startCrawl.mutate()}
-              disabled={isScanning || isCrawlerRunning}
-            >
-              {(isScanning || isCrawlerRunning) ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  {crawlerProgress?.stage === 'preparing' ? 'Preparing...' :
-                   crawlerProgress?.stage === 'discovering' ? 'Discovering...' :
-                   crawlerProgress?.stage === 'crawling' ? 'Crawling...' :
-                   crawlerProgress?.stage === 'analyzing' ? 'Analyzing...' :
-                   'Scanning...'}
-                </>
-              ) : (
-                <>
-                  <Activity className="mr-2 h-4 w-4" />
-                  Start New Scan
-                </>
-              )}
-            </Button>
-          </div>
-        </motion.div>
+          {/* Optimized Header - Research-based 2025 standards */}
+          <DashboardPageHeader
+            title="Site Diagnostic"
+            description="Comprehensive AI-powered analysis of your site's health and performance"
+            badge={{
+              icon: <Sparkles className="mr-1 h-3 w-3" />,
+              text: "AI-Powered Diagnostics",
+              variant: "secondary"
+            }}
+            actions={
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isScanning}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Export Report
+                </Button>
+                <Button
+                  onClick={() => startCrawl.mutate()}
+                  disabled={isScanning || isCrawlerRunning}
+                >
+                  {(isScanning || isCrawlerRunning) ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      {crawlerProgress?.stage === 'preparing' ? 'Preparing...' :
+                       crawlerProgress?.stage === 'discovering' ? 'Discovering...' :
+                       crawlerProgress?.stage === 'crawling' ? 'Crawling...' :
+                       crawlerProgress?.stage === 'analyzing' ? 'Analyzing...' :
+                       'Scanning...'}
+                    </>
+                  ) : (
+                    <>
+                      <Activity className="mr-2 h-4 w-4" />
+                      Start New Scan
+                    </>
+                  )}
+                </Button>
+              </div>
+            }
+          />
 
         {/* Enhanced Scan Progress */}
         {(isCrawlerRunning || crawlerProgress) && crawlerProgress && (
@@ -1062,7 +991,6 @@ function DiagnosticPage() {
         </Tabs>
       </div>
       </DashboardLayout>
-    </div>
   );
 }
 

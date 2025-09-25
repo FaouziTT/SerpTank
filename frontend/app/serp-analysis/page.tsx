@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { withAuth } from '@/lib/auth-context';
+import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -500,26 +502,29 @@ function SERPAnalysisPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">SERP Analysis</h1>
-            <p className="text-muted-foreground">
-              Analyze search engine results and competitor rankings
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => refetch()}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
-            </Button>
-            <Button variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </Button>
-          </div>
-        </div>
+        <div className="relative space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="SERP Analysis"
+          description="Analyze search engine results and competitor rankings"
+          badge={{
+            icon: <Search className="mr-1 h-3 w-3" />,
+            text: "SERP Intelligence",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Button variant="outline" onClick={() => refetch()} size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh
+              </Button>
+              <Button variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          }
+        />
 
         {/* Keyword Analysis */}
         <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
@@ -1019,6 +1024,7 @@ function SERPAnalysisPage() {
             </Tabs>
           </>
         )}
+        </div>
       </div>
     </DashboardLayout>
   );

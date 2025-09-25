@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +17,7 @@ import { LoadingState } from '@/components/ui/loading-state';
 import { ErrorState } from '@/components/ui/error-state';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useAutoRefresh } from '@/lib/hooks/use-auto-refresh';
-import { 
+import {
   Target,
   TrendingUp,
   Users,
@@ -30,8 +31,10 @@ import {
   Shield,
   Zap,
   Loader2,
-  RefreshCw
+  RefreshCw,
+  Download
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 function MarketSimulationPage() {
@@ -111,68 +114,6 @@ function MarketSimulationPage() {
 
   const isLoading = scenariosLoading || competitorsLoading;
 
-  // Mock data for demonstration
-  const mockMarketData = {
-    keyword: 'SEO tools',
-    market_share: 12.5,
-    opportunity_score: 78,
-    difficulty_score: 65,
-    competitors: [
-      {
-        domain: 'competitor1.com',
-        market_share: 24.5,
-        traffic_estimate: 450000,
-        domain_authority: 85,
-        strengths: ['Brand recognition', 'Content depth', 'Technical SEO'],
-        weaknesses: ['Page speed', 'Mobile UX'],
-      },
-      {
-        domain: 'competitor2.com',
-        market_share: 18.3,
-        traffic_estimate: 320000,
-        domain_authority: 78,
-        strengths: ['User experience', 'Fresh content'],
-        weaknesses: ['Limited features', 'Pricing'],
-      },
-      {
-        domain: 'competitor3.com',
-        market_share: 15.7,
-        traffic_estimate: 280000,
-        domain_authority: 72,
-        strengths: ['Affordable pricing', 'Good support'],
-        weaknesses: ['Feature set', 'Performance'],
-      },
-    ],
-    competitiveAnalysis: [
-      { metric: 'Content Quality', yours: 75, average: 65 },
-      { metric: 'Technical SEO', yours: 82, average: 70 },
-      { metric: 'User Experience', yours: 68, average: 72 },
-      { metric: 'Page Speed', yours: 85, average: 68 },
-      { metric: 'Mobile Optimization', yours: 78, average: 75 },
-      { metric: 'Domain Authority', yours: 65, average: 78 },
-    ],
-    opportunities: [
-      {
-        title: 'Content Gap: Advanced SEO Guides',
-        impact: 'high',
-        effort: 'medium',
-        description: 'Competitors lack comprehensive guides on advanced topics',
-      },
-      {
-        title: 'Technical Improvement: Core Web Vitals',
-        impact: 'high',
-        effort: 'low',
-        description: 'Quick wins available to outperform 70% of competitors',
-      },
-      {
-        title: 'Local SEO Expansion',
-        impact: 'medium',
-        effort: 'medium',
-        description: 'Untapped local market with low competition',
-      },
-    ],
-  };
-
   const handleAnalyze = () => {
     if (!searchKeyword) return;
     analyzeKeyword.mutate(searchKeyword);
@@ -193,16 +134,16 @@ function MarketSimulationPage() {
     return colors[impact] || 'default';
   };
 
-  // Transform backend data to match frontend expectations
+  // Use only live data from backend - no mock fallbacks
   const marketData = competitorAnalysis ? {
     keyword: searchKeyword || 'SEO tools',
-    market_share: competitorAnalysis.competitor_analysis?.your_market_share || 12.5,
-    opportunity_score: competitorAnalysis.competitive_insights?.opportunity_score || 78,
-    difficulty_score: competitorAnalysis.competitive_insights?.difficulty_score || 65,
-    competitors: competitorAnalysis.competitor_analysis?.competitors || mockMarketData.competitors,
-    competitiveAnalysis: competitorAnalysis.competitor_analysis?.comparative_metrics || mockMarketData.competitiveAnalysis,
-    opportunities: competitorAnalysis.market_opportunities || mockMarketData.opportunities,
-  } : mockMarketData;
+    market_share: competitorAnalysis.competitor_analysis?.your_market_share,
+    opportunity_score: competitorAnalysis.competitive_insights?.opportunity_score,
+    difficulty_score: competitorAnalysis.competitive_insights?.difficulty_score,
+    competitors: competitorAnalysis.competitor_analysis?.competitors || [],
+    competitiveAnalysis: competitorAnalysis.competitor_analysis?.comparative_metrics || [],
+    opportunities: competitorAnalysis.market_opportunities || [],
+  } : null;
 
   if (!currentProject) {
     return (
@@ -218,27 +159,37 @@ function MarketSimulationPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Market Simulation</h1>
-            <p className="text-muted-foreground">
-              Analyze competitive landscape and discover market opportunities
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              queryClient.invalidateQueries({ queryKey: ['market-scenarios'] });
-              queryClient.invalidateQueries({ queryKey: ['competitor-analysis'] });
-            }}
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
-        </div>
+        <div className="relative space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="Market Simulation"
+          description="Analyze competitive landscape and discover market opportunities"
+          badge={{
+            icon: <Target className="mr-1 h-3 w-3" />,
+            text: "Market Intelligence",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ['market-scenarios'] });
+                  queryClient.invalidateQueries({ queryKey: ['competitor-analysis'] });
+                }}
+                className="bg-card/80 backdrop-blur-sm border-border/50"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+              <Button variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          }
+        />
 
         {/* Search */}
         <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
@@ -288,8 +239,19 @@ function MarketSimulationPage() {
           />
         )}
 
-        {/* Market Overview */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* Show empty state when no data available */}
+        {!isLoading && !marketData && (
+          <EmptyState
+            icon={Search}
+            title="No Market Analysis Available"
+            description="Enter a keyword above to analyze market opportunities and competitive landscape."
+          />
+        )}
+
+        {/* Market Overview - only show when we have live data */}
+        {!isLoading && marketData && (
+          <>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="metric-card border-muted/50 bg-gradient-to-br from-card to-card/50">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -300,8 +262,8 @@ function MarketSimulationPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold">{marketData.market_share}%</div>
-              <Progress value={marketData.market_share} className="mt-2" />
+              <div className="text-3xl font-bold">{marketData.market_share || 0}%</div>
+              <Progress value={marketData.market_share || 0} className="mt-2" />
             </CardContent>
           </Card>
 
@@ -315,8 +277,8 @@ function MarketSimulationPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className={`text-3xl font-bold ${getScoreColor(marketData.opportunity_score)}`}>
-                {marketData.opportunity_score}/100
+              <div className={`text-3xl font-bold ${getScoreColor(marketData.opportunity_score || 0)}`}>
+                {marketData.opportunity_score || 0}/100
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 High growth potential
@@ -334,8 +296,8 @@ function MarketSimulationPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className={`text-3xl font-bold ${getScoreColor(100 - marketData.difficulty_score)}`}>
-                {marketData.difficulty_score}/100
+              <div className={`text-3xl font-bold ${getScoreColor(100 - (marketData.difficulty_score || 0))}`}>
+                {marketData.difficulty_score || 0}/100
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Moderate difficulty
@@ -598,7 +560,9 @@ function MarketSimulationPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+        </>
+        )}
+        </div>
     </DashboardLayout>
   );
 }

@@ -134,7 +134,11 @@ class BackgroundTaskService:
                 task.resource_type = resource_type
                 await db.commit()
                 await self._broadcast_update(task)
-                
+
+                # Log completion activity for crawl tasks
+                if task.task_type == TaskType.CRAWL:
+                    await self._log_crawl_completion_activity(task)
+
                 logger.info(f"Task {task_id} completed successfully")
     
     async def fail_task(self, task_id: str, error_message: str) -> None:
@@ -265,7 +269,96 @@ class BackgroundTaskService:
             
             result = await db.execute(query.limit(1))
             return result.scalar_one_or_none() is not None
-    
+
+    async def get_task_progress_status(
+        self,
+        user_id: int,
+        task_type: TaskType,
+        site_id: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """
+        Get detailed progress status for the most recent task of a given type.
+        This is specifically designed for loading bars and progress indicators.
+
+        Returns:
+            Dict with 'status' (pending/in_progress/completed) and 'progress' (0-100)
+        """
+        async with async_session_factory() as db:
+            # [FIX] Check for active (STARTED, PROGRESS) tasks FIRST.
+            # We always want to know if something is currently running.
+            active_query = select(BackgroundTask).where(
+                and_(
+                    BackgroundTask.user_id == user_id,
+                    BackgroundTask.task_type == task_type,
+                    BackgroundTask.status.in_([TaskStatus.STARTED, TaskStatus.PROGRESS])
+                )
+            ).order_by(BackgroundTask.created_at.desc())
+
+            if site_id:
+                active_query = active_query.where(BackgroundTask.site_id == site_id)
+
+            active_result = await db.execute(active_query.limit(1))
+            active_task = active_result.scalar_one_or_none()
+
+            if active_task:
+                return {
+                    "status": "in_progress",
+                    "progress": active_task.progress,
+                    "message": active_task.status_message or "Task in progress..."
+                }
+
+            # [FIX] If no active task, check for a PENDING task.
+            # This means it's been queued but not started by a worker yet.
+            pending_query = select(BackgroundTask).where(
+                and_(
+                    BackgroundTask.user_id == user_id,
+                    BackgroundTask.task_type == task_type,
+                    BackgroundTask.status == TaskStatus.PENDING
+                )
+            ).order_by(BackgroundTask.created_at.desc())
+
+            if site_id:
+                pending_query = pending_query.where(BackgroundTask.site_id == site_id)
+
+            pending_result = await db.execute(pending_query.limit(1))
+            pending_task = pending_result.scalar_one_or_none()
+
+            if pending_task:
+                return {
+                    "status": "pending",
+                    "progress": 0,
+                    "message": pending_task.status_message or "Task is pending..."
+                }
+
+            # [FIX] Only if nothing is active or pending, check for the latest completed task.
+            completed_query = select(BackgroundTask).where(
+                and_(
+                    BackgroundTask.user_id == user_id,
+                    BackgroundTask.task_type == task_type,
+                    BackgroundTask.status == TaskStatus.COMPLETED
+                )
+            ).order_by(BackgroundTask.created_at.desc())
+
+            if site_id:
+                completed_query = completed_query.where(BackgroundTask.site_id == site_id)
+
+            completed_result = await db.execute(completed_query.limit(1))
+            completed_task = completed_result.scalar_one_or_none()
+
+            if completed_task:
+                return {
+                    "status": "completed",
+                    "progress": 100,
+                    "message": completed_task.status_message or "Task completed successfully"
+                }
+
+            # Default to a "not found" or "pending" state if no task of this type has ever run.
+            return {
+                "status": "pending",
+                "progress": 0,
+                "message": "Waiting for task to be created..."
+            }
+
     async def cleanup_old_tasks(self, days: int = 30) -> int:
         """Clean up old completed tasks."""
         from datetime import timedelta
@@ -306,6 +399,38 @@ class BackgroundTaskService:
             )
         except Exception as e:
             logger.error(f"Error broadcasting task update: {e}")
+
+    async def _log_crawl_completion_activity(self, task: BackgroundTask) -> None:
+        """Log activity when a crawl task completes."""
+        try:
+            from app.services.activity_service import activity_service
+            from app.models.activity_feed import ActivityType
+
+            # Extract metrics from task result if available
+            result = task.result or {}
+            health_score = result.get('health_score', 'N/A')
+            issues_count = result.get('issues_count', 0)
+            pages_crawled = result.get('pages_crawled', 0)
+
+            # Get the URL from task parameters
+            url = task.parameters.get('url', 'your site')
+
+            await activity_service.log_activity(
+                type=ActivityType.SITE_CRAWLED,
+                title="Site Diagnostic Completed",
+                description=f"Analysis complete for {url} - Health Score: {health_score}%, Pages: {pages_crawled}, Issues: {issues_count}",
+                user_id=task.user_id,
+                site_id=task.site_id,
+                data={
+                    "task_id": task.id,
+                    "crawl_result": result,
+                    "status": "completed"
+                },
+                broadcast=True
+            )
+
+        except Exception as e:
+            logger.error(f"Error logging crawl completion activity: {e}")
 
 
 # Create singleton instance

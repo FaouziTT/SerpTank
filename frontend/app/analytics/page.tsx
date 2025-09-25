@@ -21,6 +21,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useProject } from "@/lib/project-context";
 import { useToast } from "@/components/ui/use-toast";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { DashboardPageHeader } from "@/components/layout/dashboard-page-header";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useAnalyticsService, type AnalyticsFilters } from "@/lib/data-access";
 import { dedupedApi as api } from "@/lib/api-deduped";
@@ -41,8 +42,7 @@ import {
 import { formatNumber, formatPercentage, formatDate } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AIInsightsPanel } from "@/components/ai-insights-panel";
-import { SEOOrb } from "@/components/ui/seo-orb";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface AnalyticsModule {
   id: string;
@@ -1979,9 +1979,6 @@ function SEOCompetitorComparison({ data, isLoading }: { data: any; isLoading: bo
   const [showAIInsights, setShowAIInsights] = useState(false);
   
   // Parallax and scroll effects
-  const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 500], [0, 150]);
-  const orbScale = useTransform(scrollY, [0, 500], [1, 0.8]);
   
   // Use the new analytics service
   const analyticsService = useAnalyticsService();
@@ -2554,130 +2551,63 @@ function SEOCompetitorComparison({ data, isLoading }: { data: any; isLoading: bo
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative noise-overlay">
-      {/* Background gradient mesh */}
-      <div className="fixed inset-0 gradient-mesh opacity-20 dark:opacity-10" />
-      
-      {/* Enhanced floating 3D orb */}
-      <motion.div
-        className="fixed right-[-300px] top-1/4 w-[600px] h-[600px] lg:w-[800px] lg:h-[800px] pointer-events-none"
-        style={{ y: heroY, scale: orbScale }}
-      >
-        <SEOOrb className="scale-100 opacity-30" />
-      </motion.div>
-      
-      {/* Animated background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-32 -left-32 w-64 h-64 bg-primary/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-accent/20 rounded-full blur-3xl"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </div>
-
       <DashboardLayout>
         <div className="space-y-8 relative z-10">
-        {/* Enhanced Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="flex items-center justify-between"
-        >
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-            >
-              <Badge variant="secondary" className="mb-4 animate-slide-up-fade">
-                <Sparkles className="mr-1 h-3 w-3" />
-                Analytics Intelligence
-              </Badge>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-5xl sm:text-6xl font-bold tracking-tighter mb-4 leading-[0.9]"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <span className="block">Analytics</span>
-              <span className="block text-gradient-electric">Hub</span>
-            </motion.h1>
-            
-            <motion.p 
-              className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              Unified analytics and AI-powered insights across all your SEO data
-            </motion.p>
-          </div>
-          <div className="flex items-center gap-2">
-            <DateRangePicker
-              value={dateRange}
-              onChange={setDateRange}
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => refetch()}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => {
-                if (currentProject?.id) {
-                  exportAnalytics.mutate({
-                    projectId: currentProject.id,
-                    filters: analyticsFilters,
-                    format: 'csv',
-                  });
-                }
-              }}
-              disabled={exportAnalytics.isPending}
-            >
-              {exportAnalytics.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              ) : (
-                <Download className="h-4 w-4 mr-2" />
-              )}
-              Export
-            </Button>
-            <Button 
-              size="sm"
-              onClick={() => setShowAIInsights(true)}
-            >
-              <Brain className="h-4 w-4 mr-2" />
-              AI Insights
-            </Button>
-          </div>
-        </motion.div>
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="Analytics Hub"
+          description="Unified analytics and AI-powered insights across all your SEO data"
+          badge={{
+            icon: <Sparkles className="mr-1 h-3 w-3" />,
+            text: "Analytics Intelligence",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-2">
+              <DateRangePicker
+                value={dateRange}
+                onChange={setDateRange}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                disabled={isLoading}
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+                Refresh
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (currentProject?.id) {
+                    exportAnalytics.mutate({
+                      projectId: currentProject.id,
+                      filters: analyticsFilters,
+                      format: 'csv',
+                    });
+                  }
+                }}
+                disabled={exportAnalytics.isPending}
+              >
+                {exportAnalytics.isPending ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                Export
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => setShowAIInsights(true)}
+              >
+                <Brain className="h-4 w-4 mr-2" />
+                AI Insights
+              </Button>
+            </div>
+          }
+        />
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -3230,6 +3160,5 @@ function SEOCompetitorComparison({ data, isLoading }: { data: any; isLoading: bo
         </Dialog>
         </div>
       </DashboardLayout>
-    </div>
   );
 }

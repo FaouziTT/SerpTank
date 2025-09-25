@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
   Search,
   TrendingUp,
   TrendingDown,
@@ -26,6 +27,7 @@ import {
   Clock,
   Activity
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { api } from '@/lib/api-client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useExport } from '@/lib/hooks/use-export';
@@ -412,60 +414,64 @@ function SearchConsolePage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Search Console</h1>
-            <p className="text-muted-foreground">
-              Google Search Console data and insights
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-[180px]">
-                <Calendar className="mr-2 h-4 w-4" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7days">Last 7 Days</SelectItem>
-                <SelectItem value="28days">Last 28 Days</SelectItem>
-                <SelectItem value="3months">Last 3 Months</SelectItem>
-                <SelectItem value="6months">Last 6 Months</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => syncData.mutate()}
-              disabled={isSyncing}
-            >
-              {isSyncing ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Syncing...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Sync Data
-                </>
-              )}
-            </Button>
-            <ExportButton 
-              data={[
-                ...(data?.top_queries || []),
-                ...(data?.top_pages || [])
-              ]}
-              filename="search-console-data"
-              variant="outline"
-              size="sm"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export
-            </ExportButton>
-          </div>
-        </div>
+        <div className="relative space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="Search Console"
+          description="Google Search Console data and insights"
+          badge={{
+            icon: <Globe className="mr-1 h-3 w-3" />,
+            text: "Google Integration",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Select value={dateRange} onValueChange={setDateRange}>
+                <SelectTrigger className="w-[180px]">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7days">Last 7 Days</SelectItem>
+                  <SelectItem value="28days">Last 28 Days</SelectItem>
+                  <SelectItem value="3months">Last 3 Months</SelectItem>
+                  <SelectItem value="6months">Last 6 Months</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-card/80 backdrop-blur-sm border-border/50"
+                onClick={() => syncData.mutate()}
+                disabled={isSyncing}
+              >
+                {isSyncing ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Syncing...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Sync Data
+                  </>
+                )}
+              </Button>
+              <ExportButton
+                data={[
+                  ...(data?.top_queries || []),
+                  ...(data?.top_pages || [])
+                ]}
+                filename="search-console-data"
+                variant="outline"
+                size="sm"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </ExportButton>
+            </div>
+          }
+        />
 
         {/* Connection Status with Sync Progress */}
         <Card className={isSyncing ? "border-blue-500/20 bg-blue-500/5" : "border-green-500/20 bg-green-500/5"}>
@@ -829,35 +835,35 @@ function SearchConsolePage() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
 
-      {/* Bulk Action Bar */}
-      <BulkActionBar
-        selectedCount={queriesBulkSelection.selectedCount}
-        onAction={handleBulkAction}
-        onClear={queriesBulkSelection.deselectAll}
-        actions={[
-          {
-            id: 'export',
-            label: 'Export',
-            icon: Download,
-            variant: 'outline',
-          },
-          {
-            id: 'track',
-            label: 'Track Keywords',
-            icon: Eye,
-            variant: 'default',
-          },
-          {
-            id: 'delete',
-            label: 'Remove',
-            icon: Trash2,
-            variant: 'destructive',
-            dangerous: true,
-          },
-        ]}
-      />
+        {/* Bulk Action Bar */}
+        <BulkActionBar
+          selectedCount={queriesBulkSelection.selectedCount}
+          onAction={handleBulkAction}
+          onClear={queriesBulkSelection.deselectAll}
+          actions={[
+            {
+              id: 'export',
+              label: 'Export',
+              icon: Download,
+              variant: 'outline',
+            },
+            {
+              id: 'track',
+              label: 'Track Keywords',
+              icon: Eye,
+              variant: 'default',
+            },
+            {
+              id: 'delete',
+              label: 'Remove',
+              icon: Trash2,
+              variant: 'destructive',
+              dangerous: true,
+            },
+          ]}
+        />
+        </div>
     </DashboardLayout>
   );
 }

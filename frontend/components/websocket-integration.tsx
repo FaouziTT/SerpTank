@@ -21,27 +21,7 @@ export function WebSocketIntegration() {
 
   return (
     <>
-      {/* Connection status indicator (only in development) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-4 left-4 z-50">
-          <Badge 
-            variant={isConnected ? 'default' : 'secondary'}
-            className="flex items-center gap-2"
-          >
-            {isConnected ? (
-              <>
-                <Wifi className="h-3 w-3" />
-                Real-time Connected
-              </>
-            ) : (
-              <>
-                <WifiOff className="h-3 w-3" />
-                Real-time Disconnected
-              </>
-            )}
-          </Badge>
-        </div>
-      )}
+      {/* Connection status now handled by the sidebar */}
     </>
   );
 }

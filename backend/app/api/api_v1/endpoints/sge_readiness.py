@@ -194,6 +194,7 @@ async def create_sge_monitor(
     monitor_data: Dict[str, Any],
     background_tasks: BackgroundTasks,
     current_user: UserProfile = Depends(get_current_active_user),
+    db: AsyncSession = Depends(get_db)
 ) -> Any:
     """
     Create an SGE monitoring task.
@@ -212,7 +213,8 @@ async def create_sge_monitor(
     try:
         result = await sge_readiness_service.create_sge_monitor(
             monitor_data=monitor_data,
-            user_id=current_user.id
+            user_id=current_user.id,
+            db=db
         )
         
         return {
@@ -240,14 +242,14 @@ async def get_sge_monitor(
 ) -> Any:
     """
     Get SGE monitor results.
-    
+
     This endpoint returns the current status and results of an SGE monitoring task.
-    
+
     Args:
         monitor_id: ID of the monitor
         current_user: The authenticated user
         db: Database session
-        
+
     Returns:
         Monitor results and status
     """
@@ -257,18 +259,19 @@ async def get_sge_monitor(
             user_id=current_user.id,
             db=db
         )
-        
+
         return {
             "success": True,
             "data": result
         }
-        
+
     except ValueError as e:
         logger.error(f"SGE monitor retrieval error: {e}")
         raise HTTPException(
-            status_code=404, 
+            status_code=404,
             detail=f"Monitor not found: {str(e)}"
         )
     except Exception as e:
         logger.error(f"SGE monitor retrieval error: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to retrieve SGE monitor: {str(e)}")
+

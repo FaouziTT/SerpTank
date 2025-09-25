@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { withAuth } from '@/lib/auth-context';
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
+import { DashboardPageHeader } from '@/components/layout/dashboard-page-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,6 +28,7 @@ import {
   Clock,
   Award
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { api } from '@/lib/api-client';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useProject } from '@/lib/project-context';
@@ -40,28 +42,56 @@ function YouTubeAnalysisPage() {
   const [channelUrl, setChannelUrl] = useState('');
   const { currentProject } = useProject();
 
+  // State for storing channel data
+  const [channelData, setChannelData] = useState<any>(null);
+
   // Fetch YouTube analytics - disabled by default until channel is specified
   const { data: analyticsData, isLoading, error, refetch } = useQuery({
-    queryKey: ['youtube-analytics', currentProject?.id],
+    queryKey: ['youtube-analytics', currentProject?.id, channelData?.channel_id],
     queryFn: async () => {
-      return null; // No default channel to analyze
+      if (!channelData?.channel_id) return null;
+
+      // Fetch additional data for comprehensive analytics
+      const [channelInfo, recentVideos, competitorData] = await Promise.allSettled([
+        api.youtube.getChannelInfo({ channel_id: channelData.channel_id }),
+        api.youtube.searchVideos({ channel_id: channelData.channel_id, max_results: 10 }),
+        api.youtube.getCompetitorAnalysis({ channel_ids: [channelData.channel_id] })
+      ]);
+
+      const result = {
+        channel: channelData,
+        recent_videos: recentVideos.status === 'fulfilled' ? recentVideos.value.data?.data?.videos || [] : [],
+        competitor_comparison: competitorData.status === 'fulfilled' ? competitorData.value.data?.data?.insights || {} : {},
+        // Generate mock performance trends and content categories for now
+        performance_trends: generatePerformanceTrends(),
+        content_categories: generateContentCategories(),
+        seo_opportunities: generateSeoOpportunities()
+      };
+
+      return result;
     },
-    enabled: false, // Disabled until user specifies a channel
+    enabled: !!channelData?.channel_id,
   });
 
   // Analyze channel mutation
   const analyzeChannel = useMutation({
-    mutationFn: async (channelId: string) => {
+    mutationFn: async ({ channelId, channelUsername }: { channelId: string; channelUsername: string }) => {
       if (!currentProject) throw new Error('No project selected');
-      const response = await api.youtube.getChannelInfo({ channel_id: channelId });
+
+      const params: any = {};
+      if (channelId) params.channel_id = channelId;
+      if (channelUsername) params.channel_username = channelUsername;
+
+      const response = await api.youtube.getChannelInfo(params);
       // Handle backend response structure
       if (response.data?.success === false) {
         throw new Error(response.data.error || 'Failed to analyze channel');
       }
       return response.data?.data || response.data;
     },
-    onSuccess: () => {
-      refetch();
+    onSuccess: (data) => {
+      // Set the channel data to trigger the analytics query
+      setChannelData(data);
       notifications.success('Analysis complete', 'YouTube channel data has been fetched.');
       setChannelUrl('');
     },
@@ -75,128 +105,123 @@ function YouTubeAnalysisPage() {
       notifications.error('No channel URL', 'Please enter a YouTube channel URL.');
       return;
     }
-    
-    // Extract channel ID from URL
-    const channelId = channelUrl.includes('@') 
-      ? channelUrl.split('@')[1].split('/')[0]
-      : channelUrl.split('/channel/')[1]?.split('/')[0] || channelUrl;
-    
-    analyzeChannel.mutate(channelId);
+
+    // Extract channel info from URL
+    let channelId = '';
+    let channelUsername = '';
+
+    if (channelUrl.includes('@')) {
+      // Handle format: https://youtube.com/@username or @username
+      channelUsername = channelUrl.includes('@')
+        ? channelUrl.split('@')[1].split('/')[0].split('?')[0]
+        : channelUrl;
+    } else if (channelUrl.includes('/channel/')) {
+      // Handle format: https://youtube.com/channel/UC...
+      channelId = channelUrl.split('/channel/')[1].split('/')[0].split('?')[0];
+    } else if (channelUrl.startsWith('UC') && channelUrl.length === 24) {
+      // Direct channel ID
+      channelId = channelUrl;
+    } else {
+      // Assume it's a username
+      channelUsername = channelUrl;
+    }
+
+    analyzeChannel.mutate({ channelId, channelUsername });
   };
 
-  // Mock data for demonstration
-  const mockData = {
-    channel: {
-      id: 'UC_x5XG1OV2P6uZZ5FSM9Ttw',
-      title: 'Google for Developers',
-      description: 'The Google Developers channel features talks...',
-      subscriber_count: 2340000,
-      video_count: 5678,
-      view_count: 892340000,
-      created_at: '2007-08-23T00:00:00Z',
-      thumbnail_url: 'https://yt3.googleusercontent.com/...',
-      custom_url: '@GoogleDevelopers',
-    },
-    recent_videos: [
-      {
-        id: 'abc123',
-        title: 'What\'s new in Web Development',
-        views: 125000,
-        likes: 8900,
-        comments: 456,
-        duration: 'PT15M32S',
-        published_at: '2024-01-10T18:00:00Z',
-        engagement_rate: 7.5,
-      },
-      {
-        id: 'def456',
-        title: 'Building with AI: A Developer\'s Guide',
-        views: 98000,
-        likes: 7200,
-        comments: 389,
-        duration: 'PT22M18S',
-        published_at: '2024-01-08T18:00:00Z',
-        engagement_rate: 7.8,
-      },
-      {
-        id: 'ghi789',
-        title: 'Chrome DevTools Tips and Tricks',
-        views: 156000,
-        likes: 12300,
-        comments: 678,
-        duration: 'PT18M45S',
-        published_at: '2024-01-05T18:00:00Z',
-        engagement_rate: 8.3,
-      },
-    ],
-    performance_trends: [
-      { date: '2024-01-09', views: 245000, subscribers: 2200 },
-      { date: '2024-01-10', views: 268000, subscribers: 2350 },
-      { date: '2024-01-11', views: 289000, subscribers: 2450 },
-      { date: '2024-01-12', views: 256000, subscribers: 2300 },
-      { date: '2024-01-13', views: 198000, subscribers: 1800 },
-      { date: '2024-01-14', views: 205000, subscribers: 1950 },
-      { date: '2024-01-15', views: 312000, subscribers: 2800 },
-    ],
-    content_categories: [
-      { category: 'Web Development', videos: 156, percentage: 35 },
-      { category: 'Mobile Development', videos: 98, percentage: 22 },
-      { category: 'AI/ML', videos: 89, percentage: 20 },
-      { category: 'Cloud Computing', videos: 67, percentage: 15 },
-      { category: 'Other', videos: 36, percentage: 8 },
-    ],
-    seo_opportunities: [
-      {
-        type: 'title_optimization',
-        title: 'Optimize Video Titles',
-        description: '23 videos could benefit from keyword-rich titles',
-        impact: 'high',
-        videos_affected: 23,
-      },
-      {
-        type: 'description_enhancement',
-        title: 'Enhance Descriptions',
-        description: '45 videos have descriptions under 200 characters',
-        impact: 'medium',
-        videos_affected: 45,
-      },
-      {
-        type: 'thumbnail_consistency',
-        title: 'Improve Thumbnails',
-        description: 'Inconsistent thumbnail style across recent videos',
-        impact: 'medium',
-        videos_affected: 12,
-      },
-    ],
-    competitor_comparison: {
-      subscriber_growth: '+12.5%',
-      view_rate: '+8.3%',
-      engagement_rate: '+2.1%',
-      upload_frequency: '-15%',
-    },
+
+  // Helper functions to generate mock data for unimplemented features
+  const generatePerformanceTrends = () => {
+    const trends = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      trends.push({
+        date: date.toISOString().split('T')[0],
+        views: Math.floor(Math.random() * 100000) + 50000,
+        subscribers: Math.floor(Math.random() * 5000) + 1000,
+      });
+    }
+    return trends;
   };
+
+  const generateContentCategories = () => [
+    { category: 'Technology', videos: 45, percentage: 30 },
+    { category: 'Education', videos: 38, percentage: 25 },
+    { category: 'Entertainment', videos: 30, percentage: 20 },
+    { category: 'Gaming', videos: 23, percentage: 15 },
+    { category: 'Other', videos: 15, percentage: 10 },
+  ];
+
+  const generateSeoOpportunities = () => [
+    {
+      type: 'title_optimization',
+      title: 'Optimize Video Titles',
+      description: 'Some videos could benefit from keyword-rich titles',
+      impact: 'high',
+      videos_affected: Math.floor(Math.random() * 20) + 10,
+    },
+    {
+      type: 'description_enhancement',
+      title: 'Enhance Descriptions',
+      description: 'Videos have descriptions under 200 characters',
+      impact: 'medium',
+      videos_affected: Math.floor(Math.random() * 30) + 15,
+    },
+    {
+      type: 'thumbnail_consistency',
+      title: 'Improve Thumbnails',
+      description: 'Inconsistent thumbnail style across recent videos',
+      impact: 'medium',
+      videos_affected: Math.floor(Math.random() * 15) + 5,
+    },
+  ];
 
   // Transform backend data to match frontend expectations
   const transformYouTubeData = (data: any) => {
     if (!data) return null;
-    
-    // If data has the expected structure, return as is
-    if (data.channel && data.recent_videos) {
-      return data;
-    }
-    
-    // Transform backend response to match frontend structure
+
+    // Transform backend channel data to match frontend structure
+    const transformedChannel = data.channel ? {
+      id: data.channel.channel_id,
+      title: data.channel.title,
+      description: data.channel.description,
+      subscriber_count: data.channel.statistics?.subscriber_count || 0,
+      video_count: data.channel.statistics?.video_count || 0,
+      view_count: data.channel.statistics?.view_count || 0,
+      created_at: data.channel.published_at || data.channel.created_at,
+      thumbnail_url: data.channel.thumbnail_url,
+      custom_url: data.channel.custom_url,
+    } : null;
+
+    // Transform videos data
+    const transformedVideos = (data.recent_videos || []).map((video: any) => ({
+      id: video.video_id,
+      title: video.title,
+      views: video.statistics?.view_count || 0,
+      likes: video.statistics?.like_count || 0,
+      comments: video.statistics?.comment_count || 0,
+      duration: video.statistics?.duration || 'PT10M0S',
+      published_at: video.published_at,
+      engagement_rate: video.statistics?.engagement_rate || 0,
+    }));
+
     return {
-      channel: data.channel || data,
-      recent_videos: data.recent_videos || [],
-      performance_trends: data.performance_trends || mockData.performance_trends,
-      content_categories: data.content_categories || mockData.content_categories,
-      seo_opportunities: data.seo_opportunities || mockData.seo_opportunities,
-      competitor_comparison: data.competitor_comparison || mockData.competitor_comparison,
+      channel: transformedChannel,
+      recent_videos: transformedVideos,
+      performance_trends: data.performance_trends || generatePerformanceTrends(),
+      content_categories: data.content_categories || generateContentCategories(),
+      seo_opportunities: data.seo_opportunities || generateSeoOpportunities(),
+      competitor_comparison: data.competitor_comparison || {
+        subscriber_growth: '+5.2%',
+        view_rate: '+3.8%',
+        engagement_rate: '+1.5%',
+        upload_frequency: '-8%',
+      },
     };
   };
   
-  const data = transformYouTubeData(analyticsData) || mockData;
+  const data = transformYouTubeData(analyticsData);
   const COLORS = ['#8b5cf6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
 
   if (!currentProject) {
@@ -250,26 +275,29 @@ function YouTubeAnalysisPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">YouTube Analytics</h1>
-            <p className="text-muted-foreground">
-              Analyze YouTube channels and optimize video SEO
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={() => refetch()}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Refresh
-            </Button>
-            <Button variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              Export Report
-            </Button>
-          </div>
-        </div>
+        <div className="space-y-6">
+        {/* Optimized Header - Research-based 2025 standards */}
+        <DashboardPageHeader
+          title="YouTube Analytics"
+          description="Analyze YouTube channels and optimize video SEO"
+          badge={{
+            icon: <Youtube className="mr-1 h-3 w-3" />,
+            text: "Video Analytics",
+            variant: "secondary"
+          }}
+          actions={
+            <div className="flex items-center gap-4">
+              <Button variant="outline" onClick={() => refetch()} size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Refresh
+              </Button>
+              <Button variant="outline" size="sm" className="bg-card/80 backdrop-blur-sm border-border/50">
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            </div>
+          }
+        />
 
         {/* Channel Input */}
         <Card className="border-red-500/20 bg-gradient-to-br from-card to-red-500/5">
@@ -311,7 +339,19 @@ function YouTubeAnalysisPage() {
           </CardContent>
         </Card>
 
-        {data.channel && (
+        {!data?.channel && !analyzeChannel.isPending && (
+          <Card className="border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <Youtube className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Channel Analyzed Yet</h3>
+              <p className="text-muted-foreground text-center">
+                Enter a YouTube channel URL above to get started with comprehensive analytics and SEO insights.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {data?.channel && (
           <>
             {/* Channel Overview */}
             <Card>
@@ -567,7 +607,7 @@ function YouTubeAnalysisPage() {
             </Card>
           </>
         )}
-      </div>
+        </div>
     </DashboardLayout>
   );
 }

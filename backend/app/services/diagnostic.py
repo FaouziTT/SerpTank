@@ -292,67 +292,52 @@ class DiagnosticService:
         db: AsyncSession
     ) -> List[RecentActivitiesResponse]:
         """
-        Get recent activities for a user.
-        
+        Get recent activities for a user using the modern ActivityFeed system.
+
         Args:
             user_id: ID of the user
             limit: Maximum number of activities to return
             db: Database session
-            
+
         Returns:
             List of recent activities
-            
+
         Raises:
             ValueError: If query fails
         """
         try:
-            # Get recent activities from database
-            result = await db.execute(
-                select(Activity)
-                .where(Activity.user_id == user_id)
-                .order_by(desc(Activity.created_at))
-                .limit(limit)
-                .options(selectinload(Activity.user))
+            from app.services.activity_service import activity_service
+            from app.models.activity_feed import ActivityType
+
+            # Use the existing ActivityFeed system for relevant diagnostic activities
+            activities = await activity_service.get_activity_feed(
+                user_id=user_id,
+                activity_types=[
+                    ActivityType.SITE_CRAWLED,
+                    ActivityType.PERFORMANCE_ANALYZED,
+                    ActivityType.SERP_ANALYZED,
+                    ActivityType.PERFORMANCE_ALERT,
+                    ActivityType.PERFORMANCE_IMPROVED,
+                    ActivityType.PERFORMANCE_DEGRADED
+                ],
+                limit=limit,
+                include_system=True
             )
-            
-            activities = result.scalars().all()
-            
-            # If no activities exist, try to create default ones
+
+            # If no activities exist, return static defaults for demo
             if not activities:
-                try:
-                    await self._create_default_activities(user_id, db)
-                    # Re-fetch after creating defaults
-                    result = await db.execute(
-                        select(Activity)
-                        .where(Activity.user_id == user_id)
-                        .order_by(desc(Activity.created_at))
-                        .limit(limit)
-                        .options(selectinload(Activity.user))
-                    )
-                    activities = result.scalars().all()
-                except Exception as create_error:
-                    # If we can't create activities (e.g., read-only transaction),
-                    # return static default activities
-                    logger.warning(f"Could not create default activities: {create_error}")
-                    
-                    # Rollback the session to recover from the failed transaction
-                    try:
-                        await db.rollback()
-                    except Exception as rollback_error:
-                        logger.debug(f"Rollback failed (expected in read-only mode): {rollback_error}")
-                    
-                    return self._get_static_default_activities(user_id, limit)
-            
+                return self._get_static_default_activities(user_id, limit)
+
             return [
                 RecentActivitiesResponse(
                     id=str(activity.id),
-                    type=activity.activity_type,
-                    description=activity.description,
-                    timestamp=activity.timestamp
+                    type=activity.type.value,  # Convert enum to string
+                    description=activity.description or activity.title,
+                    timestamp=activity.created_at
                 )
                 for activity in activities
             ]
-            
+
         except Exception as e:
             logger.error(f"Error getting recent activities for user {user_id}: {e}")
             raise ValueError(f"Failed to get recent activities: {e}")
@@ -416,13 +401,13 @@ class DiagnosticService:
             },
             {
                 "id": "default-2",
-                "type": "crawl",
+                "type": "site_crawled",
                 "description": "Site Analysis Initiated - Comprehensive crawl analysis available",
                 "timestamp": (now - timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M:%S")
             },
             {
                 "id": "default-3",
-                "type": "performance",
+                "type": "performance_analyzed",
                 "description": "Core Web Vitals Baseline - Initial performance metrics captured",
                 "timestamp": (now - timedelta(minutes=15)).strftime("%Y-%m-%d %H:%M:%S")
             },
