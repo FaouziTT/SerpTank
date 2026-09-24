@@ -62,6 +62,8 @@ from serptank.modules.integrations import router_project as integrations_project
 from serptank.modules.jobs import router as jobs_router
 from serptank.modules.jobs.service import CeleryDispatcher, InProcessDispatcher, JobDispatcher
 from serptank.modules.keywords import router as keywords_router
+from serptank.modules.llm import router as llm_router
+from serptank.modules.onpage import router as onpage_router
 from serptank.modules.projects import router as projects_router
 from serptank.modules.tenancy import router as tenancy_router
 from serptank.workers.celery_config import make_celery
@@ -126,6 +128,8 @@ def _include_routers(app: FastAPI) -> None:
     app.include_router(integrations_org_router.callback_router, prefix=API_PREFIX)
     app.include_router(integrations_project_router.router, prefix=API_PREFIX)
     app.include_router(keywords_router.router, prefix=API_PREFIX)
+    app.include_router(onpage_router.router, prefix=API_PREFIX)
+    app.include_router(llm_router.router, prefix=API_PREFIX)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:

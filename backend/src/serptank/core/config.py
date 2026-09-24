@@ -159,6 +159,11 @@ class Settings(BaseSettings):
     serp_global_daily_requests: int = 20_000  # hard stop across all orgs (cost breaker)
     serp_validation_rate: float = 0.0  # share of fetches cross-checked with a 2nd vendor
     serp_cache_days: int = 1  # public SERPs are shared across orgs for this long
+
+    # --- LLM gateway (Modules 9-10) -----------------------------------------------
+    llm_enabled: bool = True  # global kill switch
+    openai_api_key: SecretStr = SecretStr("")
+    openai_model: str = "gpt-4.1-mini"
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"

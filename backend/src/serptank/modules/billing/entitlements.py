@@ -44,6 +44,7 @@ class Plan:
     ai_prompts_per_month: int
     rank_check_interval_hours: int
     serp_requests_per_day: int = 0  # paid (uncached) SERP fetches per org per day
+    llm_tokens_per_month: int = 0  # LLM input+output tokens per org per month
     addons: frozenset[str] = field(default_factory=frozenset)
 
 
@@ -61,6 +62,7 @@ PLANS: dict[str, Plan] = {
         ai_prompts_per_month=50,
         rank_check_interval_hours=168,
         serp_requests_per_day=100,
+        llm_tokens_per_month=50_000,
     ),
     "pro": Plan(
         code="pro",
@@ -75,6 +77,7 @@ PLANS: dict[str, Plan] = {
         ai_prompts_per_month=2_000,
         rank_check_interval_hours=24,
         serp_requests_per_day=3_000,
+        llm_tokens_per_month=2_000_000,
     ),
     "agency": Plan(
         code="agency",
@@ -89,6 +92,7 @@ PLANS: dict[str, Plan] = {
         ai_prompts_per_month=20_000,
         rank_check_interval_hours=24,
         serp_requests_per_day=30_000,
+        llm_tokens_per_month=20_000_000,
     ),
 }
 

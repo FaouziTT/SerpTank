@@ -81,6 +81,18 @@ test("create an org and project, verify instructions, invite an editor", async (
   ).toBeVisible();
   await page.goto(projectUrl);
 
+  // Content: honest empty states, and a brief built without any SERP vendor configured.
+  await page.getByRole("link", { name: "Content" }).click();
+  await expect(page.getByRole("heading", { name: "Content" })).toBeVisible();
+  await expect(page.getByText("No analyses yet")).toBeVisible();
+  await page.getByRole("tab", { name: "Content briefs" }).click();
+  await page.getByLabel("Keyword to write for").fill("trail running shoes");
+  await page.getByRole("button", { name: "Create brief" }).click();
+  await expect(page.getByText(/No live SERP was available/)).toBeVisible();
+  await page.getByRole("tab", { name: "Cannibalization" }).click();
+  await expect(page.getByText("Search Console data needed")).toBeVisible();
+  await page.goto(projectUrl);
+
   // Domain verification instructions (the check itself needs real DNS).
   await page.getByRole("button", { name: "Use a DNS TXT record" }).click();
   await expect(page.getByText(/serptank-site-verification=/)).toBeVisible();

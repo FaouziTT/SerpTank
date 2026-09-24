@@ -27,6 +27,8 @@ from serptank.modules.integrations.models import (
     VitalsDaily,
 )
 from serptank.modules.jobs.models import Job
+from serptank.modules.llm.models import LlmUsage
+from serptank.modules.onpage.models import ContentBrief, PageOptimization
 from serptank.modules.projects.models import Project, ProjectMarket
 from serptank.modules.search_data.models import (
     Competitor,
@@ -49,6 +51,7 @@ __all__ = [
     "BingDaily",
     "Competitor",
     "Connection",
+    "ContentBrief",
     "Crawl",
     "CrawlLink",
     "CrawlPage",
@@ -59,9 +62,11 @@ __all__ = [
     "Invitation",
     "Job",
     "KeywordMetrics",
+    "LlmUsage",
     "Membership",
     "MfaTotp",
     "Organization",
+    "PageOptimization",
     "Project",
     "ProjectMarket",
     "ProjectSource",

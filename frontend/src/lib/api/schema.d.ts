@@ -557,6 +557,23 @@ export interface paths {
     patch: operations["update_org_api_v1_orgs__org_id__patch"];
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/ai-usage": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ai Usage */
+    get: operations["ai_usage_api_v1_orgs__org_id__ai_usage_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/api-keys": {
     parameters: {
       query?: never;
@@ -940,6 +957,75 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/briefs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Briefs */
+    get: operations["list_briefs_api_v1_orgs__org_id__projects__project_id__briefs_get"];
+    put?: never;
+    /** Start Brief */
+    post: operations["start_brief_api_v1_orgs__org_id__projects__project_id__briefs_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/briefs/{brief_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Brief */
+    get: operations["get_brief_api_v1_orgs__org_id__projects__project_id__briefs__brief_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/briefs/{brief_id}/markdown": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Export Brief */
+    get: operations["export_brief_api_v1_orgs__org_id__projects__project_id__briefs__brief_id__markdown_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/cannibalization": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Cannibalization */
+    get: operations["get_cannibalization_api_v1_orgs__org_id__projects__project_id__cannibalization_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/competitors": {
     parameters: {
       query?: never;
@@ -1173,6 +1259,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/keyword-map": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Keyword Map */
+    get: operations["get_keyword_map_api_v1_orgs__org_id__projects__project_id__keyword_map_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/keyword-map/{keyword_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Set Target Page */
+    put: operations["set_target_page_api_v1_orgs__org_id__projects__project_id__keyword_map__keyword_id__put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/keywords": {
     parameters: {
       query?: never;
@@ -1331,6 +1451,61 @@ export interface paths {
     post?: never;
     /** Remove Market */
     delete: operations["remove_market_api_v1_orgs__org_id__projects__project_id__markets__market_id__delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/optimizer": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Optimizations */
+    get: operations["list_optimizations_api_v1_orgs__org_id__projects__project_id__optimizer_get"];
+    put?: never;
+    /** Start Optimization */
+    post: operations["start_optimization_api_v1_orgs__org_id__projects__project_id__optimizer_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/optimizer/{optimization_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Optimization */
+    get: operations["get_optimization_api_v1_orgs__org_id__projects__project_id__optimizer__optimization_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/optimizer/{optimization_id}/rewrite": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Suggest Rewrite
+     * @description Optional AI rewrite of title/meta/H1, grounded in the stored analysis.
+     */
+    post: operations["suggest_rewrite_api_v1_orgs__org_id__projects__project_id__optimizer__optimization_id__rewrite_post"];
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -1559,6 +1734,43 @@ export interface components {
       /** Surface */
       surface: string;
     };
+    /** AiUsageOut */
+    AiUsageOut: {
+      /** Available */
+      available: boolean;
+      /** By Purpose */
+      by_purpose: components["schemas"]["PurposeUsage"][];
+      /** Month */
+      month: string;
+      /** Tokens Per Month */
+      tokens_per_month: number;
+      /** Tokens Used */
+      tokens_used: number;
+    };
+    /** AnalysisSummary */
+    AnalysisSummary: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Error */
+      error: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Keyword */
+      keyword: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Status */
+      status: string;
+    };
     /** AnalyzeOut */
     AnalyzeOut: {
       /** Ai Answer Cites */
@@ -1710,6 +1922,69 @@ export interface components {
       /** Api Key */
       api_key: string;
     };
+    /** BriefOut */
+    BriefOut: {
+      /** Brief */
+      brief: {
+        [key: string]: unknown;
+      };
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Error */
+      error: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Keyword */
+      keyword: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Status */
+      status: string;
+    };
+    /** BriefRequest */
+    BriefRequest: {
+      /** Keyword */
+      keyword: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+    };
+    /** BriefStarted */
+    BriefStarted: {
+      brief: components["schemas"]["AnalysisSummary"];
+      job: components["schemas"]["JobOut"];
+    };
+    /** CannibalizationOut */
+    CannibalizationOut: {
+      /** Clicks */
+      clicks: number;
+      /** Impressions */
+      impressions: number;
+      /** Pages */
+      pages: components["schemas"]["CompetingPageOut"][];
+      /** Query */
+      query: string;
+    };
+    /** CannibalizationReport */
+    CannibalizationReport: {
+      /** Has Search Console Data */
+      has_search_console_data: boolean;
+      /** Issues */
+      issues: components["schemas"]["CannibalizationOut"][];
+      /** Window Days */
+      window_days: number;
+    };
     /** ChangePasswordRequest */
     ChangePasswordRequest: {
       /** Current Password */
@@ -1721,6 +1996,19 @@ export interface components {
     CodeRequest: {
       /** Code */
       code: string;
+    };
+    /** CompetingPageOut */
+    CompetingPageOut: {
+      /** Clicks */
+      clicks: number;
+      /** Impressions */
+      impressions: number;
+      /** Page */
+      page: string;
+      /** Position */
+      position: number;
+      /** Share */
+      share: number;
     };
     /** CompetitorIn */
     CompetitorIn: {
@@ -2142,6 +2430,31 @@ export interface components {
       /** Volume Source */
       volume_source: string;
     };
+    /** KeywordMapRow */
+    KeywordMapRow: {
+      /** Keyword */
+      keyword: string;
+      /**
+       * Keyword Id
+       * Format: uuid
+       */
+      keyword_id: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Position */
+      position: number | null;
+      /** Ranking Source */
+      ranking_source: string | null;
+      /** Ranking Url */
+      ranking_url: string | null;
+      /** Status */
+      status: string;
+      /** Target Url */
+      target_url: string | null;
+    };
     /** KeywordsAdd */
     KeywordsAdd: {
       /** Keywords */
@@ -2350,6 +2663,87 @@ export interface components {
       query: string;
       /** Tracked */
       tracked: boolean;
+    };
+    /** OptimizationOut */
+    OptimizationOut: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Error */
+      error: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Keyword */
+      keyword: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Result */
+      result: {
+        [key: string]: unknown;
+      };
+      /** Rewrite */
+      rewrite: {
+        [key: string]: unknown;
+      } | null;
+      /** Score */
+      score: number | null;
+      /** Status */
+      status: string;
+      /** Url */
+      url: string;
+    };
+    /** OptimizationStarted */
+    OptimizationStarted: {
+      job: components["schemas"]["JobOut"];
+      optimization: components["schemas"]["OptimizationSummary"];
+    };
+    /** OptimizationSummary */
+    OptimizationSummary: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Error */
+      error: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Keyword */
+      keyword: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Score */
+      score: number | null;
+      /** Status */
+      status: string;
+      /** Url */
+      url: string;
+    };
+    /** OptimizeRequest */
+    OptimizeRequest: {
+      /** Keyword */
+      keyword: string;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Url */
+      url: string;
     };
     /** OrganizationCreate */
     OrganizationCreate: {
@@ -2598,6 +2992,15 @@ export interface components {
      * @enum {string}
      */
     Provider: "google" | "bing";
+    /** PurposeUsage */
+    PurposeUsage: {
+      /** Purpose */
+      purpose: string;
+      /** Requests */
+      requests: number;
+      /** Tokens */
+      tokens: number;
+    };
     /** ReadinessResponse */
     ReadinessResponse: {
       /** Checks */
@@ -2800,6 +3203,11 @@ export interface components {
       url_count: number;
       /** Urls */
       urls: string[];
+    };
+    /** TargetUpdate */
+    TargetUpdate: {
+      /** Target Url */
+      target_url?: string | null;
     };
     /** TokenRequest */
     TokenRequest: {
@@ -3904,6 +4312,37 @@ export interface operations {
       };
     };
   };
+  ai_usage_api_v1_orgs__org_id__ai_usage_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AiUsageOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_api_keys_api_v1_orgs__org_id__api_keys_get: {
     parameters: {
       query?: never;
@@ -4813,6 +5252,170 @@ export interface operations {
       };
     };
   };
+  list_briefs_api_v1_orgs__org_id__projects__project_id__briefs_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AnalysisSummary"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_brief_api_v1_orgs__org_id__projects__project_id__briefs_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BriefRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BriefStarted"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_brief_api_v1_orgs__org_id__projects__project_id__briefs__brief_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        brief_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BriefOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  export_brief_api_v1_orgs__org_id__projects__project_id__briefs__brief_id__markdown_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        brief_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_cannibalization_api_v1_orgs__org_id__projects__project_id__cannibalization_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CannibalizationReport"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_competitors_api_v1_orgs__org_id__projects__project_id__competitors_get: {
     parameters: {
       query?: never;
@@ -5424,6 +6027,73 @@ export interface operations {
       };
     };
   };
+  get_keyword_map_api_v1_orgs__org_id__projects__project_id__keyword_map_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["KeywordMapRow"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  set_target_page_api_v1_orgs__org_id__projects__project_id__keyword_map__keyword_id__put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        keyword_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TargetUpdate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_keywords_api_v1_orgs__org_id__projects__project_id__keywords_get: {
     parameters: {
       query?: {
@@ -5754,6 +6424,140 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_optimizations_api_v1_orgs__org_id__projects__project_id__optimizer_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OptimizationSummary"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_optimization_api_v1_orgs__org_id__projects__project_id__optimizer_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OptimizeRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OptimizationStarted"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_optimization_api_v1_orgs__org_id__projects__project_id__optimizer__optimization_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        optimization_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OptimizationOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  suggest_rewrite_api_v1_orgs__org_id__projects__project_id__optimizer__optimization_id__rewrite_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        optimization_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OptimizationOut"];
+        };
       };
       /** @description Validation Error */
       422: {

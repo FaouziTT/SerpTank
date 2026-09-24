@@ -75,6 +75,90 @@
         "title": "AiSurfaceTotals",
         "type": "object"
       },
+      "AiUsageOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "by_purpose": {
+            "items": {
+              "$ref": "#/components/schemas/PurposeUsage"
+            },
+            "title": "By Purpose",
+            "type": "array"
+          },
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "tokens_per_month": {
+            "title": "Tokens Per Month",
+            "type": "integer"
+          },
+          "tokens_used": {
+            "title": "Tokens Used",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "available",
+          "month",
+          "tokens_used",
+          "tokens_per_month",
+          "by_purpose"
+        ],
+        "title": "AiUsageOut",
+        "type": "object"
+      },
+      "AnalysisSummary": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "market_id",
+          "keyword",
+          "status",
+          "error",
+          "created_at"
+        ],
+        "title": "AnalysisSummary",
+        "type": "object"
+      },
       "AnalyzeOut": {
         "properties": {
           "ai_answer_cites": {
@@ -497,6 +581,155 @@
         "title": "BingConnect",
         "type": "object"
       },
+      "BriefOut": {
+        "properties": {
+          "brief": {
+            "additionalProperties": true,
+            "title": "Brief",
+            "type": "object"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "market_id",
+          "keyword",
+          "status",
+          "error",
+          "created_at",
+          "brief"
+        ],
+        "title": "BriefOut",
+        "type": "object"
+      },
+      "BriefRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market_id",
+          "keyword"
+        ],
+        "title": "BriefRequest",
+        "type": "object"
+      },
+      "BriefStarted": {
+        "properties": {
+          "brief": {
+            "$ref": "#/components/schemas/AnalysisSummary"
+          },
+          "job": {
+            "$ref": "#/components/schemas/JobOut"
+          }
+        },
+        "required": [
+          "brief",
+          "job"
+        ],
+        "title": "BriefStarted",
+        "type": "object"
+      },
+      "CannibalizationOut": {
+        "properties": {
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "pages": {
+            "items": {
+              "$ref": "#/components/schemas/CompetingPageOut"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query",
+          "impressions",
+          "clicks",
+          "pages"
+        ],
+        "title": "CannibalizationOut",
+        "type": "object"
+      },
+      "CannibalizationReport": {
+        "properties": {
+          "has_search_console_data": {
+            "title": "Has Search Console Data",
+            "type": "boolean"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/CannibalizationOut"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "window_days": {
+            "title": "Window Days",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "has_search_console_data",
+          "window_days",
+          "issues"
+        ],
+        "title": "CannibalizationReport",
+        "type": "object"
+      },
       "ChangePasswordRequest": {
         "additionalProperties": false,
         "properties": {
@@ -534,6 +767,39 @@
           "code"
         ],
         "title": "CodeRequest",
+        "type": "object"
+      },
+      "CompetingPageOut": {
+        "properties": {
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "page": {
+            "title": "Page",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "number"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "page",
+          "impressions",
+          "clicks",
+          "position",
+          "share"
+        ],
+        "title": "CompetingPageOut",
         "type": "object"
       },
       "CompetitorIn": {
@@ -1761,6 +2027,84 @@
         "title": "KeywordIdeaOut",
         "type": "object"
       },
+      "KeywordMapRow": {
+        "properties": {
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "keyword_id": {
+            "format": "uuid",
+            "title": "Keyword Id",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "ranking_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ranking Source"
+          },
+          "ranking_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ranking Url"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "target_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Url"
+          }
+        },
+        "required": [
+          "keyword_id",
+          "keyword",
+          "market_id",
+          "target_url",
+          "ranking_url",
+          "ranking_source",
+          "position",
+          "status"
+        ],
+        "title": "KeywordMapRow",
+        "type": "object"
+      },
       "KeywordsAdd": {
         "additionalProperties": false,
         "properties": {
@@ -2301,6 +2645,200 @@
           "tracked"
         ],
         "title": "OpportunityOut",
+        "type": "object"
+      },
+      "OptimizationOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "result": {
+            "additionalProperties": true,
+            "title": "Result",
+            "type": "object"
+          },
+          "rewrite": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rewrite"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "market_id",
+          "keyword",
+          "status",
+          "error",
+          "created_at",
+          "url",
+          "score",
+          "result",
+          "rewrite"
+        ],
+        "title": "OptimizationOut",
+        "type": "object"
+      },
+      "OptimizationStarted": {
+        "properties": {
+          "job": {
+            "$ref": "#/components/schemas/JobOut"
+          },
+          "optimization": {
+            "$ref": "#/components/schemas/OptimizationSummary"
+          }
+        },
+        "required": [
+          "optimization",
+          "job"
+        ],
+        "title": "OptimizationStarted",
+        "type": "object"
+      },
+      "OptimizationSummary": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "market_id",
+          "keyword",
+          "status",
+          "error",
+          "created_at",
+          "url",
+          "score"
+        ],
+        "title": "OptimizationSummary",
+        "type": "object"
+      },
+      "OptimizeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "keyword": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "url": {
+            "maxLength": 2000,
+            "minLength": 8,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market_id",
+          "keyword",
+          "url"
+        ],
+        "title": "OptimizeRequest",
         "type": "object"
       },
       "OrganizationCreate": {
@@ -3004,6 +3542,29 @@
         "title": "Provider",
         "type": "string"
       },
+      "PurposeUsage": {
+        "properties": {
+          "purpose": {
+            "title": "Purpose",
+            "type": "string"
+          },
+          "requests": {
+            "title": "Requests",
+            "type": "integer"
+          },
+          "tokens": {
+            "title": "Tokens",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "purpose",
+          "requests",
+          "tokens"
+        ],
+        "title": "PurposeUsage",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "properties": {
           "checks": {
@@ -3576,6 +4137,25 @@
           "urls"
         ],
         "title": "SubmissionOut",
+        "type": "object"
+      },
+      "TargetUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "target_url": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Url"
+          }
+        },
+        "title": "TargetUpdate",
         "type": "object"
       },
       "TokenRequest": {
@@ -5165,6 +5745,49 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/ai-usage": {
+      "get": {
+        "operationId": "ai_usage_api_v1_orgs__org_id__ai_usage_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiUsageOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Usage",
+        "tags": [
+          "ai"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/api-keys": {
       "get": {
         "operationId": "list_api_keys_api_v1_orgs__org_id__api_keys_get",
@@ -6633,6 +7256,296 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/briefs": {
+      "get": {
+        "operationId": "list_briefs_api_v1_orgs__org_id__projects__project_id__briefs_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AnalysisSummary"
+                  },
+                  "title": "Response List Briefs Api V1 Orgs  Org Id  Projects  Project Id  Briefs Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Briefs",
+        "tags": [
+          "on-page"
+        ]
+      },
+      "post": {
+        "operationId": "start_brief_api_v1_orgs__org_id__projects__project_id__briefs_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BriefRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BriefStarted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Brief",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/briefs/{brief_id}": {
+      "get": {
+        "operationId": "get_brief_api_v1_orgs__org_id__projects__project_id__briefs__brief_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "brief_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Brief Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BriefOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Brief",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/briefs/{brief_id}/markdown": {
+      "get": {
+        "operationId": "export_brief_api_v1_orgs__org_id__projects__project_id__briefs__brief_id__markdown_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "brief_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Brief Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Brief",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/cannibalization": {
+      "get": {
+        "operationId": "get_cannibalization_api_v1_orgs__org_id__projects__project_id__cannibalization_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CannibalizationReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Cannibalization",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/projects/{project_id}/competitors": {
       "get": {
         "operationId": "list_competitors_api_v1_orgs__org_id__projects__project_id__competitors_get",
@@ -7827,6 +8740,129 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keyword-map": {
+      "get": {
+        "operationId": "get_keyword_map_api_v1_orgs__org_id__projects__project_id__keyword_map_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/KeywordMapRow"
+                  },
+                  "title": "Response Get Keyword Map Api V1 Orgs  Org Id  Projects  Project Id  Keyword Map Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Keyword Map",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keyword-map/{keyword_id}": {
+      "put": {
+        "operationId": "set_target_page_api_v1_orgs__org_id__projects__project_id__keyword_map__keyword_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "keyword_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Keyword Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TargetUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Target Page",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/projects/{project_id}/keywords": {
       "get": {
         "operationId": "list_keywords_api_v1_orgs__org_id__projects__project_id__keywords_get",
@@ -8472,6 +9508,251 @@
         "summary": "Remove Market",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/optimizer": {
+      "get": {
+        "operationId": "list_optimizations_api_v1_orgs__org_id__projects__project_id__optimizer_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OptimizationSummary"
+                  },
+                  "title": "Response List Optimizations Api V1 Orgs  Org Id  Projects  Project Id  Optimizer Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Optimizations",
+        "tags": [
+          "on-page"
+        ]
+      },
+      "post": {
+        "operationId": "start_optimization_api_v1_orgs__org_id__projects__project_id__optimizer_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OptimizeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizationStarted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Start Optimization",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/optimizer/{optimization_id}": {
+      "get": {
+        "operationId": "get_optimization_api_v1_orgs__org_id__projects__project_id__optimizer__optimization_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "optimization_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Optimization Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Optimization",
+        "tags": [
+          "on-page"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/optimizer/{optimization_id}/rewrite": {
+      "post": {
+        "description": "Optional AI rewrite of title/meta/H1, grounded in the stored analysis.",
+        "operationId": "suggest_rewrite_api_v1_orgs__org_id__projects__project_id__optimizer__optimization_id__rewrite_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "optimization_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Optimization Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OptimizationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Suggest Rewrite",
+        "tags": [
+          "on-page"
         ]
       }
     },

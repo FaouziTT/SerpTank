@@ -394,6 +394,9 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
             <Button asChild variant="outline">
               <Link href={`/orgs/${org.id}/projects/${p.id}/search`}>Search data</Link>
             </Button>
+            <Button asChild variant="outline">
+              <Link href={`/orgs/${org.id}/projects/${p.id}/content`}>Content</Link>
+            </Button>
             <Button asChild>
               <Link href={`/orgs/${org.id}/projects/${p.id}/audit`}>Open audit</Link>
             </Button>

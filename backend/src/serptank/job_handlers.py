@@ -7,3 +7,4 @@ feature modules.
 from serptank.modules.crawler import service as crawler_service  # noqa: F401 - registers "crawl"
 from serptank.modules.integrations import sync as integration_sync  # noqa: F401 - syncs
 from serptank.modules.keywords import ranks as keyword_ranks  # noqa: F401 - rank checks
+from serptank.modules.onpage import service as onpage_service  # noqa: F401 - optimizer, briefs

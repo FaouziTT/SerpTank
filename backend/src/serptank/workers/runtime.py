@@ -13,6 +13,7 @@ from serptank.core.crypto import Keyring, keyring_from_settings
 from serptank.core.http import EgressPolicy, Resolver, SafeHttpClient, system_resolver
 from serptank.modules.crawler.rendering import RendererClient
 from serptank.modules.jobs.service import HttpFactory, JobRuntime
+from serptank.modules.llm.factory import build_gateway
 from serptank.modules.search_data.collector import CollectorRouter
 from serptank.modules.search_data.factory import build_router
 
@@ -49,6 +50,10 @@ def build_runtime(
         extras["serp_http"] = serp_http
         serp_router = build_router(settings, serp_http)
     extras["serp"] = serp_router
+    # The LLM provider gets its own client too (no redirects to follow, JSON only).
+    llm_http = factory(EgressPolicy(), settings.crawler_user_agent)
+    extras["llm_http"] = llm_http
+    extras["llm"] = build_gateway(settings, llm_http)
     return JobRuntime(
         settings=settings,
         session_factory=session_factory,
@@ -62,6 +67,7 @@ async def close_runtime(runtime: JobRuntime) -> None:
     renderer = runtime.extras.get("renderer")
     if isinstance(renderer, RendererClient):
         await renderer.aclose()
-    serp_http = runtime.extras.get("serp_http")
-    if isinstance(serp_http, SafeHttpClient):
-        await serp_http.aclose()
+    for name in ("serp_http", "llm_http"):
+        client = runtime.extras.get(name)
+        if isinstance(client, SafeHttpClient):
+            await client.aclose()

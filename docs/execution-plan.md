@@ -495,7 +495,7 @@ We keep Celery 5.5 (mature, already wired) with a Redis broker on its own ACL us
 | M6 ✅ | Jobs, crawler, and technical SEO audit (Google Search Essentials + engine deltas, Web Vitals) | L | M5 |
 | M7 ✅ | Integrations and indexing: GSC (+URL Inspection, sitemaps, Gen-AI import), GA4, PSI/CrUX, Bing Webmaster Tools (+keyword API), Google Ads Keyword Planner, IndexNow | L | M5 |
 | M8 ✅ | **SerpTank search data engine**: own parsers, collector router, SERP cache, own metrics, keyword research, hybrid engine-aware rank tracking (Google first; Bing family and regional as add-ons) | L | M7 |
-| M9 | On-page optimization and SERP-based content briefs (Google-first) | M | M6, M8 |
+| M9 ✅ | On-page optimization and SERP-based content briefs (Google-first) | M | M6, M8 |
 | M10 | AI visibility (GEO/AEO) + LLM gateway | M | M8, M9 |
 | M11 | Search Presence dashboard, reports and exports, notifications and alerts, SSE realtime | M | M6–M10 |
 | M12 | Billing and entitlements (Stripe, plans, engine add-ons, metering) | M | M5 |
