@@ -1,16 +1,29 @@
-// ESLint 9 flat config. `next lint` was removed in Next 16, so ESLint runs directly.
-// Module 4 moves to eslint-config-next 16 (native flat config) and adds stricter rules.
-import { dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const compat = new FlatCompat({ baseDirectory: dirname(fileURLToPath(import.meta.url)) });
+// ESLint 10 flat config (`next lint` no longer exists in Next 16).
+import coreWebVitals from "eslint-config-next/core-web-vitals";
+import typescript from "eslint-config-next/typescript";
 
 const config = [
   {
-    ignores: [".next/**", "out/**", "node_modules/**", "coverage/**", "next-env.d.ts"],
+    ignores: [
+      ".next/**",
+      "out/**",
+      "node_modules/**",
+      "coverage/**",
+      "playwright-report/**",
+      "test-results/**",
+      "next-env.d.ts",
+      "src/lib/api/schema.d.ts",
+    ],
   },
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  ...coreWebVitals,
+  ...typescript,
+  {
+    rules: {
+      "no-console": ["error", { allow: ["warn", "error"] }],
+      "@typescript-eslint/no-explicit-any": "error",
+      "react/no-danger": "error",
+    },
+  },
 ];
 
 export default config;

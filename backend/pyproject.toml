@@ -65,7 +65,7 @@ default-groups = ["dev"]
 target-version = "py313"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["app", "tests_legacy", "scripts", "migrations/versions"]
+extend-exclude = ["app", "tests_legacy", "scripts", "scripts_ci", "migrations/versions"]
 
 [tool.ruff.lint]
 select = [

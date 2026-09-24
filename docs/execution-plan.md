@@ -490,7 +490,7 @@ We keep Celery 5.5 (mature, already wired) with a Redis broker on its own ACL us
 | M1 ✅ | Platform core (config, errors, logging, DB/Redis, security middleware, SafeHttpClient) | M | M0 |
 | M2 ✅ | Data model and multi-tenancy (fresh baseline schema, RLS, engine and market dimensions) | M | M1 |
 | M3 ✅ | Identity and access (sessions, passwords, MFA/passkeys, Google OIDC, RBAC, API keys, audit) | L | M2 |
-| M4 | Frontend foundation (rebuild `lib/`, generated client, auth UX, Next 16/Tailwind 4, engine switcher) | L | M3 |
+| M4 ✅ | Frontend foundation (rebuild `lib/`, generated client, auth UX, Next 16/Tailwind 4, engine switcher) | L | M3 |
 | M5 | Orgs, projects, target markets, members, invitations (API + UI) | M | M4 |
 | M6 | Jobs, crawler, and technical SEO audit (Google Search Essentials + engine deltas, Web Vitals) | L | M5 |
 | M7 | Integrations and indexing: GSC (+URL Inspection, sitemaps, Gen-AI import), GA4, PSI/CrUX, Bing Webmaster Tools (+keyword API), Google Ads Keyword Planner, IndexNow | L | M5 |

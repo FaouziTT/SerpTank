@@ -18,7 +18,7 @@ SerpTank is a multi-tenant SEO SaaS with two tracks:
 | `backend/src/serptank/` | **New** modular-monolith package: `core/` (platform) and `modules/<feature>/`. All new backend code goes here. |
 | `backend/tests/` | **New** test suite (pytest). |
 | `backend/app/`, `backend/alembic/`, `backend/scripts/`, `backend/tests_legacy/` | **Legacy**, reference only. Do not extend. Port the useful logic into the new package in the owning module, then delete it. |
-| `frontend/` | Next.js app. `lib/` is missing (it was never committed) and gets rebuilt in M4. Until then the frontend does not compile. |
+| `frontend/src/` | Next.js 16 app (rebuilt in M4): `app/` routes, `features/<area>/`, `components/ui/` primitives, `lib/` typed API client (generated from the backend OpenAPI). |
 | `infra/` | Infrastructure (Postgres init SQL; Caddy, backups, and more arrive in M14). |
 | `docs/` | Execution plan, ADRs, archived audits. |
 
@@ -42,9 +42,19 @@ To add a dependency, run `uv add <pkg>` (or `uv add --group dev <pkg>`) and comm
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm test:run                          # vitest
+pnpm lint && pnpm typecheck && pnpm test:run && pnpm build
 pnpm audit
-pnpm lint                              # not a CI gate until M4 (legacy code)
+pnpm e2e                               # Playwright, full stack (start dev compose first)
+pnpm api:types                         # after backend API changes (see below)
+```
+
+### API contract
+
+After changing backend routes or schemas, regenerate the frontend types (CI checks drift):
+
+```bash
+cd backend && uv run python -m serptank.openapi_export > ../frontend/src/lib/api/openapi.json
+cd ../frontend && pnpm api:types
 ```
 
 ### Local infrastructure
