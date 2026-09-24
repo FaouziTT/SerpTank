@@ -109,6 +109,26 @@ class Settings(BaseSettings):
     smtp_password: SecretStr = SecretStr("")
     smtp_starttls: bool = False
     max_request_body_bytes: int = 1_048_576
+
+    # --- Jobs, crawler and renderer (Module 6) --------------------------------------
+    # "inprocess" runs jobs as asyncio tasks inside the API (development and tests);
+    # "celery" hands them to the worker fleet (required in staging/production).
+    jobs_backend: str = "inprocess"
+    celery_broker_url: SecretStr = SecretStr("")  # defaults to redis_url when empty
+    # BYPASSRLS login used only by the scheduler to find due work across tenants.
+    scheduler_database_url: SecretStr = SecretStr("")
+    crawler_user_agent: str = "SerpTankBot/1.0 (+https://serptank.com/bot)"
+    crawl_max_pages_per_crawl: int = 10_000
+    crawl_max_pages_unverified: int = 100  # shallow crawl until domain ownership is proven
+    crawl_max_depth: int = 10
+    crawl_min_delay_s: float = 1.0  # politeness floor between requests to one host
+    crawl_concurrency: int = 2
+    crawl_mobile_sample: int = 10  # pages re-fetched with a mobile UA for parity checks
+    # Isolated Playwright renderer (internal service). Unset = no JS rendering checks.
+    renderer_url: str = ""
+    renderer_token: SecretStr = SecretStr("")
+    render_sample: int = 10
+    renderer_chromium_path: str = ""  # only when the browser build differs from Playwright's
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"
@@ -129,6 +149,10 @@ class Settings(BaseSettings):
         if self.docs_enabled is not None:
             return self.docs_enabled
         return not self.is_production_like
+
+    @property
+    def broker_url(self) -> str:
+        return self.celery_broker_url.get_secret_value() or self.redis_url.get_secret_value()
 
     @property
     def google_sign_in_enabled(self) -> bool:
@@ -164,6 +188,10 @@ class Settings(BaseSettings):
             problems.append("public_origin must be https in staging/production")
         if "*" in self.allowed_hosts:
             problems.append("allowed_hosts must not contain '*'")
+        if self.jobs_backend != "celery":
+            problems.append("jobs_backend must be 'celery' in staging/production")
+        if self.renderer_url and len(self.renderer_token.get_secret_value()) < _MIN_SECRET_BYTES:
+            problems.append("renderer_token must be >= 32 bytes when renderer_url is set")
         if self.email_backend != "smtp":
             problems.append("email_backend must be 'smtp' in staging/production")
         if problems:

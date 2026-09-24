@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { ErrorState } from "@/components/ui/error-state";
 import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {
@@ -288,6 +290,50 @@ function RenameForm({ project }: { project: Project }) {
   );
 }
 
+function ScheduleForm({ project }: { project: Project }) {
+  const org = useOrg();
+  const queryClient = useQueryClient();
+  const [error, setError] = useState<string | null>(null);
+
+  async function change(value: string) {
+    setError(null);
+    try {
+      await projectsApi.update(org.id, project.id, {
+        crawl_schedule: value as "off" | "weekly" | "monthly",
+      });
+      await queryClient.invalidateQueries({ queryKey: keys.projects(org.id) });
+    } catch (err) {
+      setError(errorText(err, "Could not change the schedule."));
+    }
+  }
+
+  return (
+    <div className="max-w-md">
+      <Field
+        id="crawl-schedule"
+        label="Automatic audits"
+        error={error ?? undefined}
+        hint={
+          project.verified
+            ? "Re-crawl and re-audit the site on a schedule."
+            : "Verify the domain to schedule audits."
+        }
+      >
+        <NativeSelect
+          id="crawl-schedule"
+          value={project.crawl_schedule}
+          disabled={!project.verified}
+          onChange={(e) => void change(e.target.value)}
+        >
+          <option value="off">Off</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </NativeSelect>
+      </Field>
+    </div>
+  );
+}
+
 export function ProjectDetail({ projectId }: { projectId: string }) {
   const org = useOrg();
   const router = useRouter();
@@ -333,6 +379,19 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
         <p className="text-muted-foreground text-sm">{p.primary_domain}</p>
       </div>
       <FormAlert message={error} />
+      <Card>
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <CardTitle>Technical SEO audit</CardTitle>
+            <CardDescription>
+              Crawl the site and check indexability, structure, content and page experience.
+            </CardDescription>
+          </div>
+          <Button asChild>
+            <Link href={`/orgs/${org.id}/projects/${p.id}/audit`}>Open audit</Link>
+          </Button>
+        </CardHeader>
+      </Card>
       <VerificationCard project={p} canWrite={canWrite} />
 
       <Card>
@@ -369,6 +428,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
           </CardHeader>
           <CardContent className="space-y-6">
             <RenameForm key={p.name} project={p} />
+            <ScheduleForm key={`${p.crawl_schedule}-${p.verified}`} project={p} />
             <Confirm
               trigger={<Button variant="destructive">Delete project</Button>}
               title={`Delete ${p.name}?`}

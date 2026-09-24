@@ -44,6 +44,7 @@ jobs:
     env:
       SERPTANK_TEST_DATABASE_URL: postgresql://serptank:ci-only-password@localhost:5432/serptank_test
       SERPTANK_TEST_REDIS_URL: redis://localhost:6379/0
+      SERPTANK_TEST_RENDERER: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -53,8 +54,10 @@ jobs:
           version: "0.8.17"
           python-version: "3.13"
           enable-cache: true
-      - name: Install (locked)
-        run: uv sync --locked
+      - name: Install (locked, incl. renderer extra)
+        run: uv sync --locked --all-extras
+      - name: Install Chromium for renderer tests
+        run: uv run playwright install --with-deps chromium
       - name: Ruff lint
         run: uv run ruff check --output-format=github .
       - name: Ruff format
@@ -68,7 +71,7 @@ jobs:
       - name: Tests with coverage
         run: uv run pytest --cov --cov-report=term --cov-fail-under=80
       - name: Dependency audit (pip-audit)
-        run: uv export --locked --no-dev --no-emit-project --format requirements-txt > /tmp/req.txt && uv run pip-audit --strict -r /tmp/req.txt --progress-spinner off
+        run: uv export --locked --no-dev --all-extras --no-emit-project --format requirements-txt > /tmp/req.txt && uv run pip-audit --strict -r /tmp/req.txt --progress-spinner off
 
   backend-image:
     name: Backend image (build, smoke, Trivy)
@@ -97,6 +100,38 @@ jobs:
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: serptank-api:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+
+  renderer-image:
+    name: Renderer image (build, non-root, Trivy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    needs: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: backend
+          file: backend/Dockerfile.renderer
+          load: true
+          push: false
+          tags: serptank-renderer:ci
+      - name: Smoke test (non-root, healthz, refuses unauthenticated renders)
+        run: |
+          test "$(docker run --rm --entrypoint id serptank-renderer:ci -u)" = "10002"
+          docker run -d --name renderer -e SERPTANK_RENDERER_TOKEN=ci-token-ci-token-ci-token-ci-token -p 127.0.0.1:18100:8100 serptank-renderer:ci
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:18100/healthz && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:18100/render -d '{}')" = "401"
+          docker rm -f renderer
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: serptank-renderer:ci
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           exit-code: "1"

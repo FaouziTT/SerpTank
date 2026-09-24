@@ -74,6 +74,7 @@ async def _out(db: AsyncSession, project: Project) -> ProjectOut:
         primary_domain=project.primary_domain,
         verified=project.domain_verified_at is not None,
         verification_method=project.verification_method,
+        crawl_schedule=project.crawl_schedule,
         created_at=project.created_at,
         markets=[MarketOut.model_validate(m) for m in await _markets(db, project.id)],
     )
@@ -144,7 +145,13 @@ async def update_project(
     project_id: uuid.UUID, body: ProjectUpdate, ctx: ProjectWrite, db: DbSession
 ) -> ProjectOut:
     project = await ProjectRepository(db, ctx.organization_id).get(project_id)
-    project.name = body.name
+    if body.name is not None:
+        project.name = body.name
+    if body.crawl_schedule is not None:
+        if body.crawl_schedule != "off" and project.domain_verified_at is None:
+            # Scheduled (unattended) crawls require proven ownership (plan §5.5).
+            raise ConflictError("Verify domain ownership before scheduling audits.")
+        project.crawl_schedule = body.crawl_schedule
     await db.commit()
     return await _out(db, project)
 

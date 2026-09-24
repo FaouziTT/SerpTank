@@ -93,6 +93,8 @@ class EgressPolicy:
     connect_timeout_s: float = 5.0
     read_timeout_s: float = 15.0
     allowed_content_types: frozenset[str] | None = None  # e.g. {"text/html"}; None = any
+    # False returns 3xx responses as-is (the crawler records every hop itself).
+    follow_redirects: bool = True
 
 
 @dataclass
@@ -324,7 +326,11 @@ class SafeHttpClient:
                 msg = f"request to {target.host} failed: {type(exc).__name__}"
                 raise UpstreamError(msg) from exc
             try:
-                if response.status_code in _REDIRECT_STATUSES and "location" in response.headers:
+                if (
+                    policy.follow_redirects
+                    and response.status_code in _REDIRECT_STATUSES
+                    and "location" in response.headers
+                ):
                     next_url = str(target.url.join(response.headers["location"]))
                     chain.append(str(target.url))
                     if httpx.URL(next_url).netloc != target.url.netloc:

@@ -38,6 +38,7 @@ from serptank.core.middleware import (
 )
 from serptank.core.ratelimit import RateLimiter
 from serptank.core.redis import create_redis
+from serptank.modules.crawler import router as crawler_router
 from serptank.modules.identity import router as identity_router
 from serptank.modules.identity.brute_force import (
     CaptchaVerifier,
@@ -56,8 +57,12 @@ from serptank.modules.identity.passwords import (
     PasswordHasher,
 )
 from serptank.modules.identity.sessions import SessionStore
+from serptank.modules.jobs import router as jobs_router
+from serptank.modules.jobs.service import CeleryDispatcher, InProcessDispatcher, JobDispatcher
 from serptank.modules.projects import router as projects_router
 from serptank.modules.tenancy import router as tenancy_router
+from serptank.workers.celery_config import make_celery
+from serptank.workers.runtime import build_runtime, close_runtime
 
 API_PREFIX = "/api/v1"
 logger = structlog.get_logger(__name__)
@@ -125,11 +130,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.identity = build_identity(
             settings, app.state.redis, app.state.rate_limiter, **overrides
         )
+        app.state.job_runtime = build_runtime(
+            settings, app.state.session_factory, **getattr(app.state, "jobs_overrides", {})
+        )
+        dispatcher: JobDispatcher
+        if settings.jobs_backend == "celery":
+            dispatcher = CeleryDispatcher(make_celery(settings).send_task)
+        else:
+            dispatcher = InProcessDispatcher(app.state.job_runtime)
+        app.state.job_dispatcher = dispatcher
         if settings.metrics_port:
             start_metrics_server(settings.metrics_port, settings.metrics_bind_address)
         try:
             yield
         finally:
+            if isinstance(dispatcher, InProcessDispatcher):
+                for task in list(dispatcher.tasks):
+                    task.cancel()
+                await dispatcher.drain()
+            await close_runtime(app.state.job_runtime)
             await app.state.identity.http.aclose()
             await app.state.redis.aclose()
             await app.state.engine.dispose()
@@ -149,6 +168,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(identity_router.org_router, prefix=API_PREFIX)
     app.include_router(tenancy_router.router, prefix=API_PREFIX)
     app.include_router(projects_router.router, prefix=API_PREFIX)
+    app.include_router(crawler_router.router, prefix=API_PREFIX)
+    app.include_router(jobs_router.router, prefix=API_PREFIX)
 
     # Middleware: the LAST added runs FIRST (outermost). Listed innermost -> outermost.
     session_detector, token_verifier = build_csrf_hooks(settings)

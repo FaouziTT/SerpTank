@@ -492,7 +492,7 @@ We keep Celery 5.5 (mature, already wired) with a Redis broker on its own ACL us
 | M3 ✅ | Identity and access (sessions, passwords, MFA/passkeys, Google OIDC, RBAC, API keys, audit) | L | M2 |
 | M4 ✅ | Frontend foundation (rebuild `lib/`, generated client, auth UX, Next 16/Tailwind 4, engine switcher) | L | M3 |
 | M5 ✅ | Orgs, projects, target markets, members, invitations (API + UI) | M | M4 |
-| M6 | Jobs, crawler, and technical SEO audit (Google Search Essentials + engine deltas, Web Vitals) | L | M5 |
+| M6 ✅ | Jobs, crawler, and technical SEO audit (Google Search Essentials + engine deltas, Web Vitals) | L | M5 |
 | M7 | Integrations and indexing: GSC (+URL Inspection, sitemaps, Gen-AI import), GA4, PSI/CrUX, Bing Webmaster Tools (+keyword API), Google Ads Keyword Planner, IndexNow | L | M5 |
 | M8 | **SerpTank search data engine**: own parsers, collector router, SERP cache, own metrics, keyword research, hybrid engine-aware rank tracking (Google first; Bing family and regional as add-ons) | L | M7 |
 | M9 | On-page optimization and SERP-based content briefs (Google-first) | M | M6, M8 |

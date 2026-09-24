@@ -22,6 +22,7 @@ from serptank.core.models import MemberRole
 from serptank.main import create_app
 from serptank.modules.identity.passwords import NoBreachChecker
 from serptank.modules.tenancy.models import Membership, Organization
+from serptank.workers.runtime import default_http_factory
 from tests.conftest import DatabaseUrls, _service_url
 
 ORIGIN = "http://localhost:3000"
@@ -78,6 +79,8 @@ def api_settings(test_database: DatabaseUrls) -> Settings:
         webauthn_rp_id="localhost",
         encryption_keys=SecretStr(f"k1:{Keyring.generate_key()}"),
         encryption_active_key_id="k1",
+        crawl_min_delay_s=0.0,
+        crawl_mobile_sample=3,
     )
 
 
@@ -90,6 +93,10 @@ async def api_app(
         "email": outbox,
         "breach_checker": NoBreachChecker(),
         "http": SafeHttpClient(resolver=_public_resolver, transport=httpx.MockTransport(internet)),
+    }
+    # Crawls fetch through the same fake internet (never the real network in tests).
+    app.state.jobs_overrides = {
+        "http_factory": default_http_factory(_public_resolver, httpx.MockTransport(internet)),
     }
     async with LifespanManager(app):
         await app.state.redis.flushdb()

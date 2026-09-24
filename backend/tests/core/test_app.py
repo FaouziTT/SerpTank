@@ -151,6 +151,7 @@ async def test_docs_disabled_in_production() -> None:
         encryption_keys=SecretStr(f"k1:{Keyring.generate_key()}"),
         encryption_active_key_id="k1",
         email_backend="smtp",
+        jobs_backend="celery",
     )
     app = create_app(settings)
     transport = httpx.ASGITransport(app=app)

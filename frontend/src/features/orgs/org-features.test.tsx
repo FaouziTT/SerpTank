@@ -50,6 +50,7 @@ const PROJECT: Project = {
   primary_domain: "example.com",
   verified: false,
   verification_method: null,
+  crawl_schedule: "off",
   created_at: "2026-09-02T00:00:00Z",
   markets: [
     {

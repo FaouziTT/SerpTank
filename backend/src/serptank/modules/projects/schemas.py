@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -45,7 +46,8 @@ class ProjectCreate(StrictModel):
 
 
 class ProjectUpdate(StrictModel):
-    name: str = Field(min_length=1, max_length=120)
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    crawl_schedule: Literal["off", "weekly", "monthly"] | None = None
 
 
 class ProjectOut(BaseModel):
@@ -54,6 +56,7 @@ class ProjectOut(BaseModel):
     primary_domain: str
     verified: bool
     verification_method: str | None
+    crawl_schedule: str
     created_at: datetime
     markets: list[MarketOut]
 

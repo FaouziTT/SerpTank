@@ -664,6 +664,74 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/jobs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Jobs */
+    get: operations["list_jobs_api_v1_orgs__org_id__jobs_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/jobs/{job_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Job */
+    get: operations["get_job_api_v1_orgs__org_id__jobs__job_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/jobs/{job_id}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cancel Job */
+    post: operations["cancel_job_api_v1_orgs__org_id__jobs__job_id__cancel_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/jobs/{job_id}/events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Job Events */
+    get: operations["job_events_api_v1_orgs__org_id__jobs__job_id__events_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/members": {
     parameters: {
       query?: never;
@@ -734,6 +802,113 @@ export interface paths {
     head?: never;
     /** Update Project */
     patch: operations["update_project_api_v1_orgs__org_id__projects__project_id__patch"];
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/crawls": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Crawls */
+    get: operations["list_crawls_api_v1_orgs__org_id__projects__project_id__crawls_get"];
+    put?: never;
+    /** Start Crawl */
+    post: operations["start_crawl_api_v1_orgs__org_id__projects__project_id__crawls_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/crawls/usage": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Crawl Usage */
+    get: operations["crawl_usage_api_v1_orgs__org_id__projects__project_id__crawls_usage_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/crawls/{crawl_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Crawl */
+    get: operations["get_crawl_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/crawls/{crawl_id}/issues": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Issues
+     * @description Issues grouped by rule, highest priority first. ``engine`` selects the lens:
+     *     baseline rules always apply; engine-specific deltas only for that engine.
+     */
+    get: operations["list_issues_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__issues_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/crawls/{crawl_id}/issues/{rule_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Issue Detail */
+    get: operations["issue_detail_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__issues__rule_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/crawls/{crawl_id}/pages": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Pages */
+    get: operations["list_pages_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__pages_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   "/api/v1/orgs/{org_id}/projects/{project_id}/markets": {
@@ -966,6 +1141,68 @@ export interface components {
       /** Code */
       code: string;
     };
+    /** CrawlOut */
+    CrawlOut: {
+      /** Budget Exhausted */
+      budget_exhausted: boolean;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Domain Verified */
+      domain_verified: boolean;
+      /** Engines */
+      engines: string[];
+      /** Finished At */
+      finished_at: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Issue Counts */
+      issue_counts: {
+        [key: string]: unknown;
+      };
+      /** Job Id */
+      job_id: string | null;
+      /** Max Pages */
+      max_pages: number;
+      /** Pages Discovered */
+      pages_discovered: number;
+      /** Pages Fetched */
+      pages_fetched: number;
+      /** Render Available */
+      render_available: boolean;
+      /** Score */
+      score: number | null;
+      /** Start Url */
+      start_url: string;
+      status: components["schemas"]["CrawlStatus"];
+    };
+    /** CrawlStarted */
+    CrawlStarted: {
+      job: components["schemas"]["JobOut"];
+      /** Pages Budget */
+      pages_budget: number;
+    };
+    /**
+     * CrawlStatus
+     * @enum {string}
+     */
+    CrawlStatus: "running" | "completed" | "failed" | "cancelled";
+    /** CrawlUsage */
+    CrawlUsage: {
+      /** Domain Verified */
+      domain_verified: boolean;
+      /** Max Pages Next Crawl */
+      max_pages_next_crawl: number;
+      /** Pages Per Month */
+      pages_per_month: number;
+      /** Pages Used This Month */
+      pages_used_this_month: number;
+    };
     /** CsrfResponse */
     CsrfResponse: {
       /** Csrf Token */
@@ -1060,6 +1297,97 @@ export interface components {
       revoked_at: string | null;
       role: components["schemas"]["MemberRole"];
     };
+    /** IssueOccurrence */
+    IssueOccurrence: {
+      /** Details */
+      details: {
+        [key: string]: unknown;
+      };
+      /** Url */
+      url: string | null;
+    };
+    /** IssuePage */
+    IssuePage: {
+      /** Items */
+      items: components["schemas"]["IssueOccurrence"][];
+      /** Rule Id */
+      rule_id: string;
+      /** Total */
+      total: number;
+    };
+    /** IssueSummary */
+    IssueSummary: {
+      /** Affected */
+      affected: number;
+      /** Category */
+      category: string;
+      /** Category Label */
+      category_label: string;
+      /** Description */
+      description: string;
+      /** Effort */
+      effort: number;
+      /** Examples */
+      examples: string[];
+      /** Fix */
+      fix: string;
+      /** Priority */
+      priority: number;
+      /** Reference */
+      reference: string | null;
+      /** Rule Id */
+      rule_id: string;
+      /** Scope */
+      scope: string;
+      severity: components["schemas"]["Severity"];
+      /** Title */
+      title: string;
+    };
+    /** JobOut */
+    JobOut: {
+      /** Cancel Requested */
+      cancel_requested: boolean;
+      /** Counters */
+      counters: {
+        [key: string]: unknown;
+      };
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Error Code */
+      error_code: string | null;
+      /** Error Message */
+      error_message: string | null;
+      /** Finished At */
+      finished_at: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Kind */
+      kind: string;
+      /** Progress */
+      progress: number;
+      /** Project Id */
+      project_id: string | null;
+      /** Result */
+      result: {
+        [key: string]: unknown;
+      };
+      /** Stage */
+      stage: string | null;
+      /** Started At */
+      started_at: string | null;
+      status: components["schemas"]["JobStatus"];
+    };
+    /**
+     * JobStatus
+     * @enum {string}
+     */
+    JobStatus: "queued" | "running" | "succeeded" | "failed" | "cancelled";
     /** LoginRequest */
     LoginRequest: {
       /** Captcha Token */
@@ -1248,6 +1576,49 @@ export interface components {
       /** Slug */
       slug: string;
     };
+    /** PageList */
+    PageList: {
+      /** Items */
+      items: components["schemas"]["PageOut"][];
+      /** Total */
+      total: number;
+    };
+    /** PageOut */
+    PageOut: {
+      /** Canonical */
+      canonical: string | null;
+      /** Content Type */
+      content_type: string | null;
+      /** Depth */
+      depth: number | null;
+      /** Error */
+      error: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** In Sitemap */
+      in_sitemap: boolean;
+      /** Indexable Bing */
+      indexable_bing: boolean;
+      /** Indexable Google */
+      indexable_google: boolean;
+      /** Inlinks */
+      inlinks: number;
+      /** Redirect To */
+      redirect_to: string | null;
+      /** Response Ms */
+      response_ms: number | null;
+      /** Status Code */
+      status_code: number | null;
+      /** Title */
+      title: string | null;
+      /** Url */
+      url: string;
+      /** Word Count */
+      word_count: number | null;
+    };
     /** PasskeyLoginRequest */
     PasskeyLoginRequest: {
       /** Credential */
@@ -1302,6 +1673,8 @@ export interface components {
     };
     /** ProjectOut */
     ProjectOut: {
+      /** Crawl Schedule */
+      crawl_schedule: string;
       /**
        * Created At
        * Format: date-time
@@ -1325,8 +1698,10 @@ export interface components {
     };
     /** ProjectUpdate */
     ProjectUpdate: {
+      /** Crawl Schedule */
+      crawl_schedule?: ("off" | "weekly" | "monthly") | null;
       /** Name */
-      name: string;
+      name?: string | null;
     };
     /** ReadinessResponse */
     ReadinessResponse: {
@@ -1406,6 +1781,11 @@ export interface components {
       reauth_valid_until: string | null;
       user: components["schemas"]["UserOut"];
     };
+    /**
+     * Severity
+     * @enum {string}
+     */
+    Severity: "critical" | "high" | "medium" | "low" | "info";
     /** TokenRequest */
     TokenRequest: {
       /** Token */
@@ -2704,6 +3084,137 @@ export interface operations {
       };
     };
   };
+  list_jobs_api_v1_orgs__org_id__jobs_get: {
+    parameters: {
+      query?: {
+        project_id?: string | null;
+        kind?: string | null;
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_job_api_v1_orgs__org_id__jobs__job_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        job_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cancel_job_api_v1_orgs__org_id__jobs__job_id__cancel_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        job_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  job_events_api_v1_orgs__org_id__jobs__job_id__events_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        job_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/event-stream": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_members_api_v1_orgs__org_id__members_get: {
     parameters: {
       query?: never;
@@ -2950,6 +3461,247 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["ProjectOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_crawls_api_v1_orgs__org_id__projects__project_id__crawls_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CrawlOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_crawl_api_v1_orgs__org_id__projects__project_id__crawls_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CrawlStarted"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  crawl_usage_api_v1_orgs__org_id__projects__project_id__crawls_usage_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CrawlUsage"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_crawl_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        crawl_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CrawlOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_issues_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__issues_get: {
+    parameters: {
+      query?: {
+        engine?: string;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        crawl_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IssueSummary"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  issue_detail_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__issues__rule_id__get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        crawl_id: string;
+        rule_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IssuePage"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_pages_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__pages_get: {
+    parameters: {
+      query?: {
+        kind?: "all" | "html" | "indexable" | "non_indexable" | "redirects" | "errors" | "blocked";
+        q?: string | null;
+        limit?: number;
+        offset?: number;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        crawl_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PageList"];
         };
       };
       /** @description Validation Error */

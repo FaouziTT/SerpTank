@@ -29,6 +29,20 @@ test("create an org and project, verify instructions, invite an editor", async (
   await expect(page.getByRole("heading", { name: "Main site" })).toBeVisible();
   await expect(page.getByText("www.e2e-serptank-example.com").first()).toBeVisible();
 
+  // Technical audit: the e2e domain doesn't exist, so the crawl must fail honestly
+  // (robots.txt unreachable) and the failure arrives over the SSE progress stream.
+  const projectUrl = page.url();
+  await page.getByRole("link", { name: "Open audit" }).click();
+  await expect(page.getByRole("heading", { name: "Technical audit" })).toBeVisible();
+  await expect(page.getByText("No audit yet")).toBeVisible();
+  await page.getByRole("button", { name: "Run audit" }).click();
+  await expect(
+    page.getByText(/The last audit failed: Your robots.txt could not be fetched/),
+  ).toBeVisible({
+    timeout: 30_000,
+  });
+  await page.goto(projectUrl);
+
   // Domain verification instructions (the check itself needs real DNS).
   await page.getByRole("button", { name: "Use a DNS TXT record" }).click();
   await expect(page.getByText(/serptank-site-verification=/)).toBeVisible();

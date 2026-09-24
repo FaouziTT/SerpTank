@@ -1,0 +1,39 @@
+# syntax=docker/dockerfile:1.7
+# -----------------------------------------------------------------------------
+# SerpTank renderer: headless Chromium (Playwright) behind a tiny internal API.
+# Isolation (plan §4.1): its own container on its own network with no route to
+# Postgres/Redis; every page request is fetched through SafeHttpClient inside the
+# process, and Chromium itself gets a black-hole proxy. Runs as a non-root user.
+# Base images should be pinned by digest; Renovate keeps the digests current.
+# -----------------------------------------------------------------------------
+FROM python:3.13-slim-bookworm
+
+RUN pip install --no-cache-dir uv==0.8.17 \
+    && groupadd --system --gid 10002 renderer \
+    && useradd --system --uid 10002 --gid renderer --create-home renderer
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright \
+    PATH="/app/.venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+COPY pyproject.toml uv.lock README.md ./
+RUN uv sync --locked --no-dev --extra renderer --no-install-project
+COPY src ./src
+RUN uv sync --locked --no-dev --extra renderer --no-editable \
+    && rm -rf /app/src
+# Chromium and its system libraries, version-matched to the locked Playwright
+# (apt over HTTPS).
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && playwright install --with-deps --only-shell chromium \
+    && rm -rf /var/lib/apt/lists/* /root/.cache
+
+USER renderer:renderer
+EXPOSE 8100
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8100/healthz', timeout=3)"]
+CMD ["uvicorn", "--factory", "serptank.renderer.app:create_app", "--host", "0.0.0.0", "--port", "8100", \
+     "--no-server-header", "--no-date-header"]

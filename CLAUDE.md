@@ -27,14 +27,24 @@ SerpTank is a multi-tenant SEO SaaS with two tracks:
 ### Backend (`cd backend`, Python 3.13, uv)
 
 ```bash
-uv sync --locked                       # install exactly what uv.lock pins
+uv sync --locked --all-extras          # install exactly what uv.lock pins (+ renderer extra)
 uv run pytest                          # tests (with coverage: --cov)
 uv run ruff check . && uv run ruff format --check .
 uv run mypy                            # strict
 uv run lint-imports                    # module-boundary contracts
 uv run bandit -q -r src
-uv export --locked --no-dev --no-emit-project --format requirements-txt > /tmp/r.txt && uv run pip-audit -r /tmp/r.txt
+uv export --locked --no-dev --all-extras --no-emit-project --format requirements-txt > /tmp/r.txt && uv run pip-audit -r /tmp/r.txt
 ```
+
+Background jobs run in-process in development (`SERPTANK_JOBS_BACKEND=inprocess`, the default). Production uses Celery workers and beat (same image as the API):
+
+```bash
+uv run celery -A serptank.workers.app worker -Q default,crawl -c 2
+uv run celery -A serptank.workers.app beat
+uv run uvicorn --factory serptank.renderer.app:create_app --port 8100   # isolated JS renderer
+```
+
+The renderer is optional (`SERPTANK_RENDERER_URL` + `SERPTANK_RENDERER_TOKEN`). Without it, audits skip the JavaScript-rendering checks and say so in the UI. Renderer tests need Chromium: `uv run playwright install chromium` and `SERPTANK_TEST_RENDERER=1`.
 
 To add a dependency, run `uv add <pkg>` (or `uv add --group dev <pkg>`) and commit `uv.lock`. Every runtime dependency needs a reason; see plan §7.
 

@@ -86,10 +86,12 @@ export const projectsApi = {
   create: (orgId: string, body: S["ProjectCreate"]) =>
     unwrap(api.POST("/api/v1/orgs/{org_id}/projects", { ...org(orgId), body })),
   rename: (orgId: string, projectId: string, name: string) =>
+    projectsApi.update(orgId, projectId, { name }),
+  update: (orgId: string, projectId: string, body: S["ProjectUpdate"]) =>
     unwrap(
       api.PATCH("/api/v1/orgs/{org_id}/projects/{project_id}", {
         ...project(orgId, projectId),
-        body: { name },
+        body,
       }),
     ),
   remove: (orgId: string, projectId: string) =>

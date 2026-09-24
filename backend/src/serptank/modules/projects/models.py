@@ -28,6 +28,7 @@ device_enum = Enum(Device, name="device", values_callable=pg_enum_values)
 class Project(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
     __tablename__ = "projects"
     __table_args__ = (
+        CheckConstraint("crawl_schedule IN ('off', 'weekly', 'monthly')", name="crawl_schedule"),
         Index(
             "uq_projects_org_domain_active",
             "organization_id",
@@ -45,6 +46,10 @@ class Project(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
     # Published by the customer in DNS or a file, so it is not a secret.
     verification_token: Mapped[str | None] = mapped_column(String(64))
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    # Automatic technical audits: "off", "weekly" or "monthly" (verified domains only).
+    crawl_schedule: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="off", server_default="off"
+    )
 
 
 class ProjectMarket(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
