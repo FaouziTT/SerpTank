@@ -84,6 +84,30 @@ class Settings(BaseSettings):
     encryption_active_key_id: str = ""
 
     docs_enabled: bool | None = None  # default: on in development/test only
+
+    # --- Identity (Module 3) -------------------------------------------------------
+    session_idle_timeout_s: int = 24 * 3600
+    session_absolute_timeout_s: int = 14 * 24 * 3600
+    session_remember_absolute_timeout_s: int = 30 * 24 * 3600
+    reauth_window_s: int = 10 * 60
+    password_min_length: int = 12
+    breached_password_check: bool = True  # HIBP k-anonymity range API
+    # WebAuthn relying party; the RP id must be the registrable domain of public_origin.
+    webauthn_rp_id: str = "localhost"
+    webauthn_rp_name: str = "SerpTank"
+    # Google sign-in (OIDC). Separate OAuth client from the GSC/GA4 data integration (M7).
+    google_client_id: str = ""
+    google_client_secret: SecretStr = SecretStr("")
+    # Cloudflare Turnstile; when unset, repeated failures are throttled instead.
+    turnstile_secret: SecretStr = SecretStr("")
+    # Outbound email. "console" logs a redacted notice (dev); "smtp" sends for real.
+    email_backend: str = "console"
+    email_from: str = "SerpTank <no-reply@serptank.com>"
+    smtp_host: str = "localhost"
+    smtp_port: int = 1025
+    smtp_username: str = ""
+    smtp_password: SecretStr = SecretStr("")
+    smtp_starttls: bool = False
     max_request_body_bytes: int = 1_048_576
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
@@ -105,6 +129,10 @@ class Settings(BaseSettings):
         if self.docs_enabled is not None:
             return self.docs_enabled
         return not self.is_production_like
+
+    @property
+    def google_sign_in_enabled(self) -> bool:
+        return bool(self.google_client_id and self.google_client_secret.get_secret_value())
 
     @property
     def cookie_secure(self) -> bool:
@@ -136,6 +164,8 @@ class Settings(BaseSettings):
             problems.append("public_origin must be https in staging/production")
         if "*" in self.allowed_hosts:
             problems.append("allowed_hosts must not contain '*'")
+        if self.email_backend != "smtp":
+            problems.append("email_backend must be 'smtp' in staging/production")
         if problems:
             raise ValueError("Insecure production configuration: " + "; ".join(problems))
         return self

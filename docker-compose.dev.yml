@@ -66,6 +66,17 @@ services:
     read_only: true
     tmpfs: ["/tmp"]
 
+  mailpit:
+    # Catches all outbound email in development (UI: http://127.0.0.1:8025).
+    # Use SERPTANK_EMAIL_BACKEND=smtp with SMTP host 127.0.0.1:1025.
+    image: axllent/mailpit:v1.27
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+    networks: [backend]
+    security_opt: ["no-new-privileges:true"]
+
 volumes:
   postgres_data:
   redis_data:

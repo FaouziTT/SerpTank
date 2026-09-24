@@ -20,6 +20,7 @@ def _prod(**overrides: object) -> Settings:
         "api_key_pepper": SecretStr("p" * 40),
         "encryption_keys": SecretStr(f"k1:{key}"),
         "encryption_active_key_id": "k1",
+        "email_backend": "smtp",
     }
     values.update(overrides)
     return Settings(**values)  # type: ignore[arg-type]
