@@ -43,6 +43,31 @@ test("create an org and project, verify instructions, invite an editor", async (
   });
   await page.goto(projectUrl);
 
+  // Search data: honest empty states, IndexNow key instructions, CSV import.
+  await page.getByRole("link", { name: "Search data" }).click();
+  await expect(page.getByRole("heading", { name: "Search data" })).toBeVisible();
+  await expect(page.getByText("No data yet")).toBeVisible();
+  await page.getByRole("button", { name: "Create IndexNow key" }).click();
+  await expect(page.getByText("Key file not found yet")).toBeVisible();
+  await page.getByLabel("CSV file").setInputFiles({
+    name: "genai.csv",
+    mimeType: "text/csv",
+    buffer: Buffer.from(
+      "Date,Top pages,Impressions,Clicks\n2026-09-01,https://x/a,120,3\n2026-09-02,https://x/a,80,1\n",
+    ),
+  });
+  await page.getByRole("button", { name: "Import CSV" }).click();
+  await expect(page.getByText(/Imported 2 rows/)).toBeVisible();
+  await expect(page.getByText("200", { exact: true })).toBeVisible(); // AI Overviews impressions
+  await page
+    .getByRole("navigation", { name: "Organization" })
+    .getByRole("link", { name: "Integrations" })
+    .click();
+  await expect(
+    page.getByText(/Google integrations aren.t configured on this server yet/),
+  ).toBeVisible();
+  await page.goto(projectUrl);
+
   // Domain verification instructions (the check itself needs real DNS).
   await page.getByRole("button", { name: "Use a DNS TXT record" }).click();
   await expect(page.getByText(/serptank-site-verification=/)).toBeVisible();

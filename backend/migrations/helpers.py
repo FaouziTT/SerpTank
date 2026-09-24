@@ -83,8 +83,13 @@ def enable_rls_only(table: str) -> None:
 
 
 def create_hypertable(table: str, time_column: str, chunk_interval: str = "7 days") -> None:
-    """Convert ``table`` into a TimescaleDB hypertable (time-series data, plan §4.1)."""
+    """Convert ``table`` into a TimescaleDB hypertable (time-series data, plan §4.1).
+
+    TimescaleDB's default time index is skipped: models declare their own indexes
+    (tenant/project + time), and the ORM metadata stays the single source of truth.
+    """
     op.execute(
         f"SELECT create_hypertable('{table}', by_range('{time_column}', "
-        f"INTERVAL '{chunk_interval}'), if_not_exists => TRUE)"
+        f"INTERVAL '{chunk_interval}'), if_not_exists => TRUE, "
+        f"create_default_indexes => FALSE)"
     )

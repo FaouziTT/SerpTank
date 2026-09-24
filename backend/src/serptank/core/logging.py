@@ -26,6 +26,11 @@ _SENSITIVE_KEY = re.compile(
     re.IGNORECASE,
 )
 _EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+# Secrets passed in URL query strings (e.g. Bing's ?apikey=, Google's ?key=).
+_URL_SECRET = re.compile(
+    r"([?&](?:api[_-]?key|apikey|key|token|access_token|code|client_secret)=)[^&\s\"'#]+",
+    re.IGNORECASE,
+)
 
 
 def _hash_email(match: re.Match[str]) -> str:
@@ -42,7 +47,7 @@ def redact(value: Any, *, key: str | None = None) -> Any:
     if isinstance(value, list | tuple):
         return type(value)(redact(item) for item in value)
     if isinstance(value, str):
-        return _EMAIL.sub(_hash_email, value)
+        return _URL_SECRET.sub(r"\1" + REDACTED, _EMAIL.sub(_hash_email, value))
     return value
 
 

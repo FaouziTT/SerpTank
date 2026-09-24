@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from serptank import job_handlers  # noqa: F401 - registers handlers
 from serptank.core.config import Settings
+from serptank.core.crypto import Keyring, keyring_from_settings
 from serptank.core.http import EgressPolicy, Resolver, SafeHttpClient, system_resolver
 from serptank.modules.crawler.rendering import RendererClient
 from serptank.modules.jobs.service import HttpFactory, JobRuntime
@@ -29,6 +30,7 @@ def build_runtime(
     *,
     http_factory: HttpFactory | None = None,
     renderer: RendererClient | None = None,
+    keyring: Keyring | None = None,
 ) -> JobRuntime:
     extras: dict[str, Any] = {}
     if renderer is not None:
@@ -41,6 +43,7 @@ def build_runtime(
         settings=settings,
         session_factory=session_factory,
         http_factory=http_factory or default_http_factory(),
+        keyring=keyring or keyring_from_settings(settings),
         extras=extras,
     )
 

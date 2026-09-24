@@ -10,7 +10,8 @@ export type Permission =
   | "members:manage"
   | "project:write"
   | "api_keys:manage"
-  | "audit:read";
+  | "audit:read"
+  | "integrations:manage";
 
 const ADMIN: ReadonlySet<Permission> = new Set([
   "org:update",
@@ -18,6 +19,7 @@ const ADMIN: ReadonlySet<Permission> = new Set([
   "project:write",
   "api_keys:manage",
   "audit:read",
+  "integrations:manage",
 ]);
 
 const MATRIX: Record<MemberRole, ReadonlySet<Permission>> = {

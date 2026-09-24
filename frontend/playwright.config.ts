@@ -26,8 +26,9 @@ export default defineConfig({
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: [
     {
+      // Start from clean rate-limit/session state: DB 3 of the dev Redis is e2e-only.
       command:
-        "cd ../backend && uv run uvicorn --factory serptank.main:create_app --port 8000 --no-proxy-headers",
+        "cd ../backend && uv run python -c \"import os, redis; redis.Redis.from_url(os.environ['SERPTANK_REDIS_URL']).flushdb()\" && uv run uvicorn --factory serptank.main:create_app --port 8000 --no-proxy-headers",
       url: "http://127.0.0.1:8000/healthz",
       reuseExistingServer: false,
       timeout: 60_000,

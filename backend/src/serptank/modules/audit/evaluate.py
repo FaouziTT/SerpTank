@@ -102,5 +102,7 @@ SITE_LEVEL_RULES = frozenset(
         "google_ignores_crawl_delay",
         "yandex_directives",
         "baidu_language",
+        "cwv_origin_poor",
+        "cwv_origin_needs_improvement",
     }
 )

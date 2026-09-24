@@ -5,3 +5,4 @@ feature modules.
 """
 
 from serptank.modules.crawler import service as crawler_service  # noqa: F401 - registers "crawl"
+from serptank.modules.integrations import sync as integration_sync  # noqa: F401 - syncs

@@ -80,6 +80,10 @@ def api_settings(test_database: DatabaseUrls) -> Settings:
         encryption_keys=SecretStr(f"k1:{Keyring.generate_key()}"),
         encryption_active_key_id="k1",
         crawl_min_delay_s=0.0,
+        google_data_client_id="data-client.apps.googleusercontent.com",
+        google_data_client_secret=SecretStr("data-secret"),
+        google_api_key=SecretStr("crux-key"),
+        google_ads_developer_token=SecretStr("dev-token"),
         crawl_mobile_sample=3,
     )
 

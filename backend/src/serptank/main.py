@@ -10,7 +10,7 @@ Tests call :func:`create_app` with explicit settings.
 
 from __future__ import annotations
 
-import secrets
+import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
@@ -23,7 +23,7 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from serptank import __version__
 from serptank.api import health
 from serptank.core.config import Settings, get_settings
-from serptank.core.crypto import Keyring
+from serptank.core.crypto import Keyring, keyring_from_settings
 from serptank.core.db import create_engine, create_session_factory
 from serptank.core.email import EmailSender, create_email_sender
 from serptank.core.errors import register_error_handlers
@@ -57,6 +57,8 @@ from serptank.modules.identity.passwords import (
     PasswordHasher,
 )
 from serptank.modules.identity.sessions import SessionStore
+from serptank.modules.integrations import router_org as integrations_org_router
+from serptank.modules.integrations import router_project as integrations_project_router
 from serptank.modules.jobs import router as jobs_router
 from serptank.modules.jobs.service import CeleryDispatcher, InProcessDispatcher, JobDispatcher
 from serptank.modules.projects import router as projects_router
@@ -69,12 +71,7 @@ logger = structlog.get_logger(__name__)
 
 
 def build_keyring(settings: Settings) -> Keyring:
-    keys = settings.parsed_encryption_keys()
-    if keys:
-        return Keyring(keys, settings.encryption_active_key_id)
-    # Only reachable outside staging/production (config validation fails closed there).
-    logger.warning("ephemeral_encryption_key", detail="data encrypted now is lost on restart")
-    return Keyring({"ephemeral": secrets.token_bytes(32)}, "ephemeral")
+    return keyring_from_settings(settings)
 
 
 def build_identity(
@@ -112,6 +109,7 @@ def build_identity(
     )
 
 
+IMPORT_PATH = re.compile(r"^/api/v1/orgs/[^/]+/projects/[^/]+/imports/[a-z_]+$")
 DOCS_PATHS = (f"{API_PREFIX}/docs", f"{API_PREFIX}/openapi.json")
 
 
@@ -131,7 +129,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             settings, app.state.redis, app.state.rate_limiter, **overrides
         )
         app.state.job_runtime = build_runtime(
-            settings, app.state.session_factory, **getattr(app.state, "jobs_overrides", {})
+            settings,
+            app.state.session_factory,
+            keyring=app.state.identity.keyring,
+            **getattr(app.state, "jobs_overrides", {}),
         )
         dispatcher: JobDispatcher
         if settings.jobs_backend == "celery":
@@ -170,6 +171,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(projects_router.router, prefix=API_PREFIX)
     app.include_router(crawler_router.router, prefix=API_PREFIX)
     app.include_router(jobs_router.router, prefix=API_PREFIX)
+    app.include_router(integrations_org_router.router, prefix=API_PREFIX)
+    app.include_router(integrations_org_router.callback_router, prefix=API_PREFIX)
+    app.include_router(integrations_project_router.router, prefix=API_PREFIX)
 
     # Middleware: the LAST added runs FIRST (outermost). Listed innermost -> outermost.
     session_detector, token_verifier = build_csrf_hooks(settings)
@@ -180,7 +184,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         session_detector=session_detector,
         token_verifier=token_verifier,
     )
-    app.add_middleware(BodySizeLimitMiddleware, max_bytes=settings.max_request_body_bytes)
+    app.add_middleware(
+        BodySizeLimitMiddleware,
+        max_bytes=settings.max_request_body_bytes,
+        # CSV exports are larger; the route re-checks the limit while streaming.
+        overrides=((IMPORT_PATH, settings.max_csv_import_bytes),),
+    )
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
     app.add_middleware(
         SecurityHeadersMiddleware,

@@ -28,6 +28,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from serptank.core.config import Settings
+from serptank.core.crypto import Keyring
 from serptank.core.db import bind_identity
 from serptank.core.errors import ConflictError
 from serptank.core.http import EgressPolicy, SafeHttpClient
@@ -60,6 +61,7 @@ class JobRuntime:
     session_factory: async_sessionmaker[AsyncSession]
     # Builds an SSRF-safe client with a given policy and user agent.
     http_factory: HttpFactory
+    keyring: Keyring | None = None  # decrypts integration credentials
     extras: dict[str, Any] = field(default_factory=dict)
 
 

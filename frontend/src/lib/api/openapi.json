@@ -15,6 +15,66 @@
         "title": "AIEngine",
         "type": "string"
       },
+      "AdsAccount": {
+        "additionalProperties": false,
+        "properties": {
+          "customer_id": {
+            "pattern": "^\\d{3}-?\\d{3}-?\\d{4}$",
+            "title": "Customer Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "customer_id"
+        ],
+        "title": "AdsAccount",
+        "type": "object"
+      },
+      "AiSurfaceTotals": {
+        "properties": {
+          "citations": {
+            "title": "Citations",
+            "type": "integer"
+          },
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "date_from": {
+            "format": "date",
+            "title": "Date From",
+            "type": "string"
+          },
+          "date_to": {
+            "format": "date",
+            "title": "Date To",
+            "type": "string"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "surface": {
+            "title": "Surface",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "surface",
+          "impressions",
+          "clicks",
+          "citations",
+          "date_from",
+          "date_to"
+        ],
+        "title": "AiSurfaceTotals",
+        "type": "object"
+      },
       "ApiKeyCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -302,6 +362,35 @@
         "title": "AuditEventOut",
         "type": "object"
       },
+      "AuthorizationUrl": {
+        "properties": {
+          "authorization_url": {
+            "title": "Authorization Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "authorization_url"
+        ],
+        "title": "AuthorizationUrl",
+        "type": "object"
+      },
+      "BingConnect": {
+        "additionalProperties": false,
+        "properties": {
+          "api_key": {
+            "maxLength": 200,
+            "minLength": 16,
+            "title": "Api Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "api_key"
+        ],
+        "title": "BingConnect",
+        "type": "object"
+      },
       "ChangePasswordRequest": {
         "additionalProperties": false,
         "properties": {
@@ -340,6 +429,83 @@
         ],
         "title": "CodeRequest",
         "type": "object"
+      },
+      "ConnectionOut": {
+        "properties": {
+          "account_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Label"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "last_error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Error Code"
+          },
+          "provider": {
+            "$ref": "#/components/schemas/Provider"
+          },
+          "scopes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Scopes",
+            "type": "array"
+          },
+          "settings": {
+            "additionalProperties": true,
+            "title": "Settings",
+            "type": "object"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ConnectionStatus"
+          }
+        },
+        "required": [
+          "provider",
+          "status",
+          "account_label",
+          "scopes",
+          "features",
+          "last_error_code",
+          "created_at",
+          "settings"
+        ],
+        "title": "ConnectionOut",
+        "type": "object"
+      },
+      "ConnectionStatus": {
+        "enum": [
+          "active",
+          "error",
+          "reauth_required"
+        ],
+        "title": "ConnectionStatus",
+        "type": "string"
       },
       "CrawlOut": {
         "properties": {
@@ -612,6 +778,55 @@
         "title": "EntitlementsOut",
         "type": "object"
       },
+      "GoogleProperties": {
+        "properties": {
+          "ga4_properties": {
+            "items": {
+              "$ref": "#/components/schemas/PropertyOption"
+            },
+            "title": "Ga4 Properties",
+            "type": "array"
+          },
+          "gsc_sites": {
+            "items": {
+              "$ref": "#/components/schemas/PropertyOption"
+            },
+            "title": "Gsc Sites",
+            "type": "array"
+          }
+        },
+        "required": [
+          "gsc_sites",
+          "ga4_properties"
+        ],
+        "title": "GoogleProperties",
+        "type": "object"
+      },
+      "GoogleStart": {
+        "additionalProperties": false,
+        "properties": {
+          "features": {
+            "items": {
+              "enum": [
+                "gsc",
+                "gsc_write",
+                "ga4",
+                "ads"
+              ],
+              "type": "string"
+            },
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Features",
+            "type": "array"
+          }
+        },
+        "required": [
+          "features"
+        ],
+        "title": "GoogleStart",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -641,6 +856,243 @@
           "version"
         ],
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "ImportOut": {
+        "properties": {
+          "bad_rows": {
+            "title": "Bad Rows",
+            "type": "integer"
+          },
+          "columns": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Columns",
+            "type": "object"
+          },
+          "date_from": {
+            "format": "date",
+            "title": "Date From",
+            "type": "string"
+          },
+          "date_to": {
+            "format": "date",
+            "title": "Date To",
+            "type": "string"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "missing_metrics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Metrics",
+            "type": "array"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "rows",
+          "bad_rows",
+          "errors",
+          "date_from",
+          "date_to",
+          "columns",
+          "missing_metrics"
+        ],
+        "title": "ImportOut",
+        "type": "object"
+      },
+      "IndexNowSettings": {
+        "additionalProperties": false,
+        "properties": {
+          "auto_submit": {
+            "title": "Auto Submit",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "auto_submit"
+        ],
+        "title": "IndexNowSettings",
+        "type": "object"
+      },
+      "InspectRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "maxLength": 2048,
+            "minLength": 8,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "InspectRequest",
+        "type": "object"
+      },
+      "InspectionOut": {
+        "properties": {
+          "coverage_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage State"
+          },
+          "google_canonical": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Google Canonical"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "indexing_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indexing State"
+          },
+          "inspected_at": {
+            "format": "date-time",
+            "title": "Inspected At",
+            "type": "string"
+          },
+          "last_crawl_time": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Crawl Time"
+          },
+          "page_fetch_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Fetch State"
+          },
+          "robots_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Robots State"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          },
+          "user_canonical": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Canonical"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "inspected_at",
+          "verdict",
+          "coverage_state",
+          "indexing_state",
+          "robots_state",
+          "page_fetch_state",
+          "last_crawl_time",
+          "google_canonical",
+          "user_canonical"
+        ],
+        "title": "InspectionOut",
+        "type": "object"
+      },
+      "IntegrationsOverview": {
+        "properties": {
+          "connections": {
+            "items": {
+              "$ref": "#/components/schemas/ConnectionOut"
+            },
+            "title": "Connections",
+            "type": "array"
+          },
+          "google_available": {
+            "title": "Google Available",
+            "type": "boolean"
+          },
+          "keyword_planner_available": {
+            "title": "Keyword Planner Available",
+            "type": "boolean"
+          },
+          "vitals_available": {
+            "title": "Vitals Available",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "connections",
+          "google_available",
+          "vitals_available",
+          "keyword_planner_available"
+        ],
+        "title": "IntegrationsOverview",
         "type": "object"
       },
       "InvitationAccept": {
@@ -1300,6 +1752,53 @@
         "title": "MembershipOut",
         "type": "object"
       },
+      "MetricRow": {
+        "properties": {
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "ctr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ctr"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          }
+        },
+        "required": [
+          "key",
+          "clicks",
+          "impressions",
+          "ctr",
+          "position"
+        ],
+        "title": "MetricRow",
+        "type": "object"
+      },
       "MfaVerifyRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1714,6 +2213,91 @@
         "title": "PasskeyRegisterRequest",
         "type": "object"
       },
+      "PerformanceOut": {
+        "properties": {
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "ctr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ctr"
+          },
+          "date_from": {
+            "format": "date",
+            "title": "Date From",
+            "type": "string"
+          },
+          "date_to": {
+            "format": "date",
+            "title": "Date To",
+            "type": "string"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "has_data": {
+            "title": "Has Data",
+            "type": "boolean"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "top_pages": {
+            "items": {
+              "$ref": "#/components/schemas/MetricRow"
+            },
+            "title": "Top Pages",
+            "type": "array"
+          },
+          "top_queries": {
+            "items": {
+              "$ref": "#/components/schemas/MetricRow"
+            },
+            "title": "Top Queries",
+            "type": "array"
+          }
+        },
+        "required": [
+          "source",
+          "days",
+          "date_from",
+          "date_to",
+          "has_data",
+          "clicks",
+          "impressions",
+          "ctr",
+          "position",
+          "top_queries",
+          "top_pages"
+        ],
+        "title": "PerformanceOut",
+        "type": "object"
+      },
       "ProjectCreate": {
         "additionalProperties": false,
         "properties": {
@@ -1840,6 +2424,32 @@
         },
         "title": "ProjectUpdate",
         "type": "object"
+      },
+      "PropertyOption": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "PropertyOption",
+        "type": "object"
+      },
+      "Provider": {
+        "enum": [
+          "google",
+          "bing"
+        ],
+        "title": "Provider",
+        "type": "string"
       },
       "ReadinessResponse": {
         "properties": {
@@ -2082,6 +2692,170 @@
         "title": "Severity",
         "type": "string"
       },
+      "SitemapSubmit": {
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "maxLength": 2048,
+            "minLength": 8,
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "SitemapSubmit",
+        "type": "object"
+      },
+      "SourceKind": {
+        "enum": [
+          "gsc",
+          "ga4",
+          "bing",
+          "indexnow"
+        ],
+        "title": "SourceKind",
+        "type": "string"
+      },
+      "SourceLink": {
+        "additionalProperties": false,
+        "properties": {
+          "property_id": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Property Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "property_id"
+        ],
+        "title": "SourceLink",
+        "type": "object"
+      },
+      "SourceOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/SourceKind"
+          },
+          "last_sync_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Sync At"
+          },
+          "last_sync_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Sync Status"
+          },
+          "property_id": {
+            "title": "Property Id",
+            "type": "string"
+          },
+          "settings": {
+            "additionalProperties": true,
+            "title": "Settings",
+            "type": "object"
+          },
+          "synced_through": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Synced Through"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "property_id",
+          "settings",
+          "last_sync_at",
+          "last_sync_status",
+          "synced_through"
+        ],
+        "title": "SourceOut",
+        "type": "object"
+      },
+      "SubmissionOut": {
+        "properties": {
+          "channel": {
+            "title": "Channel",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status Code"
+          },
+          "submitted_at": {
+            "format": "date-time",
+            "title": "Submitted At",
+            "type": "string"
+          },
+          "trigger": {
+            "title": "Trigger",
+            "type": "string"
+          },
+          "url_count": {
+            "title": "Url Count",
+            "type": "integer"
+          },
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Urls",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "channel",
+          "submitted_at",
+          "url_count",
+          "status_code",
+          "trigger",
+          "urls"
+        ],
+        "title": "SubmissionOut",
+        "type": "object"
+      },
       "TokenRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2114,6 +2888,34 @@
           "otpauth_uri"
         ],
         "title": "TotpSetupResponse",
+        "type": "object"
+      },
+      "UrlList": {
+        "additionalProperties": false,
+        "properties": {
+          "channel": {
+            "default": "indexnow",
+            "enum": [
+              "indexnow",
+              "bing"
+            ],
+            "title": "Channel",
+            "type": "string"
+          },
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "title": "Urls",
+            "type": "array"
+          }
+        },
+        "required": [
+          "urls"
+        ],
+        "title": "UrlList",
         "type": "object"
       },
       "UserOut": {
@@ -2298,6 +3100,100 @@
           "method"
         ],
         "title": "VerificationStart",
+        "type": "object"
+      },
+      "VitalsOut": {
+        "properties": {
+          "assessment": {
+            "title": "Assessment",
+            "type": "string"
+          },
+          "cls": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cls"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "fcp_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fcp Ms"
+          },
+          "form_factor": {
+            "title": "Form Factor",
+            "type": "string"
+          },
+          "inp_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inp Ms"
+          },
+          "lcp_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lcp Ms"
+          },
+          "scope": {
+            "title": "Scope",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          },
+          "ttfb_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ttfb Ms"
+          }
+        },
+        "required": [
+          "target",
+          "scope",
+          "form_factor",
+          "date",
+          "lcp_ms",
+          "inp_ms",
+          "cls",
+          "fcp_ms",
+          "ttfb_ms",
+          "assessment"
+        ],
+        "title": "VitalsOut",
         "type": "object"
       }
     }
@@ -3745,6 +4641,342 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/integrations": {
+      "get": {
+        "operationId": "overview_api_v1_orgs__org_id__integrations_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntegrationsOverview"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Overview",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/integrations/bing": {
+      "put": {
+        "operationId": "connect_bing_api_v1_orgs__org_id__integrations_bing_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BingConnect"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Connect Bing",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/integrations/bing/sites": {
+      "get": {
+        "operationId": "bing_sites_api_v1_orgs__org_id__integrations_bing_sites_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PropertyOption"
+                  },
+                  "title": "Response Bing Sites Api V1 Orgs  Org Id  Integrations Bing Sites Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Bing Sites",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/integrations/google/ads": {
+      "put": {
+        "operationId": "set_ads_account_api_v1_orgs__org_id__integrations_google_ads_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdsAccount"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Ads Account",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/integrations/google/properties": {
+      "get": {
+        "operationId": "google_properties_api_v1_orgs__org_id__integrations_google_properties_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoogleProperties"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Google Properties",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/integrations/google/start": {
+      "post": {
+        "operationId": "google_start_api_v1_orgs__org_id__integrations_google_start_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleStart"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthorizationUrl"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Google Start",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/integrations/{provider}": {
+      "delete": {
+        "operationId": "disconnect_api_v1_orgs__org_id__integrations__provider__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Provider"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disconnect",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/invitations": {
       "get": {
         "operationId": "list_invitations_api_v1_orgs__org_id__invitations_get",
@@ -4540,6 +5772,75 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai-performance": {
+      "get": {
+        "operationId": "ai_performance_api_v1_orgs__org_id__projects__project_id__ai_performance_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 90,
+              "maximum": 480,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AiSurfaceTotals"
+                  },
+                  "title": "Response Ai Performance Api V1 Orgs  Org Id  Projects  Project Id  Ai Performance Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Ai Performance",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/projects/{project_id}/crawls": {
       "get": {
         "operationId": "list_crawls_api_v1_orgs__org_id__projects__project_id__crawls_get",
@@ -5075,6 +6376,491 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/gsc/sitemaps": {
+      "get": {
+        "operationId": "gsc_sitemaps_api_v1_orgs__org_id__projects__project_id__gsc_sitemaps_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response Gsc Sitemaps Api V1 Orgs  Org Id  Projects  Project Id  Gsc Sitemaps Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Gsc Sitemaps",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "operationId": "gsc_submit_sitemap_api_v1_orgs__org_id__projects__project_id__gsc_sitemaps_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SitemapSubmit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Gsc Submit Sitemap",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/imports/{source}": {
+      "post": {
+        "description": "Import a CSV export (raw ``text/csv`` body). Replaces the file's date range.",
+        "operationId": "import_csv_api_v1_orgs__org_id__projects__project_id__imports__source__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gsc_genai",
+                "bing_ai"
+              ],
+              "title": "Source",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "surface",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "ai_overview",
+                    "ai_mode",
+                    "copilot"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Surface"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Import Csv",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/indexnow": {
+      "patch": {
+        "operationId": "indexnow_settings_api_v1_orgs__org_id__projects__project_id__indexnow_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndexNowSettings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Indexnow Settings",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "operationId": "create_indexnow_key_api_v1_orgs__org_id__projects__project_id__indexnow_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Indexnow Key",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/indexnow/verify": {
+      "post": {
+        "operationId": "verify_indexnow_key_api_v1_orgs__org_id__projects__project_id__indexnow_verify_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Verify Indexnow Key",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/inspections": {
+      "get": {
+        "operationId": "list_inspections_api_v1_orgs__org_id__projects__project_id__inspections_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InspectionOut"
+                  },
+                  "title": "Response List Inspections Api V1 Orgs  Org Id  Projects  Project Id  Inspections Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Inspections",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "operationId": "inspect_url_api_v1_orgs__org_id__projects__project_id__inspections_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Inspect Url",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/projects/{project_id}/markets": {
       "post": {
         "operationId": "add_market_api_v1_orgs__org_id__projects__project_id__markets_post",
@@ -5194,6 +6980,469 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/performance": {
+      "get": {
+        "description": "Totals and top queries/pages from first-party data (no estimates).",
+        "operationId": "performance_api_v1_orgs__org_id__projects__project_id__performance_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "source",
+            "required": false,
+            "schema": {
+              "default": "gsc",
+              "enum": [
+                "gsc",
+                "bing"
+              ],
+              "title": "Source",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 28,
+              "maximum": 480,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformanceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Performance",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/sources": {
+      "get": {
+        "operationId": "list_sources_api_v1_orgs__org_id__projects__project_id__sources_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SourceOut"
+                  },
+                  "title": "Response List Sources Api V1 Orgs  Org Id  Projects  Project Id  Sources Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Sources",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/sources/{kind}": {
+      "delete": {
+        "operationId": "unlink_source_api_v1_orgs__org_id__projects__project_id__sources__kind__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gsc",
+                "ga4",
+                "bing"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Unlink Source",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "put": {
+        "description": "Link a provider property to the project (checked against the account's access).",
+        "operationId": "link_source_api_v1_orgs__org_id__projects__project_id__sources__kind__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gsc",
+                "ga4",
+                "bing"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceLink"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Link Source",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/sources/{kind}/sync": {
+      "post": {
+        "operationId": "sync_source_api_v1_orgs__org_id__projects__project_id__sources__kind__sync_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "kind",
+            "required": true,
+            "schema": {
+              "enum": [
+                "gsc",
+                "ga4",
+                "bing",
+                "vitals"
+              ],
+              "title": "Kind",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Sync Source",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/submissions": {
+      "get": {
+        "operationId": "list_submissions_api_v1_orgs__org_id__projects__project_id__submissions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubmissionOut"
+                  },
+                  "title": "Response List Submissions Api V1 Orgs  Org Id  Projects  Project Id  Submissions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Submissions",
+        "tags": [
+          "integrations"
+        ]
+      },
+      "post": {
+        "operationId": "submit_urls_api_v1_orgs__org_id__projects__project_id__submissions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UrlList"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SubmissionOut"
+                  },
+                  "title": "Response Submit Urls Api V1 Orgs  Org Id  Projects  Project Id  Submissions Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Urls",
+        "tags": [
+          "integrations"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/projects/{project_id}/verification": {
       "post": {
         "operationId": "start_verification_api_v1_orgs__org_id__projects__project_id__verification_post",
@@ -5307,6 +7556,63 @@
         "summary": "Check Verification",
         "tags": [
           "projects"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/vitals": {
+      "get": {
+        "operationId": "vitals_api_v1_orgs__org_id__projects__project_id__vitals_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VitalsOut"
+                  },
+                  "title": "Response Vitals Api V1 Orgs  Org Id  Projects  Project Id  Vitals Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Vitals",
+        "tags": [
+          "integrations"
         ]
       }
     },

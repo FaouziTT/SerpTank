@@ -15,6 +15,7 @@ import structlog
 from sqlalchemy import func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from serptank.core.errors import AppError
 from serptank.core.http import EgressPolicy
 from serptank.core.models import uuid7
 from serptank.modules.audit.service import run_audit
@@ -32,6 +33,14 @@ from serptank.modules.crawler.rendering import RendererClient, render_summary
 from serptank.modules.crawler.robots import BINGBOT, GOOGLEBOT
 from serptank.modules.crawler.similarity import to_signed
 from serptank.modules.crawler.urls import host_of, is_internal, site_hosts
+from serptank.modules.integrations.indexing import (
+    changed_urls_since_previous_crawl,
+    indexnow_source,
+    submit_indexnow,
+)
+from serptank.modules.integrations.providers.base import ProviderError
+from serptank.modules.integrations.providers.crux import assess
+from serptank.modules.integrations.sync import latest_vitals
 from serptank.modules.jobs.service import (
     JobCancelledError,
     JobContext,
@@ -233,6 +242,40 @@ async def run_crawl(ctx: JobContext) -> dict[str, Any]:
         raise
 
 
+async def _auto_submit(ctx: JobContext, db: AsyncSession, crawl: Crawl) -> dict[str, Any] | None:
+    """Ping IndexNow with new/changed URLs when the project opted in (verified only)."""
+    source = await indexnow_source(db, crawl.project_id)
+    if (
+        source is None
+        or not source.settings.get("auto_submit")
+        or not source.settings.get("verified")
+    ):
+        return None
+    project = await db.get(Project, crawl.project_id)
+    if project is None or project.domain_verified_at is None:
+        return None
+    urls = await changed_urls_since_previous_crawl(db, crawl)
+    if not urls:
+        return {"submitted": 0}
+    http = ctx.runtime.http_factory(EgressPolicy(), ctx.runtime.settings.crawler_user_agent)
+    try:
+        entries = await submit_indexnow(
+            db,
+            project=project,
+            source=source,
+            urls=urls[:10_000],
+            http=http,
+            settings=ctx.runtime.settings,
+            trigger="crawl",
+        )
+    except (ProviderError, AppError) as exc:
+        logger.info("indexnow_auto_submit_failed", error=type(exc).__name__)
+        return {"submitted": 0, "error": getattr(exc, "code", "failed")}
+    finally:
+        await http.aclose()
+    return {"submitted": sum(e.url_count for e in entries)}
+
+
 async def _close_crawl(ctx: JobContext, crawl_id: uuid.UUID, status: CrawlStatus) -> None:
     async with await ctx.session() as db:
         await db.execute(
@@ -338,9 +381,24 @@ async def _run(ctx: JobContext, crawl: Crawl, max_pages: int) -> dict[str, Any]:
             "rendered_pages": len(rendered),
             "mobile_pages": len(summary.mobile),
         }
+        # Field Core Web Vitals (synced from CrUX) feed the page-experience rules.
+        stored.site["vitals"] = [
+            {
+                "target": v.target,
+                "scope": v.scope,
+                "form_factor": v.form_factor,
+                "lcp_ms": v.lcp_ms,
+                "inp_ms": v.inp_ms,
+                "cls": v.cls,
+                "assessment": assess({"lcp_ms": v.lcp_ms, "inp_ms": v.inp_ms, "cls": v.cls}),
+            }
+            for v in await latest_vitals(db, crawl.project_id)
+        ]
         await db.flush()
         audit = await run_audit(db, stored)
         stored.status = CrawlStatus.COMPLETED
+        await db.commit()
+        stored.site = {**stored.site, "indexnow": await _auto_submit(ctx, db, stored)}
         await db.commit()
     return {
         "crawl_id": str(crawl.id),

@@ -27,8 +27,11 @@ import hmac
 import secrets
 from dataclasses import dataclass
 
+import structlog
 from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+from serptank.core.config import Settings
 
 _VERSION = "v1"
 _NONCE_BYTES = 12
@@ -105,3 +108,15 @@ def hash_token(token: str, *, pepper: str) -> str:
 
 def constant_time_equals(a: str, b: str) -> bool:
     return hmac.compare_digest(a.encode("utf-8"), b.encode("utf-8"))
+
+
+def keyring_from_settings(settings: Settings) -> Keyring:
+    """The configured keyring; outside staging/production an ephemeral key if unset."""
+    keys = settings.parsed_encryption_keys()
+    if keys:
+        return Keyring(keys, settings.encryption_active_key_id)
+    # Only reachable outside staging/production (config validation fails closed there).
+    structlog.get_logger(__name__).warning(
+        "ephemeral_encryption_key", detail="data encrypted now is lost on restart"
+    )
+    return Keyring({"ephemeral": secrets.token_bytes(32)}, "ephemeral")

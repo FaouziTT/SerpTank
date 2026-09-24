@@ -56,8 +56,14 @@ describe("org navigation", () => {
   it("hides links the role cannot use", () => {
     const labels = (role: Parameters<typeof orgNavItems>[1]) =>
       orgNavItems(ORG, role).map((i) => i.label);
-    expect(labels("owner")).toEqual(["Projects", "Members", "Audit log", "Settings"]);
-    expect(labels("viewer")).toEqual(["Projects", "Members", "Settings"]);
+    expect(labels("owner")).toEqual([
+      "Projects",
+      "Members",
+      "Integrations",
+      "Audit log",
+      "Settings",
+    ]);
+    expect(labels("viewer")).toEqual(["Projects", "Members", "Integrations", "Settings"]);
     expect(labels("billing")).toEqual(["Settings"]);
   });
 

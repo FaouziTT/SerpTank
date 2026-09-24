@@ -149,3 +149,65 @@ def mobile_parity(site: Site) -> Iterator[Finding]:
             problems.append("noindex on mobile")
         if problems:
             yield Finding(page.url, {"differences": problems})
+
+
+REF_CWV = "https://developers.google.com/search/docs/appearance/core-web-vitals"
+
+
+def _vitals(site: Site, scope: str) -> list[dict[str, object]]:
+    return [v for v in site.site.get("vitals", []) if v.get("scope") == scope]
+
+
+def _cwv_details(v: dict[str, object]) -> dict[str, object]:
+    return {k: v.get(k) for k in ("form_factor", "lcp_ms", "inp_ms", "cls")}
+
+
+@rule(
+    "cwv_origin_poor",
+    title="Core Web Vitals are poor for real users",
+    category="page_experience",
+    severity=Severity.HIGH,
+    description="Chrome UX Report field data (p75 of real visits) rates the site poor on "
+    "LCP, INP or CLS. Core Web Vitals are part of Google's page experience signals.",
+    fix="Start with the worst metric: LCP (server time, render-blocking resources, image "
+    "size), INP (long JavaScript tasks) or CLS (reserve space for media and ads).",
+    effort=3,
+    reference=REF_CWV,
+)
+def cwv_origin_poor(site: Site) -> Iterator[Finding]:
+    for v in _vitals(site, "origin"):
+        if v.get("assessment") == "poor":
+            yield Finding(str(v.get("target")), _cwv_details(v))
+
+
+@rule(
+    "cwv_origin_needs_improvement",
+    title="Core Web Vitals need improvement",
+    category="page_experience",
+    severity=Severity.MEDIUM,
+    description="Real-user Core Web Vitals miss Google's 'good' thresholds (LCP 2.5 s, INP "
+    "200 ms, CLS 0.1) on at least one metric.",
+    fix="Improve the metrics above their threshold; re-check after 28 days of new data.",
+    effort=3,
+    reference=REF_CWV,
+)
+def cwv_origin_needs_improvement(site: Site) -> Iterator[Finding]:
+    for v in _vitals(site, "origin"):
+        if v.get("assessment") == "needs_improvement":
+            yield Finding(str(v.get("target")), _cwv_details(v))
+
+
+@rule(
+    "cwv_pages_poor",
+    title="Key pages with poor Core Web Vitals",
+    category="page_experience",
+    severity=Severity.MEDIUM,
+    description="Important URLs with enough traffic for their own field data score poor.",
+    fix="Profile these pages in PageSpeed Insights and fix the failing metric.",
+    effort=3,
+    reference=REF_CWV,
+)
+def cwv_pages_poor(site: Site) -> Iterator[Finding]:
+    for v in _vitals(site, "url"):
+        if v.get("assessment") == "poor":
+            yield Finding(str(v.get("target")), _cwv_details(v))

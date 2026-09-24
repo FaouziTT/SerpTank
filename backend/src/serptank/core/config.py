@@ -129,6 +129,20 @@ class Settings(BaseSettings):
     renderer_token: SecretStr = SecretStr("")
     render_sample: int = 10
     renderer_chromium_path: str = ""  # only when the browser build differs from Playwright's
+
+    # --- Integrations and indexing (Module 7) ----------------------------------------
+    # Separate OAuth client for customer data (GSC/GA4/Ads) - never the sign-in client.
+    google_data_client_id: str = ""
+    google_data_client_secret: SecretStr = SecretStr("")
+    # Server-side key for PageSpeed Insights and the CrUX API (public data).
+    google_api_key: SecretStr = SecretStr("")
+    # Google Ads API (Keyword Planner): developer token + optional manager account.
+    google_ads_developer_token: SecretStr = SecretStr("")
+    google_ads_login_customer_id: str = ""
+    google_ads_api_version: str = "v22"
+    indexnow_endpoint: str = "https://api.indexnow.org/indexnow"
+    gsc_backfill_days: int = 90  # GSC keeps 16 months; first sync fetches this much
+    max_csv_import_bytes: int = 20 * 1024 * 1024
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"
@@ -153,6 +167,12 @@ class Settings(BaseSettings):
     @property
     def broker_url(self) -> str:
         return self.celery_broker_url.get_secret_value() or self.redis_url.get_secret_value()
+
+    @property
+    def google_data_enabled(self) -> bool:
+        return bool(
+            self.google_data_client_id and self.google_data_client_secret.get_secret_value()
+        )
 
     @property
     def google_sign_in_enabled(self) -> bool:

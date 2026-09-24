@@ -21,6 +21,7 @@ from serptank.core.config import get_settings
 from serptank.core.db import create_engine, create_session_factory
 from serptank.core.logging import configure_logging
 from serptank.modules.crawler.scheduling import enqueue_due_crawls, fail_stale_jobs
+from serptank.modules.integrations.scheduling import enqueue_due_syncs
 from serptank.modules.jobs.service import CeleryDispatcher, JobRuntime, execute_job
 from serptank.workers.celery_config import make_celery
 from serptank.workers.runtime import build_runtime, close_runtime
@@ -83,8 +84,13 @@ def schedule_due_work() -> None:
         try:
             system = create_session_factory(engine)
             await fail_stale_jobs(system)
-            await enqueue_due_crawls(
-                system, _runtime().session_factory, CeleryDispatcher(celery.send_task)
+            dispatcher = CeleryDispatcher(celery.send_task)
+            await enqueue_due_crawls(system, _runtime().session_factory, dispatcher)
+            await enqueue_due_syncs(
+                system,
+                _runtime().session_factory,
+                dispatcher,
+                vitals_enabled=bool(settings.google_api_key.get_secret_value()),
             )
         finally:
             await engine.dispose()

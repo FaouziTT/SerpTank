@@ -629,6 +629,125 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/integrations": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Overview */
+    get: operations["overview_api_v1_orgs__org_id__integrations_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/integrations/bing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Connect Bing */
+    put: operations["connect_bing_api_v1_orgs__org_id__integrations_bing_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/integrations/bing/sites": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Bing Sites */
+    get: operations["bing_sites_api_v1_orgs__org_id__integrations_bing_sites_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/integrations/google/ads": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Set Ads Account */
+    put: operations["set_ads_account_api_v1_orgs__org_id__integrations_google_ads_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/integrations/google/properties": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Google Properties */
+    get: operations["google_properties_api_v1_orgs__org_id__integrations_google_properties_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/integrations/google/start": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Google Start */
+    post: operations["google_start_api_v1_orgs__org_id__integrations_google_start_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/integrations/{provider}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Disconnect */
+    delete: operations["disconnect_api_v1_orgs__org_id__integrations__provider__delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/invitations": {
     parameters: {
       query?: never;
@@ -804,6 +923,23 @@ export interface paths {
     patch: operations["update_project_api_v1_orgs__org_id__projects__project_id__patch"];
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai-performance": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ai Performance */
+    get: operations["ai_performance_api_v1_orgs__org_id__projects__project_id__ai_performance_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/crawls": {
     parameters: {
       query?: never;
@@ -911,6 +1047,97 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/gsc/sitemaps": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Gsc Sitemaps */
+    get: operations["gsc_sitemaps_api_v1_orgs__org_id__projects__project_id__gsc_sitemaps_get"];
+    put?: never;
+    /** Gsc Submit Sitemap */
+    post: operations["gsc_submit_sitemap_api_v1_orgs__org_id__projects__project_id__gsc_sitemaps_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/imports/{source}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Import Csv
+     * @description Import a CSV export (raw ``text/csv`` body). Replaces the file's date range.
+     */
+    post: operations["import_csv_api_v1_orgs__org_id__projects__project_id__imports__source__post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/indexnow": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Create Indexnow Key */
+    post: operations["create_indexnow_key_api_v1_orgs__org_id__projects__project_id__indexnow_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Indexnow Settings */
+    patch: operations["indexnow_settings_api_v1_orgs__org_id__projects__project_id__indexnow_patch"];
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/indexnow/verify": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Verify Indexnow Key */
+    post: operations["verify_indexnow_key_api_v1_orgs__org_id__projects__project_id__indexnow_verify_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/inspections": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Inspections */
+    get: operations["list_inspections_api_v1_orgs__org_id__projects__project_id__inspections_get"];
+    put?: never;
+    /** Inspect Url */
+    post: operations["inspect_url_api_v1_orgs__org_id__projects__project_id__inspections_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/markets": {
     parameters: {
       query?: never;
@@ -945,6 +1172,99 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/performance": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Performance
+     * @description Totals and top queries/pages from first-party data (no estimates).
+     */
+    get: operations["performance_api_v1_orgs__org_id__projects__project_id__performance_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/sources": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Sources */
+    get: operations["list_sources_api_v1_orgs__org_id__projects__project_id__sources_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/sources/{kind}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Link Source
+     * @description Link a provider property to the project (checked against the account's access).
+     */
+    put: operations["link_source_api_v1_orgs__org_id__projects__project_id__sources__kind__put"];
+    post?: never;
+    /** Unlink Source */
+    delete: operations["unlink_source_api_v1_orgs__org_id__projects__project_id__sources__kind__delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/sources/{kind}/sync": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Sync Source */
+    post: operations["sync_source_api_v1_orgs__org_id__projects__project_id__sources__kind__sync_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/submissions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Submissions */
+    get: operations["list_submissions_api_v1_orgs__org_id__projects__project_id__submissions_get"];
+    put?: never;
+    /** Submit Urls */
+    post: operations["submit_urls_api_v1_orgs__org_id__projects__project_id__submissions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/verification": {
     parameters: {
       query?: never;
@@ -973,6 +1293,23 @@ export interface paths {
     put?: never;
     /** Check Verification */
     post: operations["check_verification_api_v1_orgs__org_id__projects__project_id__verification_check_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/vitals": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Vitals */
+    get: operations["vitals_api_v1_orgs__org_id__projects__project_id__vitals_get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -1030,6 +1367,34 @@ export interface components {
       | "gemini"
       | "copilot"
       | "claude";
+    /** AdsAccount */
+    AdsAccount: {
+      /** Customer Id */
+      customer_id: string;
+    };
+    /** AiSurfaceTotals */
+    AiSurfaceTotals: {
+      /** Citations */
+      citations: number;
+      /** Clicks */
+      clicks: number;
+      /**
+       * Date From
+       * Format: date
+       */
+      date_from: string;
+      /**
+       * Date To
+       * Format: date
+       */
+      date_to: string;
+      /** Impressions */
+      impressions: number;
+      /** Source */
+      source: string;
+      /** Surface */
+      surface: string;
+    };
     /** ApiKeyCreateRequest */
     ApiKeyCreateRequest: {
       /**
@@ -1129,6 +1494,16 @@ export interface components {
       /** Target Type */
       target_type: string | null;
     };
+    /** AuthorizationUrl */
+    AuthorizationUrl: {
+      /** Authorization Url */
+      authorization_url: string;
+    };
+    /** BingConnect */
+    BingConnect: {
+      /** Api Key */
+      api_key: string;
+    };
     /** ChangePasswordRequest */
     ChangePasswordRequest: {
       /** Current Password */
@@ -1141,6 +1516,33 @@ export interface components {
       /** Code */
       code: string;
     };
+    /** ConnectionOut */
+    ConnectionOut: {
+      /** Account Label */
+      account_label: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Features */
+      features: string[];
+      /** Last Error Code */
+      last_error_code: string | null;
+      provider: components["schemas"]["Provider"];
+      /** Scopes */
+      scopes: string[];
+      /** Settings */
+      settings: {
+        [key: string]: unknown;
+      };
+      status: components["schemas"]["ConnectionStatus"];
+    };
+    /**
+     * ConnectionStatus
+     * @enum {string}
+     */
+    ConnectionStatus: "active" | "error" | "reauth_required";
     /** CrawlOut */
     CrawlOut: {
       /** Budget Exhausted */
@@ -1246,6 +1648,18 @@ export interface components {
       /** Search Engines */
       search_engines: components["schemas"]["SearchEngine"][];
     };
+    /** GoogleProperties */
+    GoogleProperties: {
+      /** Ga4 Properties */
+      ga4_properties: components["schemas"]["PropertyOption"][];
+      /** Gsc Sites */
+      gsc_sites: components["schemas"]["PropertyOption"][];
+    };
+    /** GoogleStart */
+    GoogleStart: {
+      /** Features */
+      features: ("gsc" | "gsc_write" | "ga4" | "ads")[];
+    };
     /** HTTPValidationError */
     HTTPValidationError: {
       /** Detail */
@@ -1257,6 +1671,83 @@ export interface components {
       status: string;
       /** Version */
       version: string;
+    };
+    /** ImportOut */
+    ImportOut: {
+      /** Bad Rows */
+      bad_rows: number;
+      /** Columns */
+      columns: {
+        [key: string]: string;
+      };
+      /**
+       * Date From
+       * Format: date
+       */
+      date_from: string;
+      /**
+       * Date To
+       * Format: date
+       */
+      date_to: string;
+      /** Errors */
+      errors: string[];
+      /** Missing Metrics */
+      missing_metrics: string[];
+      /** Rows */
+      rows: number;
+    };
+    /** IndexNowSettings */
+    IndexNowSettings: {
+      /** Auto Submit */
+      auto_submit: boolean;
+    };
+    /** InspectRequest */
+    InspectRequest: {
+      /** Url */
+      url: string;
+    };
+    /** InspectionOut */
+    InspectionOut: {
+      /** Coverage State */
+      coverage_state: string | null;
+      /** Google Canonical */
+      google_canonical: string | null;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Indexing State */
+      indexing_state: string | null;
+      /**
+       * Inspected At
+       * Format: date-time
+       */
+      inspected_at: string;
+      /** Last Crawl Time */
+      last_crawl_time: string | null;
+      /** Page Fetch State */
+      page_fetch_state: string | null;
+      /** Robots State */
+      robots_state: string | null;
+      /** Url */
+      url: string;
+      /** User Canonical */
+      user_canonical: string | null;
+      /** Verdict */
+      verdict: string | null;
+    };
+    /** IntegrationsOverview */
+    IntegrationsOverview: {
+      /** Connections */
+      connections: components["schemas"]["ConnectionOut"][];
+      /** Google Available */
+      google_available: boolean;
+      /** Keyword Planner Available */
+      keyword_planner_available: boolean;
+      /** Vitals Available */
+      vitals_available: boolean;
     };
     /** InvitationAccept */
     InvitationAccept: {
@@ -1514,6 +2005,19 @@ export interface components {
       organization_slug: string;
       role: components["schemas"]["MemberRole"];
     };
+    /** MetricRow */
+    MetricRow: {
+      /** Clicks */
+      clicks: number;
+      /** Ctr */
+      ctr: number | null;
+      /** Impressions */
+      impressions: number;
+      /** Key */
+      key: string;
+      /** Position */
+      position: number | null;
+    };
     /** MfaVerifyRequest */
     MfaVerifyRequest: {
       /** Code */
@@ -1662,6 +2166,37 @@ export interface components {
        */
       name: string;
     };
+    /** PerformanceOut */
+    PerformanceOut: {
+      /** Clicks */
+      clicks: number;
+      /** Ctr */
+      ctr: number | null;
+      /**
+       * Date From
+       * Format: date
+       */
+      date_from: string;
+      /**
+       * Date To
+       * Format: date
+       */
+      date_to: string;
+      /** Days */
+      days: number;
+      /** Has Data */
+      has_data: boolean;
+      /** Impressions */
+      impressions: number;
+      /** Position */
+      position: number | null;
+      /** Source */
+      source: string;
+      /** Top Pages */
+      top_pages: components["schemas"]["MetricRow"][];
+      /** Top Queries */
+      top_queries: components["schemas"]["MetricRow"][];
+    };
     /** ProjectCreate */
     ProjectCreate: {
       /** Domain */
@@ -1703,6 +2238,18 @@ export interface components {
       /** Name */
       name?: string | null;
     };
+    /** PropertyOption */
+    PropertyOption: {
+      /** Id */
+      id: string;
+      /** Label */
+      label: string;
+    };
+    /**
+     * Provider
+     * @enum {string}
+     */
+    Provider: "google" | "bing";
     /** ReadinessResponse */
     ReadinessResponse: {
       /** Checks */
@@ -1786,6 +2333,65 @@ export interface components {
      * @enum {string}
      */
     Severity: "critical" | "high" | "medium" | "low" | "info";
+    /** SitemapSubmit */
+    SitemapSubmit: {
+      /** Url */
+      url: string;
+    };
+    /**
+     * SourceKind
+     * @enum {string}
+     */
+    SourceKind: "gsc" | "ga4" | "bing" | "indexnow";
+    /** SourceLink */
+    SourceLink: {
+      /** Property Id */
+      property_id: string;
+    };
+    /** SourceOut */
+    SourceOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      kind: components["schemas"]["SourceKind"];
+      /** Last Sync At */
+      last_sync_at: string | null;
+      /** Last Sync Status */
+      last_sync_status: string | null;
+      /** Property Id */
+      property_id: string;
+      /** Settings */
+      settings: {
+        [key: string]: unknown;
+      };
+      /** Synced Through */
+      synced_through: string | null;
+    };
+    /** SubmissionOut */
+    SubmissionOut: {
+      /** Channel */
+      channel: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Status Code */
+      status_code: number | null;
+      /**
+       * Submitted At
+       * Format: date-time
+       */
+      submitted_at: string;
+      /** Trigger */
+      trigger: string;
+      /** Url Count */
+      url_count: number;
+      /** Urls */
+      urls: string[];
+    };
     /** TokenRequest */
     TokenRequest: {
       /** Token */
@@ -1797,6 +2403,17 @@ export interface components {
       otpauth_uri: string;
       /** Secret */
       secret: string;
+    };
+    /** UrlList */
+    UrlList: {
+      /**
+       * Channel
+       * @default indexnow
+       * @enum {string}
+       */
+      channel: "indexnow" | "bing";
+      /** Urls */
+      urls: string[];
     };
     /** UserOut */
     UserOut: {
@@ -1860,6 +2477,32 @@ export interface components {
     /** VerificationStart */
     VerificationStart: {
       method: components["schemas"]["VerificationMethod"];
+    };
+    /** VitalsOut */
+    VitalsOut: {
+      /** Assessment */
+      assessment: string;
+      /** Cls */
+      cls: number | null;
+      /**
+       * Date
+       * Format: date
+       */
+      date: string;
+      /** Fcp Ms */
+      fcp_ms: number | null;
+      /** Form Factor */
+      form_factor: string;
+      /** Inp Ms */
+      inp_ms: number | null;
+      /** Lcp Ms */
+      lcp_ms: number | null;
+      /** Scope */
+      scope: string;
+      /** Target */
+      target: string;
+      /** Ttfb Ms */
+      ttfb_ms: number | null;
     };
   };
   responses: never;
@@ -2988,6 +3631,234 @@ export interface operations {
       };
     };
   };
+  overview_api_v1_orgs__org_id__integrations_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["IntegrationsOverview"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  connect_bing_api_v1_orgs__org_id__integrations_bing_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BingConnect"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ConnectionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  bing_sites_api_v1_orgs__org_id__integrations_bing_sites_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PropertyOption"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  set_ads_account_api_v1_orgs__org_id__integrations_google_ads_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AdsAccount"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ConnectionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  google_properties_api_v1_orgs__org_id__integrations_google_properties_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["GoogleProperties"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  google_start_api_v1_orgs__org_id__integrations_google_start_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GoogleStart"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AuthorizationUrl"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  disconnect_api_v1_orgs__org_id__integrations__provider__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        provider: components["schemas"]["Provider"];
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_invitations_api_v1_orgs__org_id__invitations_get: {
     parameters: {
       query?: never;
@@ -3474,6 +4345,40 @@ export interface operations {
       };
     };
   };
+  ai_performance_api_v1_orgs__org_id__projects__project_id__ai_performance_get: {
+    parameters: {
+      query?: {
+        days?: number;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AiSurfaceTotals"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_crawls_api_v1_orgs__org_id__projects__project_id__crawls_get: {
     parameters: {
       query?: {
@@ -3715,6 +4620,277 @@ export interface operations {
       };
     };
   };
+  gsc_sitemaps_api_v1_orgs__org_id__projects__project_id__gsc_sitemaps_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  gsc_submit_sitemap_api_v1_orgs__org_id__projects__project_id__gsc_sitemaps_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SitemapSubmit"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  import_csv_api_v1_orgs__org_id__projects__project_id__imports__source__post: {
+    parameters: {
+      query?: {
+        surface?: ("ai_overview" | "ai_mode" | "copilot") | null;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        source: "gsc_genai" | "bing_ai";
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ImportOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_indexnow_key_api_v1_orgs__org_id__projects__project_id__indexnow_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SourceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  indexnow_settings_api_v1_orgs__org_id__projects__project_id__indexnow_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["IndexNowSettings"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SourceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  verify_indexnow_key_api_v1_orgs__org_id__projects__project_id__indexnow_verify_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SourceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_inspections_api_v1_orgs__org_id__projects__project_id__inspections_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InspectionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  inspect_url_api_v1_orgs__org_id__projects__project_id__inspections_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["InspectRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InspectionOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   add_market_api_v1_orgs__org_id__projects__project_id__markets_post: {
     parameters: {
       query?: never;
@@ -3782,6 +4958,242 @@ export interface operations {
       };
     };
   };
+  performance_api_v1_orgs__org_id__projects__project_id__performance_get: {
+    parameters: {
+      query?: {
+        source?: "gsc" | "bing";
+        days?: number;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PerformanceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_sources_api_v1_orgs__org_id__projects__project_id__sources_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SourceOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  link_source_api_v1_orgs__org_id__projects__project_id__sources__kind__put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        kind: "gsc" | "ga4" | "bing";
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SourceLink"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SourceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  unlink_source_api_v1_orgs__org_id__projects__project_id__sources__kind__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        kind: "gsc" | "ga4" | "bing";
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  sync_source_api_v1_orgs__org_id__projects__project_id__sources__kind__sync_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        kind: "gsc" | "ga4" | "bing" | "vitals";
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_submissions_api_v1_orgs__org_id__projects__project_id__submissions_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubmissionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  submit_urls_api_v1_orgs__org_id__projects__project_id__submissions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UrlList"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SubmissionOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   start_verification_api_v1_orgs__org_id__projects__project_id__verification_post: {
     parameters: {
       query?: never;
@@ -3837,6 +5249,38 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["VerificationResult"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  vitals_api_v1_orgs__org_id__projects__project_id__vitals_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["VitalsOut"][];
         };
       };
       /** @description Validation Error */

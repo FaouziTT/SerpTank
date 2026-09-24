@@ -387,9 +387,14 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
               Crawl the site and check indexability, structure, content and page experience.
             </CardDescription>
           </div>
-          <Button asChild>
-            <Link href={`/orgs/${org.id}/projects/${p.id}/audit`}>Open audit</Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button asChild variant="outline">
+              <Link href={`/orgs/${org.id}/projects/${p.id}/search`}>Search data</Link>
+            </Button>
+            <Button asChild>
+              <Link href={`/orgs/${org.id}/projects/${p.id}/audit`}>Open audit</Link>
+            </Button>
+          </div>
         </CardHeader>
       </Card>
       <VerificationCard project={p} canWrite={canWrite} />

@@ -365,3 +365,41 @@ def test_faulty_rule_is_reported_not_fatal() -> None:
     finally:
         RULES["title_missing"] = original
     assert result.failed_rules == ["title_missing"]
+
+
+def test_core_web_vitals_rules() -> None:
+    vitals = [
+        {
+            "target": BASE,
+            "scope": "origin",
+            "form_factor": "PHONE",
+            "lcp_ms": 4800,
+            "inp_ms": 150,
+            "cls": 0.05,
+            "assessment": "poor",
+        },
+        {
+            "target": BASE,
+            "scope": "origin",
+            "form_factor": "DESKTOP",
+            "lcp_ms": 2900,
+            "inp_ms": 150,
+            "cls": 0.05,
+            "assessment": "needs_improvement",
+        },
+        {
+            "target": f"{BASE}/slow",
+            "scope": "url",
+            "form_factor": "PHONE",
+            "lcp_ms": 6000,
+            "inp_ms": 90,
+            "cls": 0.3,
+            "assessment": "poor",
+        },
+    ]
+    site = make_site(site={"vitals": vitals})
+    poor = list(RULES["cwv_origin_poor"].check(site))
+    assert [f.details["form_factor"] for f in poor] == ["PHONE"]
+    assert findings(site, "cwv_origin_needs_improvement") == [BASE]
+    assert findings(site, "cwv_pages_poor") == [f"{BASE}/slow"]
+    assert findings(make_site(), "cwv_origin_poor") == []  # no field data: nothing claimed

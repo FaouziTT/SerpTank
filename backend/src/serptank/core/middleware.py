@@ -19,7 +19,7 @@ import json
 import re
 import time
 import uuid
-from collections.abc import Awaitable, Callable, Iterable
+from collections.abc import Awaitable, Callable, Iterable, Sequence
 
 import structlog
 from starlette.datastructures import Headers, MutableHeaders
@@ -139,22 +139,37 @@ class SecurityHeadersMiddleware:
 class BodySizeLimitMiddleware:
     """Rejects request bodies larger than ``max_bytes`` (declared or streamed)."""
 
-    def __init__(self, app: ASGIApp, *, max_bytes: int = 1_048_576) -> None:
+    def __init__(
+        self,
+        app: ASGIApp,
+        *,
+        max_bytes: int = 1_048_576,
+        overrides: Sequence[tuple[re.Pattern[str], int]] = (),
+    ) -> None:
         self.app = app
         self.max_bytes = max_bytes
+        # (path pattern, limit) pairs for the few routes that accept larger uploads.
+        self.overrides = tuple(overrides)
+
+    def _limit(self, path: str) -> int:
+        for pattern, limit in self.overrides:
+            if pattern.match(path):
+                return limit
+        return self.max_bytes
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return
+        max_bytes = self._limit(scope.get("path", ""))
         declared = Headers(scope=scope).get("content-length")
-        if declared and declared.isdigit() and int(declared) > self.max_bytes:
+        if declared and declared.isdigit() and int(declared) > max_bytes:
             await _send_problem(
                 send,
                 status=413,
                 code="payload_too_large",
                 title="Payload too large",
-                detail=f"Request bodies are limited to {self.max_bytes} bytes.",
+                detail=f"Request bodies are limited to {max_bytes} bytes.",
             )
             return
         received = 0
@@ -164,7 +179,7 @@ class BodySizeLimitMiddleware:
             message = await receive()
             if message["type"] == "http.request":
                 received += len(message.get("body", b""))
-                if received > self.max_bytes:
+                if received > max_bytes:
                     raise _BodyTooLargeError
             return message
 
@@ -176,7 +191,7 @@ class BodySizeLimitMiddleware:
                 status=413,
                 code="payload_too_large",
                 title="Payload too large",
-                detail=f"Request bodies are limited to {self.max_bytes} bytes.",
+                detail=f"Request bodies are limited to {max_bytes} bytes.",
             )
 
 

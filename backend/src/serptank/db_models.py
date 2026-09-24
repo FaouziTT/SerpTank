@@ -15,19 +15,36 @@ from serptank.modules.identity.models import (
     User,
     WebAuthnCredential,
 )
+from serptank.modules.integrations.models import (
+    AiPerformanceDaily,
+    BingDaily,
+    Connection,
+    Ga4Daily,
+    GscDaily,
+    IndexNowSubmission,
+    ProjectSource,
+    UrlInspection,
+    VitalsDaily,
+)
 from serptank.modules.jobs.models import Job
 from serptank.modules.projects.models import Project, ProjectMarket
 from serptank.modules.tenancy.models import Invitation, Membership, Organization
 
 __all__ = [
+    "AiPerformanceDaily",
     "ApiKey",
     "AuditEvent",
     "AuditIssue",
     "Base",
+    "BingDaily",
+    "Connection",
     "Crawl",
     "CrawlLink",
     "CrawlPage",
     "EmailToken",
+    "Ga4Daily",
+    "GscDaily",
+    "IndexNowSubmission",
     "Invitation",
     "Job",
     "Membership",
@@ -35,7 +52,10 @@ __all__ = [
     "Organization",
     "Project",
     "ProjectMarket",
+    "ProjectSource",
     "RecoveryCode",
+    "UrlInspection",
     "User",
+    "VitalsDaily",
     "WebAuthnCredential",
 ]

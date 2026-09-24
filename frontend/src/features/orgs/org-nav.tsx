@@ -6,6 +6,7 @@ import {
   ChevronsUpDown,
   FolderKanban,
   History,
+  Plug,
   Plus,
   Settings,
   Users,
@@ -95,6 +96,7 @@ export function orgNavItems(orgId: string, role: MemberRole) {
       show: role !== "billing",
     },
     { href: `${base}/members`, label: "Members", icon: Users, show: role !== "billing" },
+    { href: `${base}/integrations`, label: "Integrations", icon: Plug, show: role !== "billing" },
     { href: `${base}/audit`, label: "Audit log", icon: History, show: can(role, "audit:read") },
     { href: `${base}/settings`, label: "Settings", icon: Settings, show: true },
   ]
