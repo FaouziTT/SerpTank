@@ -31,6 +31,7 @@ from serptank.modules.jobs.models import Job
 from serptank.modules.llm.models import LlmUsage
 from serptank.modules.onpage.models import ContentBrief, PageOptimization
 from serptank.modules.projects.models import Project, ProjectMarket
+from serptank.modules.reports.models import AlertRule, Export, Notification
 from serptank.modules.search_data.models import (
     Competitor,
     KeywordMetrics,
@@ -48,6 +49,7 @@ __all__ = [
     "AiPerformanceDaily",
     "AiProfile",
     "AiPrompt",
+    "AlertRule",
     "ApiKey",
     "AuditEvent",
     "AuditIssue",
@@ -60,6 +62,7 @@ __all__ = [
     "CrawlLink",
     "CrawlPage",
     "EmailToken",
+    "Export",
     "Ga4Daily",
     "GscDaily",
     "IndexNowSubmission",
@@ -69,6 +72,7 @@ __all__ = [
     "LlmUsage",
     "Membership",
     "MfaTotp",
+    "Notification",
     "Organization",
     "PageOptimization",
     "Project",

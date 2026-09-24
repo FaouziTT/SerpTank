@@ -9,3 +9,5 @@ from serptank.modules.crawler import service as crawler_service  # noqa: F401 - 
 from serptank.modules.integrations import sync as integration_sync  # noqa: F401 - syncs
 from serptank.modules.keywords import ranks as keyword_ranks  # noqa: F401 - rank checks
 from serptank.modules.onpage import service as onpage_service  # noqa: F401 - optimizer, briefs
+from serptank.modules.reports import alerts as report_alerts  # noqa: F401 - alert checks
+from serptank.modules.reports import exports as report_exports  # noqa: F401 - CSV exports

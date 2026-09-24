@@ -45,7 +45,7 @@ test("create an org and project, verify instructions, invite an editor", async (
 
   // Keywords: track, run a check with no live vendor configured (first-party only).
   await page.getByRole("link", { name: "Keywords" }).click();
-  await expect(page.getByRole("heading", { name: "Keywords" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Keywords", exact: true })).toBeVisible();
   await page.getByLabel("Track keywords").fill("running shoes\nBuy Running Shoes");
   await page.getByRole("button", { name: "Add keywords" }).click();
   await expect(page.getByRole("cell", { name: "buy running shoes", exact: true })).toBeVisible();
@@ -105,6 +105,23 @@ test("create an org and project, verify instructions, invite an editor", async (
   await expect(page.getByText("Done: 0 answers sampled.")).toBeVisible();
   await page.getByRole("tab", { name: "Readiness" }).click();
   await expect(page.getByText("Readiness needs a site audit")).toBeVisible();
+  await page.goto(projectUrl);
+
+  // Search Presence dashboard: honest blanks, an alert, and a CSV export via a signed link.
+  await page.getByRole("link", { name: "Dashboard" }).click();
+  await expect(page.getByRole("heading", { name: "Search Presence" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Notifications" })).toBeVisible();
+  // Server-confirmed toggle: the box reflects the saved rule after the refetch.
+  await page.getByLabel("Ranking drops on Google on").click();
+  await expect(page.getByLabel("Ranking drops on Google on")).toBeChecked();
+  await expect(page.getByLabel("Ranking drops on Google by email")).toBeEnabled();
+  await page.getByRole("button", { name: "Export Rankings" }).click();
+  await expect(page.getByRole("button", { name: "CSV" })).toBeVisible();
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("button", { name: "CSV" }).click(),
+  ]);
+  expect(download.suggestedFilename()).toMatch(/^serptank-rankings-.*\.csv$/);
   await page.goto(projectUrl);
 
   // Domain verification instructions (the check itself needs real DNS).

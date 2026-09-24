@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from serptank import job_handlers  # noqa: F401 - registers handlers
 from serptank.core.config import Settings
 from serptank.core.crypto import Keyring, keyring_from_settings
+from serptank.core.email import EmailSender, create_email_sender
 from serptank.core.http import EgressPolicy, Resolver, SafeHttpClient, system_resolver
 from serptank.modules.ai_visibility.engines import build_engines
 from serptank.modules.crawler.rendering import RendererClient
@@ -36,8 +37,10 @@ def build_runtime(
     renderer: RendererClient | None = None,
     keyring: Keyring | None = None,
     serp_router: CollectorRouter | None = None,
+    email: EmailSender | None = None,
 ) -> JobRuntime:
-    extras: dict[str, Any] = {}
+    # Alert emails (tests pass an in-memory sender).
+    extras: dict[str, Any] = {"email": email or create_email_sender(settings)}
     if renderer is not None:
         extras["renderer"] = renderer
     elif settings.renderer_url:

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { authApi, type SessionResponse } from "@/features/auth/api";
 import { currentOrgId, OrgSwitcher, orgNavItems } from "@/features/orgs/org-nav";
+import { NotificationBell } from "@/features/reports/notifications";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -88,7 +89,10 @@ export function AppShell({ session, children }: { session: SessionResponse; chil
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b px-4">
           <span className="text-muted-foreground text-sm md:hidden">SerpTank</span>
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1">
+            {membership && membership.role !== "billing" ? (
+              <NotificationBell orgId={membership.organization_id} />
+            ) : null}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" aria-label="Account menu">

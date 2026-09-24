@@ -389,6 +389,9 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
           </div>
           <div className="flex gap-2">
             <Button asChild variant="outline">
+              <Link href={`/orgs/${org.id}/projects/${p.id}/presence`}>Dashboard</Link>
+            </Button>
+            <Button asChild variant="outline">
               <Link href={`/orgs/${org.id}/projects/${p.id}/keywords`}>Keywords</Link>
             </Button>
             <Button asChild variant="outline">

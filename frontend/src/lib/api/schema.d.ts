@@ -500,6 +500,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/exports/{org_id}/{export_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Download Export */
+    get: operations["download_export_api_v1_exports__org_id___export_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/invitations/accept": {
     parameters: {
       query?: never;
@@ -903,6 +920,74 @@ export interface paths {
     patch: operations["update_member_api_v1_orgs__org_id__members__membership_id__patch"];
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/notifications": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Notifications */
+    get: operations["list_notifications_api_v1_orgs__org_id__notifications_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/notifications/read-all": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Mark All Read */
+    post: operations["mark_all_read_api_v1_orgs__org_id__notifications_read_all_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/notifications/stream": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Notification Stream */
+    get: operations["notification_stream_api_v1_orgs__org_id__notifications_stream_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/notifications/{notification_id}/read": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Mark Read */
+    post: operations["mark_read_api_v1_orgs__org_id__notifications__notification_id__read_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects": {
     parameters: {
       query?: never;
@@ -1092,6 +1177,57 @@ export interface paths {
     /** Get Visibility */
     get: operations["get_visibility_api_v1_orgs__org_id__projects__project_id__ai_visibility_get"];
     put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/alerts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Alerts */
+    get: operations["list_alerts_api_v1_orgs__org_id__projects__project_id__alerts_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/alerts/evaluate": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Evaluate Alerts */
+    post: operations["evaluate_alerts_api_v1_orgs__org_id__projects__project_id__alerts_evaluate_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/alerts/{kind}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /** Set Alert */
+    put: operations["set_alert_api_v1_orgs__org_id__projects__project_id__alerts__kind__put"];
     post?: never;
     delete?: never;
     options?: never;
@@ -1304,6 +1440,41 @@ export interface paths {
     get: operations["list_pages_api_v1_orgs__org_id__projects__project_id__crawls__crawl_id__pages_get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/exports": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Exports */
+    get: operations["list_exports_api_v1_orgs__org_id__projects__project_id__exports_get"];
+    put?: never;
+    /** Start Export */
+    post: operations["start_export_api_v1_orgs__org_id__projects__project_id__exports_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/exports/{export_id}/link": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Export Link */
+    post: operations["export_link_api_v1_orgs__org_id__projects__project_id__exports__export_id__link_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1673,6 +1844,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/presence": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Presence */
+    get: operations["get_presence_api_v1_orgs__org_id__projects__project_id__presence_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/sources": {
     parameters: {
       query?: never;
@@ -1911,6 +2099,40 @@ export interface components {
       tokens_per_month: number;
       /** Tokens Used */
       tokens_used: number;
+    };
+    /** AlertRuleIn */
+    AlertRuleIn: {
+      /**
+       * Active
+       * @default true
+       */
+      active: boolean;
+      /**
+       * Email
+       * @default false
+       */
+      email: boolean;
+      /** Threshold */
+      threshold?: number | null;
+    };
+    /** AlertRuleOut */
+    AlertRuleOut: {
+      /** Active */
+      active: boolean;
+      /** Configured */
+      configured: boolean;
+      /** Email */
+      email: boolean;
+      /** Kind */
+      kind: string;
+      /** Label */
+      label: string;
+      /** Last Evaluated At */
+      last_evaluated_at: string | null;
+      /** Threshold */
+      threshold: number | null;
+      /** Threshold Meaning */
+      threshold_meaning: string | null;
     };
     /** AnalysisSummary */
     AnalysisSummary: {
@@ -2410,6 +2632,54 @@ export interface components {
       /** Search Engines */
       search_engines: components["schemas"]["SearchEngine"][];
     };
+    /** ExportLink */
+    ExportLink: {
+      /**
+       * Expires At
+       * Format: date-time
+       */
+      expires_at: string;
+      /** Url */
+      url: string;
+    };
+    /** ExportOut */
+    ExportOut: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Error */
+      error: string | null;
+      /** Expires At */
+      expires_at: string | null;
+      /** Filename */
+      filename: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Kind */
+      kind: string;
+      /** Rows */
+      rows: number | null;
+      /** Status */
+      status: string;
+    };
+    /** ExportRequest */
+    ExportRequest: {
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "rankings" | "audit_issues" | "gsc_queries" | "ai_answers";
+    };
+    /** ExportStarted */
+    ExportStarted: {
+      export: components["schemas"]["ExportOut"];
+      job: components["schemas"]["JobOut"];
+    };
     /** FirstPartyRow */
     FirstPartyRow: {
       /** Citations */
@@ -2871,6 +3141,38 @@ export interface components {
       /** Recovery Code */
       recovery_code?: string | null;
     };
+    /** NotificationList */
+    NotificationList: {
+      /** Items */
+      items: components["schemas"]["NotificationOut"][];
+      /** Unread */
+      unread: number;
+    };
+    /** NotificationOut */
+    NotificationOut: {
+      /** Body */
+      body: string;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Kind */
+      kind: string;
+      /** Link */
+      link: string | null;
+      /** Project Id */
+      project_id: string | null;
+      /** Read At */
+      read_at: string | null;
+      /** Title */
+      title: string;
+    };
     /** OpportunitiesOut */
     OpportunitiesOut: {
       /**
@@ -3185,6 +3487,51 @@ export interface components {
       source: string;
       /** Url */
       url: string | null;
+    };
+    /** PresenceOut */
+    PresenceOut: {
+      /** Ai */
+      ai: {
+        [key: string]: unknown;
+      };
+      /** Audit */
+      audit: {
+        [key: string]: unknown;
+      } | null;
+      /** Engines */
+      engines: {
+        [key: string]: unknown;
+      }[];
+      /**
+       * Generated At
+       * Format: date-time
+       */
+      generated_at: string;
+      /** Gsc */
+      gsc: {
+        [key: string]: unknown;
+      } | null;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Opportunities */
+      opportunities: {
+        [key: string]: unknown;
+      }[];
+      /** Score */
+      score: number | null;
+      /** Score Parts */
+      score_parts: {
+        [key: string]: number | null;
+      };
+      /** Vitals */
+      vitals: {
+        [key: string]: unknown;
+      } | null;
+      /** Volumes Known */
+      volumes_known: boolean;
     };
     /** ProjectCreate */
     ProjectCreate: {
@@ -4530,6 +4877,39 @@ export interface operations {
       };
     };
   };
+  download_export_api_v1_exports__org_id___export_id__get: {
+    parameters: {
+      query: {
+        exp: number;
+        sig: string;
+      };
+      header?: never;
+      path: {
+        org_id: string;
+        export_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   accept_invitation_api_v1_invitations_accept_post: {
     parameters: {
       query?: never;
@@ -5453,6 +5833,127 @@ export interface operations {
       };
     };
   };
+  list_notifications_api_v1_orgs__org_id__notifications_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["NotificationList"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mark_all_read_api_v1_orgs__org_id__notifications_read_all_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  notification_stream_api_v1_orgs__org_id__notifications_stream_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/event-stream": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  mark_read_api_v1_orgs__org_id__notifications__notification_id__read_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        notification_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_projects_api_v1_orgs__org_id__projects_get: {
     parameters: {
       query?: never;
@@ -6020,6 +6521,111 @@ export interface operations {
       };
     };
   };
+  list_alerts_api_v1_orgs__org_id__projects__project_id__alerts_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AlertRuleOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  evaluate_alerts_api_v1_orgs__org_id__projects__project_id__alerts_evaluate_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  set_alert_api_v1_orgs__org_id__projects__project_id__alerts__kind__put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        kind:
+          | "rank_drop"
+          | "ai_citation_lost"
+          | "audit_regression"
+          | "cwv_poor"
+          | "indexing_lost"
+          | "weekly_digest";
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AlertRuleIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_briefs_api_v1_orgs__org_id__projects__project_id__briefs_get: {
     parameters: {
       query?: never;
@@ -6511,6 +7117,107 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["PageList"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_exports_api_v1_orgs__org_id__projects__project_id__exports_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ExportOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  start_export_api_v1_orgs__org_id__projects__project_id__exports_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ExportRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ExportStarted"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  export_link_api_v1_orgs__org_id__projects__project_id__exports__export_id__link_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        export_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ExportLink"];
         };
       };
       /** @description Validation Error */
@@ -7360,6 +8067,40 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["PerformanceOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_presence_api_v1_orgs__org_id__projects__project_id__presence_get: {
+    parameters: {
+      query?: {
+        market_id?: string | null;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PresenceOut"];
         };
       };
       /** @description Validation Error */

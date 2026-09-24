@@ -66,6 +66,7 @@ from serptank.modules.keywords import router as keywords_router
 from serptank.modules.llm import router as llm_router
 from serptank.modules.onpage import router as onpage_router
 from serptank.modules.projects import router as projects_router
+from serptank.modules.reports import router as reports_router
 from serptank.modules.tenancy import router as tenancy_router
 from serptank.workers.celery_config import make_celery
 from serptank.workers.runtime import build_runtime, close_runtime
@@ -132,6 +133,9 @@ def _include_routers(app: FastAPI) -> None:
     app.include_router(onpage_router.router, prefix=API_PREFIX)
     app.include_router(llm_router.router, prefix=API_PREFIX)
     app.include_router(ai_router.router, prefix=API_PREFIX)
+    app.include_router(reports_router.router, prefix=API_PREFIX)
+    app.include_router(reports_router.org_router, prefix=API_PREFIX)
+    app.include_router(reports_router.download_router, prefix=API_PREFIX)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:

@@ -101,6 +101,7 @@ async def api_app(
     # Crawls fetch through the same fake internet (never the real network in tests).
     app.state.jobs_overrides = {
         "http_factory": default_http_factory(_public_resolver, httpx.MockTransport(internet)),
+        "email": outbox,
     }
     async with LifespanManager(app):
         await app.state.redis.flushdb()
