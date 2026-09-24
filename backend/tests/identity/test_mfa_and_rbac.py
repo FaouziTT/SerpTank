@@ -21,7 +21,7 @@ from serptank.modules.tenancy.policies import (
     can_assign_role,
     role_allows,
 )
-from tests.identity.conftest import (
+from tests.support.api import (
     STRONG_PASSWORD,
     Browser,
     create_org_with_member,

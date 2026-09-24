@@ -1222,6 +1222,15 @@ wheels = [
 ]
 
 [[package]]
+name = "publicsuffixlist"
+version = "1.0.2.20260922"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e0/2b/4233b6022599eb25a11bb5e0613de2efe9f2a8d2919b02e024a9e383e5ea/publicsuffixlist-1.0.2.20260922.tar.gz", hash = "sha256:f471784adb84337d9b96e9d237faa7f0bf9497bd7f44cc4fe52140a834fd0035", size = 109235, upload-time = "2026-09-22T08:27:33.86Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/00/8a3c7982c489ac26d5058763d76a764bca66e9cf08a1208b79597640c3f7/publicsuffixlist-1.0.2.20260922-py2.py3-none-any.whl", hash = "sha256:49b2e687205d4ee63791a2bce89d6f3e186dcf9049438de5c654e41466393eae", size = 108913, upload-time = "2026-09-22T08:27:32.512Z" },
+]
+
+[[package]]
 name = "pwdlib"
 version = "0.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1588,10 +1597,12 @@ dependencies = [
     { name = "alembic" },
     { name = "asyncpg" },
     { name = "cryptography" },
+    { name = "dnspython" },
     { name = "email-validator" },
     { name = "fastapi" },
     { name = "httpx" },
     { name = "prometheus-client" },
+    { name = "publicsuffixlist" },
     { name = "pwdlib", extra = ["argon2", "bcrypt"] },
     { name = "pydantic-settings" },
     { name = "pyjwt", extra = ["crypto"] },
@@ -1624,10 +1635,12 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.20.0" },
     { name = "asyncpg", specifier = ">=0.31.0" },
     { name = "cryptography", specifier = ">=50.0.1" },
+    { name = "dnspython", specifier = ">=2.8.0" },
     { name = "email-validator", specifier = ">=2.3.0" },
     { name = "fastapi", specifier = ">=0.141.1" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "prometheus-client", specifier = ">=0.26.0" },
+    { name = "publicsuffixlist", specifier = ">=1.0.2.20260922" },
     { name = "pwdlib", extras = ["argon2", "bcrypt"], specifier = ">=0.3.1" },
     { name = "pydantic-settings", specifier = ">=2.15.0" },
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.15.0" },

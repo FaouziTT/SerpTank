@@ -42,7 +42,8 @@ class Project(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
     primary_domain: Mapped[str] = mapped_column(CITEXT, nullable=False)
     domain_verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     verification_method: Mapped[str | None] = mapped_column(String(20))
-    verification_token_hash: Mapped[str | None] = mapped_column(String(64))
+    # Published by the customer in DNS or a file, so it is not a secret.
+    verification_token: Mapped[str | None] = mapped_column(String(64))
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 

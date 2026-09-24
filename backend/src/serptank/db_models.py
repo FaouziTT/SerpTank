@@ -14,13 +14,14 @@ from serptank.modules.identity.models import (
     WebAuthnCredential,
 )
 from serptank.modules.projects.models import Project, ProjectMarket
-from serptank.modules.tenancy.models import Membership, Organization
+from serptank.modules.tenancy.models import Invitation, Membership, Organization
 
 __all__ = [
     "ApiKey",
     "AuditEvent",
     "Base",
     "EmailToken",
+    "Invitation",
     "Membership",
     "MfaTotp",
     "Organization",

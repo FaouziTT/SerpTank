@@ -56,6 +56,8 @@ from serptank.modules.identity.passwords import (
     PasswordHasher,
 )
 from serptank.modules.identity.sessions import SessionStore
+from serptank.modules.projects import router as projects_router
+from serptank.modules.tenancy import router as tenancy_router
 
 API_PREFIX = "/api/v1"
 logger = structlog.get_logger(__name__)
@@ -145,6 +147,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(health.router)
     app.include_router(identity_router.router, prefix=API_PREFIX)
     app.include_router(identity_router.org_router, prefix=API_PREFIX)
+    app.include_router(tenancy_router.router, prefix=API_PREFIX)
+    app.include_router(projects_router.router, prefix=API_PREFIX)
 
     # Middleware: the LAST added runs FIRST (outermost). Listed innermost -> outermost.
     session_detector, token_verifier = build_csrf_hooks(settings)

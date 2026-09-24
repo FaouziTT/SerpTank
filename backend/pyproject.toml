@@ -12,10 +12,12 @@ dependencies = [
     "alembic>=1.20.0",
     "asyncpg>=0.31.0",
     "cryptography>=50.0.1",
+    "dnspython>=2.8.0",
     "email-validator>=2.3.0",
     "fastapi>=0.141.1",
     "httpx>=0.28.1",
     "prometheus-client>=0.26.0",
+    "publicsuffixlist>=1.0.2.20260922",
     "pwdlib[argon2,bcrypt]>=0.3.1",
     "pydantic-settings>=2.15.0",
     "pyjwt[crypto]>=2.15.0",
@@ -101,7 +103,7 @@ files = ["src", "tests"]
 warn_unreachable = true
 
 [[tool.mypy.overrides]]
-module = ["asyncpg", "asyncpg.*"]
+module = ["asyncpg", "asyncpg.*", "publicsuffixlist"]
 ignore_missing_imports = true
 
 # -----------------------------------------------------------------------------
@@ -117,6 +119,7 @@ xfail_strict = true
 [tool.coverage.run]
 source = ["serptank"]
 branch = true
+concurrency = ["greenlet", "thread"]
 
 [tool.coverage.report]
 show_missing = true

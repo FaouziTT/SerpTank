@@ -45,3 +45,19 @@ class Membership(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
     )
     role: Mapped[MemberRole] = mapped_column(member_role_enum, nullable=False)
+
+
+class Invitation(UUIDPrimaryKeyMixin, TenantMixin, TimestampMixin, Base):
+    """An invitation to join an organization (single-use, expiring, hashed token)."""
+
+    __tablename__ = "invitations"
+
+    email: Mapped[str] = mapped_column(CITEXT, nullable=False)
+    role: Mapped[MemberRole] = mapped_column(member_role_enum, nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    invited_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")
+    )
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    accepted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

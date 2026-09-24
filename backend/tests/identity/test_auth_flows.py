@@ -5,7 +5,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from serptank.core.email import MemoryEmailSender
-from tests.identity.conftest import (
+from tests.support.api import (
     ORIGIN,
     STRONG_PASSWORD,
     Browser,

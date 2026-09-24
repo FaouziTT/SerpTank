@@ -15,7 +15,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi import FastAPI
 
 from serptank.core.email import MemoryEmailSender
-from tests.identity.conftest import (
+from tests.support.api import (
     Browser,
     FakeInternet,
     make_client,

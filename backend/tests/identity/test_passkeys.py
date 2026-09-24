@@ -6,7 +6,7 @@ import pytest
 from fastapi import FastAPI
 
 from serptank.core.email import MemoryEmailSender
-from tests.identity.conftest import (
+from tests.support.api import (
     ORIGIN,
     STRONG_PASSWORD,
     Browser,
@@ -14,7 +14,7 @@ from tests.identity.conftest import (
     make_client,
     signed_in_browser,
 )
-from tests.identity.soft_authenticator import SoftAuthenticator
+from tests.support.soft_authenticator import SoftAuthenticator
 
 
 async def _register_passkey(b: Browser) -> SoftAuthenticator:

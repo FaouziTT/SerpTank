@@ -1,4 +1,4 @@
-"""Fixtures for identity/API tests: the API runs as the RLS-restricted app role."""
+"""Shared API test harness (pytest plugin): the API runs as the RLS-restricted app role."""
 
 from __future__ import annotations
 

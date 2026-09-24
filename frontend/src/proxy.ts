@@ -8,7 +8,7 @@
  */
 import { NextResponse, type NextRequest } from "next/server";
 
-const APP_PREFIXES = ["/dashboard", "/settings", "/orgs", "/projects"];
+const APP_PREFIXES = ["/dashboard", "/settings", "/orgs", "/projects", "/invite"];
 const SESSION_COOKIES = ["__Host-st_session", "st_session"];
 
 export function buildCsp(nonce: string, dev: boolean): string {

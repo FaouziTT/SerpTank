@@ -15,16 +15,44 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authApi, type SessionResponse } from "@/features/auth/api";
+import { currentOrgId, OrgSwitcher, orgNavItems } from "@/features/orgs/org-nav";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/settings/security", label: "Security", icon: Shield },
+  { href: "/dashboard", label: "All organizations", icon: LayoutDashboard },
+  { href: "/settings/security", label: "Account security", icon: Shield },
 ];
+
+function NavLink({
+  href,
+  label,
+  icon: Icon,
+  active,
+}: {
+  href: string;
+  label: string;
+  icon: typeof Shield;
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
+        active && "bg-muted font-medium",
+      )}
+    >
+      <Icon className="h-4 w-4" aria-hidden /> {label}
+    </Link>
+  );
+}
 
 export function AppShell({ session, children }: { session: SessionResponse; children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const orgId = currentOrgId(pathname);
+  const membership = session.memberships.find((m) => m.organization_id === orgId);
 
   async function signOut() {
     try {
@@ -41,19 +69,19 @@ export function AppShell({ session, children }: { session: SessionResponse; chil
         <Link href="/dashboard" className="mb-6 block px-2 text-lg font-semibold">
           SerpTank
         </Link>
-        <nav aria-label="Main" className="space-y-1">
-          {NAV.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              aria-current={pathname.startsWith(href) ? "page" : undefined}
-              className={cn(
-                "hover:bg-muted flex items-center gap-2 rounded-md px-2 py-1.5 text-sm",
-                pathname.startsWith(href) && "bg-muted font-medium",
-              )}
-            >
-              <Icon className="h-4 w-4" aria-hidden /> {label}
-            </Link>
+        <div className="mb-4">
+          <OrgSwitcher session={session} />
+        </div>
+        {membership ? (
+          <nav aria-label="Organization" className="mb-6 space-y-1">
+            {orgNavItems(membership.organization_id, membership.role).map((item) => (
+              <NavLink key={item.href} {...item} active={item.isActive(pathname)} />
+            ))}
+          </nav>
+        ) : null}
+        <nav aria-label="Account" className="space-y-1">
+          {NAV.map((item) => (
+            <NavLink key={item.href} {...item} active={pathname.startsWith(item.href)} />
           ))}
         </nav>
       </aside>

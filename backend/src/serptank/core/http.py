@@ -225,13 +225,14 @@ class SafeHttpClient:
     async def aclose(self) -> None:
         await self._client.aclose()
 
-    async def validate_url(self, url: str) -> _Target:
+    async def validate_url(self, url: str, policy: EgressPolicy | None = None) -> _Target:
         """Validate ``url`` and resolve it to a pinned public IP, or raise."""
+        policy = policy or self.policy
         try:
             parsed = httpx.URL(url)
         except (httpx.InvalidURL, TypeError, ValueError) as exc:
             raise EgressPolicyError("invalid URL") from exc
-        if parsed.scheme not in self.policy.allowed_schemes:
+        if parsed.scheme not in policy.allowed_schemes:
             raise EgressPolicyError(f"scheme {parsed.scheme!r} is not allowed")
         if parsed.userinfo:
             raise EgressPolicyError("credentials in URLs are not allowed")
@@ -239,7 +240,7 @@ class SafeHttpClient:
         if not host:
             raise EgressPolicyError("URL has no host")
         port = parsed.port or (443 if parsed.scheme == "https" else 80)
-        if port not in self.policy.allowed_ports:
+        if port not in policy.allowed_ports:
             raise EgressPolicyError(f"port {port} is not allowed")
 
         literal = _parse_ip_literal(host)
@@ -280,24 +281,42 @@ class SafeHttpClient:
         *,
         headers: dict[str, str] | None = None,
         content: bytes | None = None,
+        policy: EgressPolicy | None = None,
     ) -> SafeResponse:
-        """Perform a request under the policy. Raises :class:`EgressError` on refusal."""
+        """Perform a request under the policy. Raises :class:`EgressError` on refusal.
+
+        ``policy`` tightens limits for one call (e.g. a tiny verification file).
+        """
+        policy = policy or self.policy
         try:
-            async with asyncio.timeout(self.policy.total_timeout_s):
-                return await self._request(method, url, httpx.Headers(headers or {}), content)
+            async with asyncio.timeout(policy.total_timeout_s):
+                return await self._request(
+                    method, url, httpx.Headers(headers or {}), content, policy
+                )
         except TimeoutError as exc:
             raise UpstreamError("request exceeded the total time limit") from exc
 
-    async def get(self, url: str, *, headers: dict[str, str] | None = None) -> SafeResponse:
-        return await self.request("GET", url, headers=headers)
+    async def get(
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        policy: EgressPolicy | None = None,
+    ) -> SafeResponse:
+        return await self.request("GET", url, headers=headers, policy=policy)
 
     async def _request(
-        self, method: str, url: str, headers: httpx.Headers, content: bytes | None
+        self,
+        method: str,
+        url: str,
+        headers: httpx.Headers,
+        content: bytes | None,
+        policy: EgressPolicy,
     ) -> SafeResponse:
         chain: list[str] = []
         current_url, current_method, current_content = url, method.upper(), content
-        for _ in range(self.policy.max_redirects + 1):
-            target = await self.validate_url(current_url)
+        for _ in range(policy.max_redirects + 1):
+            target = await self.validate_url(current_url, policy)
             request = self._build_request(target, current_method, headers, current_content)
             try:
                 response = await self._client.send(request, stream=True)
@@ -322,8 +341,8 @@ class SafeHttpClient:
                         current_method, current_content = "GET", None
                     current_url = next_url
                     continue
-                self._check_content_type(response.headers)
-                body = await self._read_capped(response)
+                self._check_content_type(response.headers, policy)
+                body = await self._read_capped(response, policy)
                 return SafeResponse(
                     status_code=response.status_code,
                     headers=response.headers,
@@ -333,18 +352,20 @@ class SafeHttpClient:
                 )
             finally:
                 await response.aclose()
-        raise TooManyRedirectsError(f"more than {self.policy.max_redirects} redirects")
+        raise TooManyRedirectsError(f"more than {policy.max_redirects} redirects")
 
-    def _check_content_type(self, headers: httpx.Headers) -> None:
-        allowed = self.policy.allowed_content_types
+    @staticmethod
+    def _check_content_type(headers: httpx.Headers, policy: EgressPolicy) -> None:
+        allowed = policy.allowed_content_types
         if allowed is None:
             return
         content_type = headers.get("content-type", "").split(";", 1)[0].strip().lower()
         if content_type not in allowed:
             raise DisallowedContentTypeError(f"content type {content_type!r} is not allowed")
 
-    async def _read_capped(self, response: httpx.Response) -> bytes:
-        limit = self.policy.max_response_bytes
+    @staticmethod
+    async def _read_capped(response: httpx.Response, policy: EgressPolicy) -> bytes:
+        limit = policy.max_response_bytes
         declared = response.headers.get("content-length")
         if declared and declared.isdigit() and int(declared) > limit:
             raise ResponseTooLargeError(f"response declares {declared} bytes (limit {limit})")

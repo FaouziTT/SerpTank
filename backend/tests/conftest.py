@@ -28,6 +28,8 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engin
 from serptank.core.config import Environment, Settings
 from serptank.main import create_app
 
+pytest_plugins = ["tests.support.api"]
+
 
 def _service_url(name: str) -> str | None:
     value = os.environ.get(name)
