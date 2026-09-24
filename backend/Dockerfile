@@ -30,6 +30,10 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 WORKDIR /app
 COPY --from=builder --chown=root:root /app/.venv /app/.venv
+# Migrations ship in the image; M14 runs `alembic upgrade head` as a one-shot job
+# with the schema-owner credentials (the API itself connects as serptank_api).
+COPY --chown=root:root alembic.ini ./
+COPY --chown=root:root migrations ./migrations
 
 USER serptank:serptank
 EXPOSE 8000

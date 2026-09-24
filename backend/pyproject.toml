@@ -8,6 +8,7 @@ license = { text = "Proprietary" }
 # Runtime dependencies are added module by module (M1 onwards) so that every
 # package in the production image has a reviewed reason to be there.
 dependencies = [
+    "alembic>=1.20.0",
     "asyncpg>=0.31.0",
     "cryptography>=50.0.1",
     "fastapi>=0.141.1",
@@ -17,6 +18,7 @@ dependencies = [
     "redis>=8.1.0",
     "sqlalchemy[asyncio]>=2.0.54",
     "structlog>=26.1.0",
+    "uuid-utils>=1.0.0",
     "uvicorn[standard]>=0.53.0",
 ]
 
@@ -50,14 +52,14 @@ default-groups = ["dev"]
 
 # -----------------------------------------------------------------------------
 # Ruff (lint + format). Replaces black, isort, flake8.
-# Legacy code in app/, alembic/ (old baseline), scripts/ and tests_legacy/ is excluded
+# Legacy code in app/, scripts/ and tests_legacy/ is excluded
 # until each part is replaced by its roadmap module, then deleted.
 # -----------------------------------------------------------------------------
 [tool.ruff]
 target-version = "py313"
 line-length = 100
 src = ["src", "tests"]
-extend-exclude = ["app", "alembic", "tests_legacy", "scripts"]
+extend-exclude = ["app", "tests_legacy", "scripts", "migrations/versions"]
 
 [tool.ruff.lint]
 select = [
@@ -76,6 +78,8 @@ select = [
 ignore = ["PLR0913"]
 
 [tool.ruff.lint.per-file-ignores]
+# DDL identifiers (table/role names) cannot be bound parameters; they are code constants.
+"migrations/helpers.py" = ["S608"]
 "tests/**" = ["S101", "S104", "S105", "S106", "PLR2004", "PLC0415"]
 
 [tool.ruff.format]
@@ -89,6 +93,10 @@ python_version = "3.13"
 strict = true
 files = ["src", "tests"]
 warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["asyncpg", "asyncpg.*"]
+ignore_missing_imports = true
 
 # -----------------------------------------------------------------------------
 # pytest. The legacy suite in tests_legacy/ cannot run (see docs/execution-plan.md §2.2).
