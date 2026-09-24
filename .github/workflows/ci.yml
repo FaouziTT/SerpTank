@@ -86,10 +86,13 @@ jobs:
           load: true
           push: false
           tags: serptank-api:ci
-      - name: Smoke test (non-root, entrypoint)
+      - name: Smoke test (non-root, serves /healthz with security headers)
         run: |
-          docker run --rm serptank-api:ci
-          test "$(docker run --rm serptank-api:ci id -u)" = "10001"
+          test "$(docker run --rm --entrypoint id serptank-api:ci -u)" = "10001"
+          docker run -d --name smoke -p 127.0.0.1:18000:8000 serptank-api:ci
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:18000/healthz && break; sleep 1; done
+          curl -fsSI http://127.0.0.1:18000/healthz | grep -i "x-content-type-options: nosniff"
+          docker rm -f smoke
       - name: Trivy image scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:

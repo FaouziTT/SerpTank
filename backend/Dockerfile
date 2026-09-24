@@ -32,5 +32,10 @@ WORKDIR /app
 COPY --from=builder --chown=root:root /app/.venv /app/.venv
 
 USER serptank:serptank
-# Module 1 replaces this with the ASGI server entrypoint and a /healthz check.
-CMD ["python", "-m", "serptank"]
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD ["python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=3)"]
+# Proxy headers are processed by the app itself (trusted proxies only), so uvicorn's
+# own handling is disabled. Server banners are suppressed.
+CMD ["uvicorn", "--factory", "serptank.main:create_app", "--host", "0.0.0.0", "--port", "8000", \
+     "--no-proxy-headers", "--no-server-header", "--no-date-header", "--timeout-graceful-shutdown", "20"]
