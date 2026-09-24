@@ -30,6 +30,67 @@
         "title": "AdsAccount",
         "type": "object"
       },
+      "AiSettingsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "brand_terms": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Brand Terms",
+            "type": "array"
+          },
+          "samples_per_prompt": {
+            "default": 3,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Samples Per Prompt",
+            "type": "integer"
+          }
+        },
+        "title": "AiSettingsIn",
+        "type": "object"
+      },
+      "AiSettingsOut": {
+        "properties": {
+          "brand_terms": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Brand Terms",
+            "type": "array"
+          },
+          "engines": {
+            "items": {
+              "$ref": "#/components/schemas/EngineStatus"
+            },
+            "title": "Engines",
+            "type": "array"
+          },
+          "prompts_per_month": {
+            "title": "Prompts Per Month",
+            "type": "integer"
+          },
+          "prompts_used_this_month": {
+            "title": "Prompts Used This Month",
+            "type": "integer"
+          },
+          "samples_per_prompt": {
+            "title": "Samples Per Prompt",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "brand_terms",
+          "samples_per_prompt",
+          "prompts_used_this_month",
+          "prompts_per_month",
+          "engines"
+        ],
+        "title": "AiSettingsOut",
+        "type": "object"
+      },
       "AiSurfaceTotals": {
         "properties": {
           "citations": {
@@ -263,6 +324,105 @@
           "market_id"
         ],
         "title": "AnalyzeRequest",
+        "type": "object"
+      },
+      "AnswerOut": {
+        "properties": {
+          "answered": {
+            "title": "Answered",
+            "type": "boolean"
+          },
+          "citations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "cited": {
+            "title": "Cited",
+            "type": "boolean"
+          },
+          "competitors": {
+            "additionalProperties": true,
+            "title": "Competitors",
+            "type": "object"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "excerpt": {
+            "title": "Excerpt",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "mention_rank": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mention Rank"
+          },
+          "mentioned": {
+            "title": "Mentioned",
+            "type": "boolean"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "prompt_id": {
+            "format": "uuid",
+            "title": "Prompt Id",
+            "type": "string"
+          },
+          "sample": {
+            "title": "Sample",
+            "type": "integer"
+          },
+          "sentiment": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sentiment"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "prompt_id",
+          "engine",
+          "sample",
+          "answered",
+          "mentioned",
+          "cited",
+          "mention_rank",
+          "sentiment",
+          "competitors",
+          "citations",
+          "excerpt",
+          "model"
+        ],
+        "title": "AnswerOut",
         "type": "object"
       },
       "ApiKeyCreateRequest": {
@@ -1178,6 +1338,100 @@
         "title": "EmailRequest",
         "type": "object"
       },
+      "EngineStatus": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "entitled": {
+            "title": "Entitled",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "selected": {
+            "title": "Selected",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "engine",
+          "selected",
+          "entitled",
+          "available",
+          "note"
+        ],
+        "title": "EngineStatus",
+        "type": "object"
+      },
+      "EngineVisibility": {
+        "properties": {
+          "answer_rate": {
+            "$ref": "#/components/schemas/RateOut"
+          },
+          "avg_mention_rank": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Mention Rank"
+          },
+          "avg_sentiment": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Avg Sentiment"
+          },
+          "citation_rate": {
+            "$ref": "#/components/schemas/RateOut"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "mention_rate": {
+            "$ref": "#/components/schemas/RateOut"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "engine",
+          "samples",
+          "answer_rate",
+          "mention_rate",
+          "citation_rate",
+          "avg_sentiment",
+          "avg_mention_rank"
+        ],
+        "title": "EngineVisibility",
+        "type": "object"
+      },
       "EntitlementsOut": {
         "properties": {
           "ai_engines": {
@@ -1245,6 +1499,39 @@
           "rank_check_interval_hours"
         ],
         "title": "EntitlementsOut",
+        "type": "object"
+      },
+      "FirstPartyRow": {
+        "properties": {
+          "citations": {
+            "title": "Citations",
+            "type": "integer"
+          },
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "surface": {
+            "title": "Surface",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "surface",
+          "impressions",
+          "clicks",
+          "citations"
+        ],
+        "title": "FirstPartyRow",
         "type": "object"
       },
       "GoogleProperties": {
@@ -3516,6 +3803,220 @@
         "title": "ProjectUpdate",
         "type": "object"
       },
+      "PromptOut": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "engines": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Engines",
+            "type": "array"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "keyword": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keyword"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "market_id",
+          "prompt",
+          "keyword",
+          "engines",
+          "active",
+          "created_at"
+        ],
+        "title": "PromptOut",
+        "type": "object"
+      },
+      "PromptSuggestion": {
+        "properties": {
+          "intent": {
+            "title": "Intent",
+            "type": "string"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt",
+          "keyword",
+          "intent"
+        ],
+        "title": "PromptSuggestion",
+        "type": "object"
+      },
+      "PromptUpdate": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "active"
+        ],
+        "title": "PromptUpdate",
+        "type": "object"
+      },
+      "PromptVisibility": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "engines": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            "title": "Engines",
+            "type": "object"
+          },
+          "keyword": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keyword"
+          },
+          "organic_position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Organic Position"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          },
+          "prompt_id": {
+            "format": "uuid",
+            "title": "Prompt Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt_id",
+          "prompt",
+          "keyword",
+          "active",
+          "organic_position",
+          "engines"
+        ],
+        "title": "PromptVisibility",
+        "type": "object"
+      },
+      "PromptsAdded": {
+        "properties": {
+          "added": {
+            "title": "Added",
+            "type": "integer"
+          },
+          "skipped_existing": {
+            "title": "Skipped Existing",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "added",
+          "skipped_existing"
+        ],
+        "title": "PromptsAdded",
+        "type": "object"
+      },
+      "PromptsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "engines": {
+            "items": {
+              "$ref": "#/components/schemas/AIEngine"
+            },
+            "title": "Engines",
+            "type": "array"
+          },
+          "keyword": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Keyword"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "prompts": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 50,
+            "minItems": 1,
+            "title": "Prompts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "market_id",
+          "prompts"
+        ],
+        "title": "PromptsIn",
+        "type": "object"
+      },
       "PropertyOption": {
         "properties": {
           "id": {
@@ -3563,6 +4064,169 @@
           "tokens"
         ],
         "title": "PurposeUsage",
+        "type": "object"
+      },
+      "RateOut": {
+        "properties": {
+          "high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High"
+          },
+          "low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Low"
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate"
+          },
+          "successes": {
+            "title": "Successes",
+            "type": "integer"
+          },
+          "trials": {
+            "title": "Trials",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "successes",
+          "trials",
+          "rate",
+          "low",
+          "high"
+        ],
+        "title": "RateOut",
+        "type": "object"
+      },
+      "ReadinessComponent": {
+        "properties": {
+          "findings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "weight",
+          "score",
+          "findings"
+        ],
+        "title": "ReadinessComponent",
+        "type": "object"
+      },
+      "ReadinessOut": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "bots": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Bots",
+            "type": "object"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/ReadinessComponent"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "crawl_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crawl Id"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          }
+        },
+        "required": [
+          "available",
+          "score",
+          "crawl_id",
+          "components",
+          "bots",
+          "note"
+        ],
+        "title": "ReadinessOut",
         "type": "object"
       },
       "ReadinessResponse": {
@@ -3973,6 +4637,46 @@
           "average_position"
         ],
         "title": "ShareOfVoiceRow",
+        "type": "object"
+      },
+      "ShareRow": {
+        "properties": {
+          "citations": {
+            "title": "Citations",
+            "type": "integer"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "is_own": {
+            "title": "Is Own",
+            "type": "boolean"
+          },
+          "mentions": {
+            "title": "Mentions",
+            "type": "integer"
+          },
+          "share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share"
+          }
+        },
+        "required": [
+          "domain",
+          "is_own",
+          "mentions",
+          "citations",
+          "share"
+        ],
+        "title": "ShareRow",
         "type": "object"
       },
       "SitemapSubmit": {
@@ -4472,6 +5176,51 @@
           "method"
         ],
         "title": "VerificationStart",
+        "type": "object"
+      },
+      "VisibilityOut": {
+        "properties": {
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "engines": {
+            "items": {
+              "$ref": "#/components/schemas/EngineVisibility"
+            },
+            "title": "Engines",
+            "type": "array"
+          },
+          "first_party": {
+            "items": {
+              "$ref": "#/components/schemas/FirstPartyRow"
+            },
+            "title": "First Party",
+            "type": "array"
+          },
+          "prompts": {
+            "items": {
+              "$ref": "#/components/schemas/PromptVisibility"
+            },
+            "title": "Prompts",
+            "type": "array"
+          },
+          "share_of_voice": {
+            "items": {
+              "$ref": "#/components/schemas/ShareRow"
+            },
+            "title": "Share Of Voice",
+            "type": "array"
+          }
+        },
+        "required": [
+          "days",
+          "engines",
+          "share_of_voice",
+          "prompts",
+          "first_party"
+        ],
+        "title": "VisibilityOut",
         "type": "object"
       },
       "VitalsOut": {
@@ -7253,6 +8002,688 @@
         "summary": "Ai Performance",
         "tags": [
           "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/answers": {
+      "get": {
+        "operationId": "list_answers_api_v1_orgs__org_id__projects__project_id__ai_answers_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "prompt_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Prompt Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "engine",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 30,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Engine"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AnswerOut"
+                  },
+                  "title": "Response List Answers Api V1 Orgs  Org Id  Projects  Project Id  Ai Answers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Answers",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/prompts": {
+      "get": {
+        "operationId": "list_prompts_api_v1_orgs__org_id__projects__project_id__ai_prompts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PromptOut"
+                  },
+                  "title": "Response List Prompts Api V1 Orgs  Org Id  Projects  Project Id  Ai Prompts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Prompts",
+        "tags": [
+          "ai-visibility"
+        ]
+      },
+      "post": {
+        "operationId": "add_prompts_api_v1_orgs__org_id__projects__project_id__ai_prompts_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromptsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptsAdded"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Prompts",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/prompts/suggestions": {
+      "get": {
+        "description": "Deterministic suggestions from tracked keywords (no LLM, no cost).",
+        "operationId": "prompt_suggestions_api_v1_orgs__org_id__projects__project_id__ai_prompts_suggestions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Market Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PromptSuggestion"
+                  },
+                  "title": "Response Prompt Suggestions Api V1 Orgs  Org Id  Projects  Project Id  Ai Prompts Suggestions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Prompt Suggestions",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/prompts/{prompt_id}": {
+      "delete": {
+        "operationId": "delete_prompt_api_v1_orgs__org_id__projects__project_id__ai_prompts__prompt_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prompt_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Prompt Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Prompt",
+        "tags": [
+          "ai-visibility"
+        ]
+      },
+      "patch": {
+        "operationId": "update_prompt_api_v1_orgs__org_id__projects__project_id__ai_prompts__prompt_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "prompt_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Prompt Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromptUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Prompt",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/readiness": {
+      "get": {
+        "operationId": "get_readiness_api_v1_orgs__org_id__projects__project_id__ai_readiness_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Readiness",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/run": {
+      "post": {
+        "operationId": "run_sampling_api_v1_orgs__org_id__projects__project_id__ai_run_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Sampling",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/settings": {
+      "get": {
+        "operationId": "get_settings_api_v1_orgs__org_id__projects__project_id__ai_settings_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AiSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Settings",
+        "tags": [
+          "ai-visibility"
+        ]
+      },
+      "put": {
+        "operationId": "update_settings_api_v1_orgs__org_id__projects__project_id__ai_settings_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AiSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Settings",
+        "tags": [
+          "ai-visibility"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/ai/visibility": {
+      "get": {
+        "operationId": "get_visibility_api_v1_orgs__org_id__projects__project_id__ai_visibility_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 30,
+              "maximum": 365,
+              "minimum": 1,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VisibilityOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Visibility",
+        "tags": [
+          "ai-visibility"
         ]
       }
     },

@@ -93,6 +93,20 @@ test("create an org and project, verify instructions, invite an editor", async (
   await expect(page.getByText("Search Console data needed")).toBeVisible();
   await page.goto(projectUrl);
 
+  // AI visibility: with no answer engines configured, a run samples nothing and says so.
+  await page.getByRole("link", { name: "AI visibility" }).click();
+  await expect(page.getByRole("heading", { name: "AI visibility" })).toBeVisible();
+  await expect(page.getByText("No AI answers sampled yet")).toBeVisible();
+  await page.getByRole("tab", { name: "Prompts" }).click();
+  await page.getByLabel("Prompts to track").fill("What are the best trail running shoes?");
+  await page.getByRole("button", { name: "Add prompts" }).click();
+  await expect(page.getByText("What are the best trail running shoes?")).toBeVisible();
+  await page.getByRole("button", { name: "Check AI answers now" }).click();
+  await expect(page.getByText("Done: 0 answers sampled.")).toBeVisible();
+  await page.getByRole("tab", { name: "Readiness" }).click();
+  await expect(page.getByText("Readiness needs a site audit")).toBeVisible();
+  await page.goto(projectUrl);
+
   // Domain verification instructions (the check itself needs real DNS).
   await page.getByRole("button", { name: "Use a DNS TXT record" }).click();
   await expect(page.getByText(/serptank-site-verification=/)).toBeVisible();

@@ -20,6 +20,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from serptank.core.config import get_settings
 from serptank.core.db import create_engine, create_session_factory
 from serptank.core.logging import configure_logging
+from serptank.modules.ai_visibility.scheduling import enqueue_due_ai_sampling
 from serptank.modules.crawler.scheduling import enqueue_due_crawls, fail_stale_jobs
 from serptank.modules.integrations.scheduling import enqueue_due_syncs
 from serptank.modules.jobs.service import CeleryDispatcher, JobRuntime, execute_job
@@ -88,6 +89,7 @@ def schedule_due_work() -> None:
             dispatcher = CeleryDispatcher(celery.send_task)
             await enqueue_due_crawls(system, _runtime().session_factory, dispatcher)
             await enqueue_due_rank_checks(system, _runtime().session_factory, dispatcher)
+            await enqueue_due_ai_sampling(system, _runtime().session_factory, dispatcher)
             await enqueue_due_syncs(
                 system,
                 _runtime().session_factory,

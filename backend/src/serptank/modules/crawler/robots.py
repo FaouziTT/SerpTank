@@ -24,6 +24,11 @@ GOOGLEBOT = "googlebot"
 BINGBOT = "bingbot"
 SERPTANKBOT = "serptankbot"
 
+# AI crawlers whose robots.txt access we report (AI-visibility readiness, Module 10).
+# Search/answer bots decide whether a site can be cited; training bots do not.
+AI_SEARCH_BOTS = ("oai-searchbot", "chatgpt-user", "perplexitybot", "claude-searchbot")
+AI_TRAINING_BOTS = ("gptbot", "google-extended", "claudebot", "ccbot")
+
 
 @dataclass(frozen=True)
 class Rule:

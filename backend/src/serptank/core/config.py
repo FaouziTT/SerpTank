@@ -164,6 +164,11 @@ class Settings(BaseSettings):
     llm_enabled: bool = True  # global kill switch
     openai_api_key: SecretStr = SecretStr("")
     openai_model: str = "gpt-4.1-mini"
+    # Answer-engine sampling (Module 10): ChatGPT search via the Responses API web-search
+    # tool, Perplexity via its Sonar API. Unset keys = that engine is "not available".
+    openai_search_model: str = "gpt-4.1-mini"
+    perplexity_api_key: SecretStr = SecretStr("")
+    perplexity_model: str = "sonar"
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"

@@ -5,6 +5,7 @@ This registry lives outside ``serptank.core`` because it imports feature modules
 
 from serptank.core.audit import AuditEvent
 from serptank.core.models import Base
+from serptank.modules.ai_visibility.models import AiObservation, AiProfile, AiPrompt
 from serptank.modules.audit.models import AuditIssue
 from serptank.modules.crawler.models import Crawl, CrawlLink, CrawlPage
 from serptank.modules.identity.models import (
@@ -43,7 +44,10 @@ from serptank.modules.search_data.models import (
 from serptank.modules.tenancy.models import Invitation, Membership, Organization
 
 __all__ = [
+    "AiObservation",
     "AiPerformanceDaily",
+    "AiProfile",
+    "AiPrompt",
     "ApiKey",
     "AuditEvent",
     "AuditIssue",

@@ -11,6 +11,7 @@ from serptank import job_handlers  # noqa: F401 - registers handlers
 from serptank.core.config import Settings
 from serptank.core.crypto import Keyring, keyring_from_settings
 from serptank.core.http import EgressPolicy, Resolver, SafeHttpClient, system_resolver
+from serptank.modules.ai_visibility.engines import build_engines
 from serptank.modules.crawler.rendering import RendererClient
 from serptank.modules.jobs.service import HttpFactory, JobRuntime
 from serptank.modules.llm.factory import build_gateway
@@ -54,6 +55,7 @@ def build_runtime(
     llm_http = factory(EgressPolicy(), settings.crawler_user_agent)
     extras["llm_http"] = llm_http
     extras["llm"] = build_gateway(settings, llm_http)
+    extras["answer_engines"] = build_engines(settings, llm_http)
     return JobRuntime(
         settings=settings,
         session_factory=session_factory,

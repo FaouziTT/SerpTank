@@ -957,6 +957,148 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/answers": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Answers */
+    get: operations["list_answers_api_v1_orgs__org_id__projects__project_id__ai_answers_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/prompts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Prompts */
+    get: operations["list_prompts_api_v1_orgs__org_id__projects__project_id__ai_prompts_get"];
+    put?: never;
+    /** Add Prompts */
+    post: operations["add_prompts_api_v1_orgs__org_id__projects__project_id__ai_prompts_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/prompts/suggestions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Prompt Suggestions
+     * @description Deterministic suggestions from tracked keywords (no LLM, no cost).
+     */
+    get: operations["prompt_suggestions_api_v1_orgs__org_id__projects__project_id__ai_prompts_suggestions_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/prompts/{prompt_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete Prompt */
+    delete: operations["delete_prompt_api_v1_orgs__org_id__projects__project_id__ai_prompts__prompt_id__delete"];
+    options?: never;
+    head?: never;
+    /** Update Prompt */
+    patch: operations["update_prompt_api_v1_orgs__org_id__projects__project_id__ai_prompts__prompt_id__patch"];
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/readiness": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Readiness */
+    get: operations["get_readiness_api_v1_orgs__org_id__projects__project_id__ai_readiness_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/run": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Run Sampling */
+    post: operations["run_sampling_api_v1_orgs__org_id__projects__project_id__ai_run_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/settings": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Settings */
+    get: operations["get_settings_api_v1_orgs__org_id__projects__project_id__ai_settings_get"];
+    /** Update Settings */
+    put: operations["update_settings_api_v1_orgs__org_id__projects__project_id__ai_settings_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/projects/{project_id}/ai/visibility": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Visibility */
+    get: operations["get_visibility_api_v1_orgs__org_id__projects__project_id__ai_visibility_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/orgs/{org_id}/projects/{project_id}/briefs": {
     parameters: {
       query?: never;
@@ -1711,6 +1853,29 @@ export interface components {
       /** Customer Id */
       customer_id: string;
     };
+    /** AiSettingsIn */
+    AiSettingsIn: {
+      /** Brand Terms */
+      brand_terms?: string[];
+      /**
+       * Samples Per Prompt
+       * @default 3
+       */
+      samples_per_prompt: number;
+    };
+    /** AiSettingsOut */
+    AiSettingsOut: {
+      /** Brand Terms */
+      brand_terms: string[];
+      /** Engines */
+      engines: components["schemas"]["EngineStatus"][];
+      /** Prompts Per Month */
+      prompts_per_month: number;
+      /** Prompts Used This Month */
+      prompts_used_this_month: number;
+      /** Samples Per Prompt */
+      samples_per_prompt: number;
+    };
     /** AiSurfaceTotals */
     AiSurfaceTotals: {
       /** Citations */
@@ -1812,6 +1977,48 @@ export interface components {
        * Format: uuid
        */
       market_id: string;
+    };
+    /** AnswerOut */
+    AnswerOut: {
+      /** Answered */
+      answered: boolean;
+      /** Citations */
+      citations: string[];
+      /** Cited */
+      cited: boolean;
+      /** Competitors */
+      competitors: {
+        [key: string]: unknown;
+      };
+      /**
+       * Date
+       * Format: date
+       */
+      date: string;
+      /** Engine */
+      engine: string;
+      /** Excerpt */
+      excerpt: string;
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Mention Rank */
+      mention_rank: number | null;
+      /** Mentioned */
+      mentioned: boolean;
+      /** Model */
+      model: string;
+      /**
+       * Prompt Id
+       * Format: uuid
+       */
+      prompt_id: string;
+      /** Sample */
+      sample: number;
+      /** Sentiment */
+      sentiment: number | null;
     };
     /** ApiKeyCreateRequest */
     ApiKeyCreateRequest: {
@@ -2151,6 +2358,33 @@ export interface components {
        */
       email: string;
     };
+    /** EngineStatus */
+    EngineStatus: {
+      /** Available */
+      available: boolean;
+      /** Engine */
+      engine: string;
+      /** Entitled */
+      entitled: boolean;
+      /** Note */
+      note: string | null;
+      /** Selected */
+      selected: boolean;
+    };
+    /** EngineVisibility */
+    EngineVisibility: {
+      answer_rate: components["schemas"]["RateOut"];
+      /** Avg Mention Rank */
+      avg_mention_rank: number | null;
+      /** Avg Sentiment */
+      avg_sentiment: number | null;
+      citation_rate: components["schemas"]["RateOut"];
+      /** Engine */
+      engine: string;
+      mention_rate: components["schemas"]["RateOut"];
+      /** Samples */
+      samples: number;
+    };
     /** EntitlementsOut */
     EntitlementsOut: {
       /** Ai Engines */
@@ -2175,6 +2409,19 @@ export interface components {
       rank_check_interval_hours: number;
       /** Search Engines */
       search_engines: components["schemas"]["SearchEngine"][];
+    };
+    /** FirstPartyRow */
+    FirstPartyRow: {
+      /** Citations */
+      citations: number;
+      /** Clicks */
+      clicks: number;
+      /** Impressions */
+      impressions: number;
+      /** Source */
+      source: string;
+      /** Surface */
+      surface: string;
     };
     /** GoogleProperties */
     GoogleProperties: {
@@ -2980,6 +3227,89 @@ export interface components {
       /** Name */
       name?: string | null;
     };
+    /** PromptOut */
+    PromptOut: {
+      /** Active */
+      active: boolean;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Engines */
+      engines: string[];
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Keyword */
+      keyword: string | null;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Prompt */
+      prompt: string;
+    };
+    /** PromptSuggestion */
+    PromptSuggestion: {
+      /** Intent */
+      intent: string;
+      /** Keyword */
+      keyword: string;
+      /** Prompt */
+      prompt: string;
+    };
+    /** PromptUpdate */
+    PromptUpdate: {
+      /** Active */
+      active: boolean;
+    };
+    /** PromptVisibility */
+    PromptVisibility: {
+      /** Active */
+      active: boolean;
+      /** Engines */
+      engines: {
+        [key: string]: {
+          [key: string]: number;
+        };
+      };
+      /** Keyword */
+      keyword: string | null;
+      /** Organic Position */
+      organic_position: number | null;
+      /** Prompt */
+      prompt: string;
+      /**
+       * Prompt Id
+       * Format: uuid
+       */
+      prompt_id: string;
+    };
+    /** PromptsAdded */
+    PromptsAdded: {
+      /** Added */
+      added: number;
+      /** Skipped Existing */
+      skipped_existing: number;
+    };
+    /** PromptsIn */
+    PromptsIn: {
+      /** Engines */
+      engines?: components["schemas"]["AIEngine"][];
+      /** Keyword */
+      keyword?: string | null;
+      /**
+       * Market Id
+       * Format: uuid
+       */
+      market_id: string;
+      /** Prompts */
+      prompts: string[];
+    };
     /** PropertyOption */
     PropertyOption: {
       /** Id */
@@ -3000,6 +3330,49 @@ export interface components {
       requests: number;
       /** Tokens */
       tokens: number;
+    };
+    /** RateOut */
+    RateOut: {
+      /** High */
+      high: number | null;
+      /** Low */
+      low: number | null;
+      /** Rate */
+      rate: number | null;
+      /** Successes */
+      successes: number;
+      /** Trials */
+      trials: number;
+    };
+    /** ReadinessComponent */
+    ReadinessComponent: {
+      /** Findings */
+      findings: string[];
+      /** Id */
+      id: string;
+      /** Label */
+      label: string;
+      /** Score */
+      score: number;
+      /** Weight */
+      weight: number;
+    };
+    /** ReadinessOut */
+    ReadinessOut: {
+      /** Available */
+      available: boolean;
+      /** Bots */
+      bots: {
+        [key: string]: boolean | null;
+      };
+      /** Components */
+      components: components["schemas"]["ReadinessComponent"][];
+      /** Crawl Id */
+      crawl_id: string | null;
+      /** Note */
+      note: string | null;
+      /** Score */
+      score: number | null;
     };
     /** ReadinessResponse */
     ReadinessResponse: {
@@ -3144,6 +3517,19 @@ export interface components {
       keywords_ranking: number;
       /** Share */
       share: number;
+    };
+    /** ShareRow */
+    ShareRow: {
+      /** Citations */
+      citations: number;
+      /** Domain */
+      domain: string;
+      /** Is Own */
+      is_own: boolean;
+      /** Mentions */
+      mentions: number;
+      /** Share */
+      share: number | null;
     };
     /** SitemapSubmit */
     SitemapSubmit: {
@@ -3319,6 +3705,19 @@ export interface components {
     /** VerificationStart */
     VerificationStart: {
       method: components["schemas"]["VerificationMethod"];
+    };
+    /** VisibilityOut */
+    VisibilityOut: {
+      /** Days */
+      days: number;
+      /** Engines */
+      engines: components["schemas"]["EngineVisibility"][];
+      /** First Party */
+      first_party: components["schemas"]["FirstPartyRow"][];
+      /** Prompts */
+      prompts: components["schemas"]["PromptVisibility"][];
+      /** Share Of Voice */
+      share_of_voice: components["schemas"]["ShareRow"][];
     };
     /** VitalsOut */
     VitalsOut: {
@@ -5239,6 +5638,375 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["AiSurfaceTotals"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_answers_api_v1_orgs__org_id__projects__project_id__ai_answers_get: {
+    parameters: {
+      query?: {
+        prompt_id?: string | null;
+        engine?: string | null;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AnswerOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_prompts_api_v1_orgs__org_id__projects__project_id__ai_prompts_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromptOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_prompts_api_v1_orgs__org_id__projects__project_id__ai_prompts_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PromptsIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromptsAdded"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  prompt_suggestions_api_v1_orgs__org_id__projects__project_id__ai_prompts_suggestions_get: {
+    parameters: {
+      query: {
+        market_id: string;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromptSuggestion"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  delete_prompt_api_v1_orgs__org_id__projects__project_id__ai_prompts__prompt_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        prompt_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_prompt_api_v1_orgs__org_id__projects__project_id__ai_prompts__prompt_id__patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        prompt_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PromptUpdate"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PromptOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_readiness_api_v1_orgs__org_id__projects__project_id__ai_readiness_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ReadinessOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  run_sampling_api_v1_orgs__org_id__projects__project_id__ai_run_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["JobOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_settings_api_v1_orgs__org_id__projects__project_id__ai_settings_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AiSettingsOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_settings_api_v1_orgs__org_id__projects__project_id__ai_settings_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AiSettingsIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_visibility_api_v1_orgs__org_id__projects__project_id__ai_visibility_get: {
+    parameters: {
+      query?: {
+        days?: number;
+      };
+      header?: never;
+      path: {
+        project_id: string;
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["VisibilityOut"];
         };
       };
       /** @description Validation Error */

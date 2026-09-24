@@ -143,22 +143,48 @@ class LlmGateway:
     async def _record(
         self, db: AsyncSession, organization_id: uuid.UUID, purpose: str, completion: Completion
     ) -> None:
-        stmt = pg_insert(LlmUsage).values(
-            month=month_start(),
-            organization_id=organization_id,
-            purpose=purpose,
-            requests=1,
-            input_tokens=completion.input_tokens,
-            output_tokens=completion.output_tokens,
+        await record_usage(
+            db, organization_id, purpose, completion.input_tokens, completion.output_tokens
         )
-        await db.execute(
-            stmt.on_conflict_do_update(
-                index_elements=["month", "organization_id", "purpose"],
-                set_={
-                    "requests": LlmUsage.requests + 1,
-                    "input_tokens": LlmUsage.input_tokens + completion.input_tokens,
-                    "output_tokens": LlmUsage.output_tokens + completion.output_tokens,
-                },
-            )
+
+
+async def record_usage(
+    db: AsyncSession,
+    organization_id: uuid.UUID,
+    purpose: str,
+    input_tokens: int,
+    output_tokens: int,
+) -> None:
+    """Add one request and its tokens to this month's usage (commits)."""
+    stmt = pg_insert(LlmUsage).values(
+        month=month_start(),
+        organization_id=organization_id,
+        purpose=purpose,
+        requests=1,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+    )
+    await db.execute(
+        stmt.on_conflict_do_update(
+            index_elements=["month", "organization_id", "purpose"],
+            set_={
+                "requests": LlmUsage.requests + 1,
+                "input_tokens": LlmUsage.input_tokens + input_tokens,
+                "output_tokens": LlmUsage.output_tokens + output_tokens,
+            },
         )
-        await db.commit()
+    )
+    await db.commit()
+
+
+async def requests_this_month(
+    db: AsyncSession, organization_id: uuid.UUID, purpose_prefix: str
+) -> int:
+    used = await db.execute(
+        select(func.coalesce(func.sum(LlmUsage.requests), 0)).where(
+            LlmUsage.organization_id == organization_id,
+            LlmUsage.month == month_start(),
+            LlmUsage.purpose.startswith(purpose_prefix),
+        )
+    )
+    return int(used.scalar_one())

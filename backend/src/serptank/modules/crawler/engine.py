@@ -45,6 +45,8 @@ from serptank.core.http import (
 from serptank.core.models import uuid7
 from serptank.modules.crawler.parser import Link, PageData, parse_html
 from serptank.modules.crawler.robots import (
+    AI_SEARCH_BOTS,
+    AI_TRAINING_BOTS,
     ALLOW_ALL,
     BINGBOT,
     DISALLOW_ALL,
@@ -216,6 +218,9 @@ class Crawler:
             "clean_params": robots.clean_params[:20],
             "invalid_lines": robots.invalid_lines,
             "home_allowed": {bot: robots.is_allowed(bot, "/") for bot in (GOOGLEBOT, BINGBOT)},
+            "ai_bots_allowed": {
+                bot: robots.is_allowed(bot, "/") for bot in (*AI_SEARCH_BOTS, *AI_TRAINING_BOTS)
+            },
         }
         return entry
 
