@@ -1,0 +1,13 @@
+{"status_code": 20000, "status_message": "Ok.", "tasks": [{"status_code": 20000, "result": [{
+  "keyword": "best running shoes", "se_results_count": 412000000, "items": [
+    {"type": "ai_overview", "rank_absolute": 1, "markdown": "The best running shoes...", "references": [
+        {"url": "https://www.runnersworld.com/gear/a1/", "domain": "www.runnersworld.com", "title": "RW"},
+        {"url": "https://www.example-shop.com/guide", "domain": "www.example-shop.com", "title": "Guide"}]},
+    {"type": "paid", "rank_absolute": 2, "url": "https://ads.example.com/"},
+    {"type": "organic", "rank_group": 1, "rank_absolute": 3, "url": "https://www.runnersworld.com/gear/a1/", "domain": "www.runnersworld.com", "title": "The 12 Best Running Shoes", "description": "Tested.", "links": [{"url": "https://www.runnersworld.com/x"}]},
+    {"type": "people_also_ask", "rank_absolute": 4, "items": [{"title": "What is the best running shoe?"}, {"title": "Is Nike good?"}]},
+    {"type": "organic", "rank_group": 2, "rank_absolute": 5, "url": "https://www.example-shop.com/running", "domain": "www.example-shop.com", "title": "Running Shoes | Example Shop", "description": "Free shipping"},
+    {"type": "popular_products", "rank_absolute": 6},
+    {"type": "brand_new_widget", "rank_absolute": 7},
+    {"type": "related_searches", "rank_absolute": 8, "items": ["best trail shoes", "running shoes men"]}
+]}]}]}

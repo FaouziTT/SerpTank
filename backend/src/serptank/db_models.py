@@ -28,6 +28,16 @@ from serptank.modules.integrations.models import (
 )
 from serptank.modules.jobs.models import Job
 from serptank.modules.projects.models import Project, ProjectMarket
+from serptank.modules.search_data.models import (
+    Competitor,
+    KeywordMetrics,
+    RankObservation,
+    SerpSnapshot,
+    SerpUsage,
+    SerpValidation,
+    TrackedKeyword,
+    VendorUsage,
+)
 from serptank.modules.tenancy.models import Invitation, Membership, Organization
 
 __all__ = [
@@ -37,6 +47,7 @@ __all__ = [
     "AuditIssue",
     "Base",
     "BingDaily",
+    "Competitor",
     "Connection",
     "Crawl",
     "CrawlLink",
@@ -47,15 +58,22 @@ __all__ = [
     "IndexNowSubmission",
     "Invitation",
     "Job",
+    "KeywordMetrics",
     "Membership",
     "MfaTotp",
     "Organization",
     "Project",
     "ProjectMarket",
     "ProjectSource",
+    "RankObservation",
     "RecoveryCode",
+    "SerpSnapshot",
+    "SerpUsage",
+    "SerpValidation",
+    "TrackedKeyword",
     "UrlInspection",
     "User",
+    "VendorUsage",
     "VitalsDaily",
     "WebAuthnCredential",
 ]

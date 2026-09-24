@@ -75,6 +75,112 @@
         "title": "AiSurfaceTotals",
         "type": "object"
       },
+      "AnalyzeOut": {
+        "properties": {
+          "ai_answer_cites": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Ai Answer Cites",
+            "type": "array"
+          },
+          "difficulty": {
+            "$ref": "#/components/schemas/DifficultyOut"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "fetched_on": {
+            "format": "date",
+            "title": "Fetched On",
+            "type": "string"
+          },
+          "from_cache": {
+            "title": "From Cache",
+            "type": "boolean"
+          },
+          "intent": {
+            "title": "Intent",
+            "type": "string"
+          },
+          "intent_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Intent Reasons",
+            "type": "array"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "people_also_ask": {
+            "items": {
+              "type": "string"
+            },
+            "title": "People Also Ask",
+            "type": "array"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/SerpResultOut"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "keyword",
+          "engine",
+          "fetched_on",
+          "from_cache",
+          "intent",
+          "intent_reasons",
+          "difficulty",
+          "features",
+          "ai_answer_cites",
+          "people_also_ask",
+          "results"
+        ],
+        "title": "AnalyzeOut",
+        "type": "object"
+      },
+      "AnalyzeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "engine": {
+            "default": "google",
+            "maxLength": 20,
+            "title": "Engine",
+            "type": "string"
+          },
+          "keyword": {
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "keyword",
+          "market_id"
+        ],
+        "title": "AnalyzeRequest",
+        "type": "object"
+      },
       "ApiKeyCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -430,6 +536,65 @@
         "title": "CodeRequest",
         "type": "object"
       },
+      "CompetitorIn": {
+        "additionalProperties": false,
+        "properties": {
+          "domain": {
+            "maxLength": 253,
+            "minLength": 3,
+            "title": "Domain",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "title": "CompetitorIn",
+        "type": "object"
+      },
+      "CompetitorOut": {
+        "properties": {
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          }
+        },
+        "required": [
+          "id",
+          "domain",
+          "label"
+        ],
+        "title": "CompetitorOut",
+        "type": "object"
+      },
       "ConnectionOut": {
         "properties": {
           "account_label": {
@@ -693,6 +858,44 @@
         ],
         "title": "Device",
         "type": "string"
+      },
+      "DifficultyOut": {
+        "properties": {
+          "confidence": {
+            "title": "Confidence",
+            "type": "string"
+          },
+          "crowding": {
+            "title": "Crowding",
+            "type": "number"
+          },
+          "prominence": {
+            "title": "Prominence",
+            "type": "number"
+          },
+          "root_pages": {
+            "title": "Root Pages",
+            "type": "number"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "targeting": {
+            "title": "Targeting",
+            "type": "number"
+          }
+        },
+        "required": [
+          "score",
+          "prominence",
+          "targeting",
+          "root_pages",
+          "crowding",
+          "confidence"
+        ],
+        "title": "DifficultyOut",
+        "type": "object"
       },
       "EmailRequest": {
         "additionalProperties": false,
@@ -1462,6 +1665,163 @@
         "title": "JobStatus",
         "type": "string"
       },
+      "KeywordIdeaOut": {
+        "properties": {
+          "competition": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Competition"
+          },
+          "cpc_high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpc High"
+          },
+          "cpc_low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cpc Low"
+          },
+          "difficulty": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Difficulty"
+          },
+          "intent": {
+            "title": "Intent",
+            "type": "string"
+          },
+          "intent_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Intent Reasons",
+            "type": "array"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "tracked": {
+            "title": "Tracked",
+            "type": "boolean"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "volume_source": {
+            "title": "Volume Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "keyword",
+          "volume",
+          "volume_source",
+          "competition",
+          "cpc_low",
+          "cpc_high",
+          "intent",
+          "intent_reasons",
+          "difficulty",
+          "tracked"
+        ],
+        "title": "KeywordIdeaOut",
+        "type": "object"
+      },
+      "KeywordsAdd": {
+        "additionalProperties": false,
+        "properties": {
+          "keywords": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 500,
+            "minItems": 1,
+            "title": "Keywords",
+            "type": "array"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 10,
+            "title": "Tags",
+            "type": "array"
+          }
+        },
+        "required": [
+          "market_id",
+          "keywords"
+        ],
+        "title": "KeywordsAdd",
+        "type": "object"
+      },
+      "KeywordsAdded": {
+        "properties": {
+          "added": {
+            "title": "Added",
+            "type": "integer"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "skipped_existing": {
+            "title": "Skipped Existing",
+            "type": "integer"
+          },
+          "used": {
+            "title": "Used",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "added",
+          "skipped_existing",
+          "limit",
+          "used"
+        ],
+        "title": "KeywordsAdded",
+        "type": "object"
+      },
       "LoginRequest": {
         "additionalProperties": false,
         "properties": {
@@ -1828,6 +2188,119 @@
           }
         },
         "title": "MfaVerifyRequest",
+        "type": "object"
+      },
+      "OpportunitiesOut": {
+        "properties": {
+          "curve_source": {
+            "enum": [
+              "own",
+              "default"
+            ],
+            "title": "Curve Source",
+            "type": "string"
+          },
+          "date_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date From"
+          },
+          "date_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date To"
+          },
+          "has_data": {
+            "title": "Has Data",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "has_data",
+          "curve_source",
+          "date_from",
+          "date_to",
+          "items"
+        ],
+        "title": "OpportunitiesOut",
+        "type": "object"
+      },
+      "OpportunityOut": {
+        "properties": {
+          "clicks": {
+            "title": "Clicks",
+            "type": "integer"
+          },
+          "ctr": {
+            "title": "Ctr",
+            "type": "number"
+          },
+          "expected_ctr": {
+            "title": "Expected Ctr",
+            "type": "number"
+          },
+          "impressions": {
+            "title": "Impressions",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "striking_distance",
+              "low_ctr"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "position": {
+            "title": "Position",
+            "type": "number"
+          },
+          "potential_clicks": {
+            "title": "Potential Clicks",
+            "type": "integer"
+          },
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "tracked": {
+            "title": "Tracked",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "query",
+          "kind",
+          "clicks",
+          "impressions",
+          "ctr",
+          "position",
+          "expected_ctr",
+          "potential_clicks",
+          "tracked"
+        ],
+        "title": "OpportunityOut",
         "type": "object"
       },
       "OrganizationCreate": {
@@ -2298,6 +2771,86 @@
         "title": "PerformanceOut",
         "type": "object"
       },
+      "PositionOut": {
+        "properties": {
+          "ai_cited": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ai Cited"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Url"
+          }
+        },
+        "required": [
+          "engine",
+          "source",
+          "position",
+          "previous",
+          "date",
+          "url",
+          "features",
+          "ai_cited"
+        ],
+        "title": "PositionOut",
+        "type": "object"
+      },
       "ProjectCreate": {
         "additionalProperties": false,
         "properties": {
@@ -2548,6 +3101,53 @@
         "title": "RegisterRequest",
         "type": "object"
       },
+      "ResearchOut": {
+        "properties": {
+          "ideas": {
+            "items": {
+              "$ref": "#/components/schemas/KeywordIdeaOut"
+            },
+            "title": "Ideas",
+            "type": "array"
+          },
+          "source": {
+            "enum": [
+              "google_ads",
+              "bing"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "ideas"
+        ],
+        "title": "ResearchOut",
+        "type": "object"
+      },
+      "ResearchRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "seed": {
+            "maxLength": 100,
+            "minLength": 2,
+            "title": "Seed",
+            "type": "string"
+          }
+        },
+        "required": [
+          "seed",
+          "market_id"
+        ],
+        "title": "ResearchRequest",
+        "type": "object"
+      },
       "ResetPasswordRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2585,6 +3185,44 @@
         ],
         "title": "SearchEngine",
         "type": "string"
+      },
+      "SerpResultOut": {
+        "properties": {
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "is_competitor": {
+            "title": "Is Competitor",
+            "type": "boolean"
+          },
+          "is_own": {
+            "title": "Is Own",
+            "type": "boolean"
+          },
+          "position": {
+            "title": "Position",
+            "type": "integer"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "url",
+          "domain",
+          "title",
+          "is_own",
+          "is_competitor"
+        ],
+        "title": "SerpResultOut",
+        "type": "object"
       },
       "SessionInfo": {
         "properties": {
@@ -2691,6 +3329,90 @@
         ],
         "title": "Severity",
         "type": "string"
+      },
+      "ShareOfVoiceOut": {
+        "properties": {
+          "date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "engine": {
+            "title": "Engine",
+            "type": "string"
+          },
+          "keywords": {
+            "title": "Keywords",
+            "type": "integer"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ShareOfVoiceRow"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "volumes_known": {
+            "title": "Volumes Known",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "engine",
+          "date",
+          "keywords",
+          "volumes_known",
+          "rows"
+        ],
+        "title": "ShareOfVoiceOut",
+        "type": "object"
+      },
+      "ShareOfVoiceRow": {
+        "properties": {
+          "average_position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Average Position"
+          },
+          "domain": {
+            "title": "Domain",
+            "type": "string"
+          },
+          "is_own": {
+            "title": "Is Own",
+            "type": "boolean"
+          },
+          "keywords_ranking": {
+            "title": "Keywords Ranking",
+            "type": "integer"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "domain",
+          "is_own",
+          "share",
+          "keywords_ranking",
+          "average_position"
+        ],
+        "title": "ShareOfVoiceRow",
+        "type": "object"
       },
       "SitemapSubmit": {
         "additionalProperties": false,
@@ -2888,6 +3610,76 @@
           "otpauth_uri"
         ],
         "title": "TotpSetupResponse",
+        "type": "object"
+      },
+      "TrackedKeywordOut": {
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "intent": {
+            "title": "Intent",
+            "type": "string"
+          },
+          "keyword": {
+            "title": "Keyword",
+            "type": "string"
+          },
+          "market_id": {
+            "format": "uuid",
+            "title": "Market Id",
+            "type": "string"
+          },
+          "positions": {
+            "items": {
+              "$ref": "#/components/schemas/PositionOut"
+            },
+            "title": "Positions",
+            "type": "array"
+          },
+          "tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tags",
+            "type": "array"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "volume_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume Source"
+          }
+        },
+        "required": [
+          "id",
+          "keyword",
+          "market_id",
+          "tags",
+          "intent",
+          "volume",
+          "volume_source",
+          "positions"
+        ],
+        "title": "TrackedKeywordOut",
         "type": "object"
       },
       "UrlList": {
@@ -5841,6 +6633,180 @@
         ]
       }
     },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/competitors": {
+      "get": {
+        "operationId": "list_competitors_api_v1_orgs__org_id__projects__project_id__competitors_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CompetitorOut"
+                  },
+                  "title": "Response List Competitors Api V1 Orgs  Org Id  Projects  Project Id  Competitors Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Competitors",
+        "tags": [
+          "keywords"
+        ]
+      },
+      "post": {
+        "operationId": "add_competitor_api_v1_orgs__org_id__projects__project_id__competitors_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompetitorIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetitorOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Competitor",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/competitors/{competitor_id}": {
+      "delete": {
+        "operationId": "delete_competitor_api_v1_orgs__org_id__projects__project_id__competitors__competitor_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "competitor_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Competitor Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Competitor",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
     "/api/v1/orgs/{org_id}/projects/{project_id}/crawls": {
       "get": {
         "operationId": "list_crawls_api_v1_orgs__org_id__projects__project_id__crawls_get",
@@ -6858,6 +7824,535 @@
         "summary": "Inspect Url",
         "tags": [
           "integrations"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords": {
+      "get": {
+        "operationId": "list_keywords_api_v1_orgs__org_id__projects__project_id__keywords_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Market Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tag",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 50,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tag"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TrackedKeywordOut"
+                  },
+                  "title": "Response List Keywords Api V1 Orgs  Org Id  Projects  Project Id  Keywords Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Keywords",
+        "tags": [
+          "keywords"
+        ]
+      },
+      "post": {
+        "operationId": "add_keywords_api_v1_orgs__org_id__projects__project_id__keywords_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KeywordsAdd"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeywordsAdded"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Keywords",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords/analyze": {
+      "post": {
+        "description": "Fetch (or reuse the cached) SERP for a keyword and explain it: KD, intent, features.",
+        "operationId": "analyze_api_v1_orgs__org_id__projects__project_id__keywords_analyze_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyzeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalyzeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Analyze",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords/check": {
+      "post": {
+        "operationId": "check_rankings_api_v1_orgs__org_id__projects__project_id__keywords_check_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Rankings",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords/opportunities": {
+      "get": {
+        "description": "Search Console queries worth working on: 'striking distance' (8-20) and low CTR.",
+        "operationId": "opportunities_api_v1_orgs__org_id__projects__project_id__keywords_opportunities_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 28,
+              "maximum": 90,
+              "minimum": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunitiesOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Opportunities",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords/research": {
+      "post": {
+        "description": "Keyword ideas from official sources: Google Ads Keyword Planner, else Bing.",
+        "operationId": "research_api_v1_orgs__org_id__projects__project_id__keywords_research_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearchRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Research",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords/share-of-voice": {
+      "get": {
+        "operationId": "share_of_voice_api_v1_orgs__org_id__projects__project_id__keywords_share_of_voice_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Market Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "engine",
+            "required": false,
+            "schema": {
+              "default": "google",
+              "maxLength": 20,
+              "title": "Engine",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShareOfVoiceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Share Of Voice",
+        "tags": [
+          "keywords"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/projects/{project_id}/keywords/{keyword_id}": {
+      "delete": {
+        "operationId": "delete_keyword_api_v1_orgs__org_id__projects__project_id__keywords__keyword_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Project Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "keyword_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Keyword Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Keyword",
+        "tags": [
+          "keywords"
         ]
       }
     },

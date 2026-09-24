@@ -61,6 +61,7 @@ from serptank.modules.integrations import router_org as integrations_org_router
 from serptank.modules.integrations import router_project as integrations_project_router
 from serptank.modules.jobs import router as jobs_router
 from serptank.modules.jobs.service import CeleryDispatcher, InProcessDispatcher, JobDispatcher
+from serptank.modules.keywords import router as keywords_router
 from serptank.modules.projects import router as projects_router
 from serptank.modules.tenancy import router as tenancy_router
 from serptank.workers.celery_config import make_celery
@@ -111,6 +112,20 @@ def build_identity(
 
 IMPORT_PATH = re.compile(r"^/api/v1/orgs/[^/]+/projects/[^/]+/imports/[a-z_]+$")
 DOCS_PATHS = (f"{API_PREFIX}/docs", f"{API_PREFIX}/openapi.json")
+
+
+def _include_routers(app: FastAPI) -> None:
+    app.include_router(health.router)
+    app.include_router(identity_router.router, prefix=API_PREFIX)
+    app.include_router(identity_router.org_router, prefix=API_PREFIX)
+    app.include_router(tenancy_router.router, prefix=API_PREFIX)
+    app.include_router(projects_router.router, prefix=API_PREFIX)
+    app.include_router(crawler_router.router, prefix=API_PREFIX)
+    app.include_router(jobs_router.router, prefix=API_PREFIX)
+    app.include_router(integrations_org_router.router, prefix=API_PREFIX)
+    app.include_router(integrations_org_router.callback_router, prefix=API_PREFIX)
+    app.include_router(integrations_project_router.router, prefix=API_PREFIX)
+    app.include_router(keywords_router.router, prefix=API_PREFIX)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -164,16 +179,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         redirect_slashes=False,
     )
     register_error_handlers(app)
-    app.include_router(health.router)
-    app.include_router(identity_router.router, prefix=API_PREFIX)
-    app.include_router(identity_router.org_router, prefix=API_PREFIX)
-    app.include_router(tenancy_router.router, prefix=API_PREFIX)
-    app.include_router(projects_router.router, prefix=API_PREFIX)
-    app.include_router(crawler_router.router, prefix=API_PREFIX)
-    app.include_router(jobs_router.router, prefix=API_PREFIX)
-    app.include_router(integrations_org_router.router, prefix=API_PREFIX)
-    app.include_router(integrations_org_router.callback_router, prefix=API_PREFIX)
-    app.include_router(integrations_project_router.router, prefix=API_PREFIX)
+    _include_routers(app)
 
     # Middleware: the LAST added runs FIRST (outermost). Listed innermost -> outermost.
     session_detector, token_verifier = build_csrf_hooks(settings)

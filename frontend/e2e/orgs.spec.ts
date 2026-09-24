@@ -43,6 +43,19 @@ test("create an org and project, verify instructions, invite an editor", async (
   });
   await page.goto(projectUrl);
 
+  // Keywords: track, run a check with no live vendor configured (first-party only).
+  await page.getByRole("link", { name: "Keywords" }).click();
+  await expect(page.getByRole("heading", { name: "Keywords" })).toBeVisible();
+  await page.getByLabel("Track keywords").fill("running shoes\nBuy Running Shoes");
+  await page.getByRole("button", { name: "Add keywords" }).click();
+  await expect(page.getByRole("cell", { name: "buy running shoes", exact: true })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "transactional", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Check rankings now" }).click();
+  await expect(page.getByRole("button", { name: "Check rankings now" })).toBeEnabled({
+    timeout: 20_000,
+  });
+  await page.goto(projectUrl);
+
   // Search data: honest empty states, IndexNow key instructions, CSV import.
   await page.getByRole("link", { name: "Search data" }).click();
   await expect(page.getByRole("heading", { name: "Search data" })).toBeVisible();

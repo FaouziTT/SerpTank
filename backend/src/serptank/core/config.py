@@ -143,6 +143,22 @@ class Settings(BaseSettings):
     indexnow_endpoint: str = "https://api.indexnow.org/indexnow"
     gsc_backfill_days: int = 90  # GSC keeps 16 months; first sync fetches this much
     max_csv_import_bytes: int = 20 * 1024 * 1024
+
+    # --- Search data engine (Module 8) ---------------------------------------------
+    # Structured-JSON SERP vendor (DataForSEO, HTTP basic auth).
+    dataforseo_login: str = ""
+    dataforseo_password: SecretStr = SecretStr("")
+    dataforseo_cost_micros: int = 2000  # live endpoint, USD micros per request
+    # Generic "unblocker" returning raw HTML, parsed by our own parsers. The template
+    # gets {url} (URL-encoded target) and {country}; the key goes in {key} or a header.
+    rawhtml_endpoint: str = ""
+    rawhtml_api_key: SecretStr = SecretStr("")
+    rawhtml_cost_micros: int = 1000
+    # Vendor order per engine ("*" = default), e.g. "google=dataforseo,rawhtml;*=dataforseo".
+    serp_vendor_order: str = "*=dataforseo,rawhtml"
+    serp_global_daily_requests: int = 20_000  # hard stop across all orgs (cost breaker)
+    serp_validation_rate: float = 0.0  # share of fetches cross-checked with a 2nd vendor
+    serp_cache_days: int = 1  # public SERPs are shared across orgs for this long
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"

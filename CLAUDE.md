@@ -44,6 +44,8 @@ uv run celery -A serptank.workers.app beat
 uv run uvicorn --factory serptank.renderer.app:create_app --port 8100   # isolated JS renderer
 ```
 
+Paid providers are only ever called by hand: `uv run python scripts_ci/live_smoke.py "query" US en` (see the script header). CI and tests use recorded fixtures and fakes.
+
 The renderer is optional (`SERPTANK_RENDERER_URL` + `SERPTANK_RENDERER_TOKEN`). Without it, audits skip the JavaScript-rendering checks and say so in the UI. Renderer tests need Chromium: `uv run playwright install chromium` and `SERPTANK_TEST_RENDERER=1`.
 
 To add a dependency, run `uv add <pkg>` (or `uv add --group dev <pkg>`) and commit `uv.lock`. Every runtime dependency needs a reason; see plan §7.
