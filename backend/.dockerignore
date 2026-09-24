@@ -1,73 +1,7 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-.tox/
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Logs
-logs/
-*.log
-
-# Testing
-test/
-tests/
-pytest.ini
-
-# Documentation
-docs/
-*.md
+# Build context allow-list style: ignore everything that is not needed to build.
+**
+!pyproject.toml
+!uv.lock
 !README.md
-
-# Git
-.git/
-.gitignore
-
-# Docker
-Dockerfile*
-docker-compose*.yml
-.dockerignore
-
-# Temporary files
-temp/
-tmp/
-*.tmp
-*.temp
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# SSL certificates
-ssl/
-*.pem
-*.key
-*.crt
+!src/**
+**/__pycache__

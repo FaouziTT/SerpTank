@@ -1,86 +1,36 @@
-# Production Dockerfile for Voltex Backend
-# Multi-stage build for optimized image size and security
+# syntax=docker/dockerfile:1.7
+# -----------------------------------------------------------------------------
+# SerpTank API image (new modular package). Multi-stage, non-root, no build
+# tooling or browser in the runtime image (the Playwright renderer gets its own
+# isolated image in Module 6).
+# Base images should be pinned by digest; Renovate keeps the digests current.
+# -----------------------------------------------------------------------------
+FROM python:3.13-slim-bookworm AS builder
 
-# Stage 1: Build dependencies
-FROM python:3.12-slim AS builder
-
-WORKDIR /app
-
-# Install build dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-        libpq-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
-
-# Stage 2: Runtime
-FROM python:3.12-slim
-
-# Create non-root user for security
-RUN groupadd -r voltex && useradd -r -g voltex voltex
+RUN pip install --no-cache-dir uv==0.8.17
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never
 
 WORKDIR /app
+# Install locked third-party dependencies first (cached layer), then the project.
+COPY pyproject.toml uv.lock README.md ./
+RUN uv sync --locked --no-dev --no-install-project
+COPY src ./src
+RUN uv sync --locked --no-dev --no-editable
 
-# Install runtime dependencies only
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        libpq5 \
-        curl \
-        wget \
-        gnupg2 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+FROM python:3.13-slim-bookworm AS runtime
 
-# Install Chrome for web crawling (if needed)
-RUN mkdir -p /etc/apt/keyrings \
-    && wget -q -O- https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg \
-    && echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends google-chrome-stable \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN groupadd --system --gid 10001 serptank \
+    && useradd --system --uid 10001 --gid serptank --no-create-home serptank
 
-# Copy Python dependencies from builder
-COPY --from=builder /root/.local /home/voltex/.local
+ENV PATH="/app/.venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-# Copy application code
-COPY --chown=voltex:voltex . .
+WORKDIR /app
+COPY --from=builder --chown=root:root /app/.venv /app/.venv
 
-# Install Playwright browsers as voltex user
-USER voltex
-ENV PATH=/home/voltex/.local/bin:$PATH
-RUN playwright install chromium
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app \
-    PATH=/home/voltex/.local/bin:$PATH
-
-# Create necessary directories
-RUN mkdir -p /app/logs /app/temp
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Expose port
-EXPOSE 8000
-
-# Run as non-root user
-USER voltex
-
-# Use gunicorn for production with uvicorn workers
-CMD ["gunicorn", "app.main:app", \
-     "-w", "4", \
-     "-k", "uvicorn.workers.UvicornWorker", \
-     "--bind", "0.0.0.0:8000", \
-     "--timeout", "120", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "--log-level", "info"]
+USER serptank:serptank
+# Module 1 replaces this with the ASGI server entrypoint and a /healthz check.
+CMD ["python", "-m", "serptank"]

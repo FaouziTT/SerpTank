@@ -1,0 +1,72 @@
+# SerpTank local development infrastructure.
+#
+#   cp .env.example .env   # then set real passwords
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# Security posture (even in dev): passwords are mandatory, services live on a
+# private network, and ports are published on 127.0.0.1 only (never 0.0.0.0).
+# The API, web, worker and renderer services are added by Modules 1, 4 and 6.
+name: serptank-dev
+
+services:
+  postgres:
+    # PostgreSQL 17 with TimescaleDB + pgvector in ONE cluster (replaces the old
+    # separate TimescaleDB container and Weaviate).
+    image: timescale/timescaledb-ha:pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-serptank}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-serptank}
+    volumes:
+      - postgres_data:/home/postgres/pgdata
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    security_opt: ["no-new-privileges:true"]
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    # Password required; the dangerous admin commands are disabled.
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - ${REDIS_PASSWORD:?set REDIS_PASSWORD in .env}
+      - --rename-command
+      - FLUSHALL
+      - ""
+      - --rename-command
+      - CONFIG
+      - ""
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    networks: [backend]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    tmpfs: ["/tmp"]
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  backend:
+    name: serptank-dev-backend

@@ -16,7 +16,7 @@ This comprehensive audit examined the entire SerpTank dashboard across all major
 - **Real-time**: WebSocket connection status shows "Disconnected" across all pages
 
 ### User Authentication
-- **User**: faouzitatou@gmail.com (Faouzi Tatou)
+- **User**: [redacted]
 - **Company**: SerpTank
 - **Account ID**: 1
 - **Account Type**: Professional
@@ -184,7 +184,7 @@ Comprehensive 5-tab interface with mixed real/fallback data:
 
 #### 5.6 Settings ✅ WORKING
 **URL**: `/settings`
-- **Real Data**: faouzitatou@gmail.com, Account ID 1
+- **Real Data**: [redacted user], Account ID 1
 - Comprehensive settings tabs: Profile, Security, Team, Integrations, API Keys, Notifications, Billing, Advanced
 - Account info shows Professional type, 6.5 GB of 10 GB storage used
 - Form inputs properly structured and functional

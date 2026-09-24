@@ -1,0 +1,9 @@
+# Gitleaks config: default rules plus a narrow allowlist for documentation
+# placeholders. Never allowlist whole files or paths.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Documentation placeholder tokens"
+regexTarget = "match"
+regexes = ['''YOUR_API_KEY''']

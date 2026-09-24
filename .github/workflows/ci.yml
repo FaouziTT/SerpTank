@@ -1,0 +1,150 @@
+# SerpTank CI. Every third-party action is pinned to a full commit SHA (A03:2025
+# supply chain); Renovate bumps the SHA and the trailing version comment together.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (lint, types, tests, contracts, audit)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      # Wired now so Module 1+ integration tests can use real Postgres and Redis.
+      postgres:
+        image: timescale/timescaledb-ha:pg17
+        env:
+          POSTGRES_USER: serptank
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: serptank_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U serptank -d serptank_test"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      redis:
+        image: redis:7.4-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      SERPTANK_TEST_DATABASE_URL: postgresql://serptank:ci-only-password@localhost:5432/serptank_test
+      SERPTANK_TEST_REDIS_URL: redis://localhost:6379/0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.8.17"
+          python-version: "3.13"
+          enable-cache: true
+      - name: Install (locked)
+        run: uv sync --locked
+      - name: Ruff lint
+        run: uv run ruff check --output-format=github .
+      - name: Ruff format
+        run: uv run ruff format --check .
+      - name: Mypy (strict)
+        run: uv run mypy
+      - name: Module boundary contracts
+        run: uv run lint-imports
+      - name: Bandit (new code)
+        run: uv run bandit -q -r src
+      - name: Tests with coverage
+        run: uv run pytest --cov --cov-report=term --cov-fail-under=80
+      - name: Dependency audit (pip-audit)
+        run: uv export --locked --no-dev --no-emit-project --format requirements-txt > /tmp/req.txt && uv run pip-audit --strict -r /tmp/req.txt --progress-spinner off
+
+  backend-image:
+    name: Backend image (build, smoke, Trivy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    needs: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: backend
+          load: true
+          push: false
+          tags: serptank-api:ci
+      - name: Smoke test (non-root, entrypoint)
+        run: |
+          docker run --rm serptank-api:ci
+          test "$(docker run --rm serptank-api:ci id -u)" = "10001"
+      - name: Trivy image scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: serptank-api:ci
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+
+  frontend:
+    name: Frontend (install, audit, unit tests)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: frontend/.nvmrc
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - name: Install (frozen lockfile)
+        run: pnpm install --frozen-lockfile
+      - name: Dependency audit
+        run: pnpm audit --audit-level moderate
+      - name: Unit tests
+        run: pnpm test:run
+      # Lint, type-check and build become required gates in Module 4, once the
+      # missing frontend/lib/ layer is rebuilt (the legacy code cannot compile).
+
+  security:
+    name: Secrets & dependency scanning
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Gitleaks (full history)
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: OSV-Scanner (lockfiles)
+        uses: google/osv-scanner-action/osv-scanner-action@a345acffa64b0eaede81a3d9aae6141214d9c8fc # v2.6.0
+        with:
+          scan-args: |-
+            --lockfile=backend/uv.lock
+            --lockfile=frontend/pnpm-lock.yaml
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.8.17"
+      - name: Semgrep (new backend code)
+        run: uvx --from semgrep==1.* semgrep scan --config p/python --config p/secrets --error --metrics off backend/src
