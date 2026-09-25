@@ -18,8 +18,10 @@ from celery.signals import worker_process_init, worker_process_shutdown
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from serptank.core.config import get_settings
+from serptank.core.crypto import keyring_from_settings
 from serptank.core.db import create_engine, create_session_factory
 from serptank.core.logging import configure_logging
+from serptank.maintenance import rotate_keys
 from serptank.modules.ai_visibility.scheduling import enqueue_due_ai_sampling
 from serptank.modules.billing.service import expire_grace_periods
 from serptank.modules.compliance.service import purge_expired
@@ -98,6 +100,10 @@ def schedule_due_work() -> None:
                 await expire_grace_periods(billing_session)
             async with system() as retention_session:
                 await purge_expired(retention_session, settings.deletion_grace_days)
+            async with system() as rotation_session:
+                await rotate_keys(
+                    rotation_session, _runtime().keyring or keyring_from_settings(settings)
+                )
             await enqueue_due_syncs(
                 system,
                 _runtime().session_factory,

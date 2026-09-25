@@ -1,0 +1,43 @@
+# SerpTank alert rules (plan §5.7). Thresholds are starting points; tune with real traffic.
+groups:
+  - name: serptank-api
+    rules:
+      - alert: ApiDown
+        expr: up{job="serptank-api"} == 0
+        for: 2m
+        labels: { severity: page }
+        annotations:
+          summary: "SerpTank API metrics endpoint is unreachable"
+
+      - alert: High5xxRate
+        expr: |
+          sum(rate(serptank_http_requests_total{status=~"5.."}[5m]))
+            / clamp_min(sum(rate(serptank_http_requests_total[5m])), 1) > 0.02
+        for: 10m
+        labels: { severity: page }
+        annotations:
+          summary: "More than 2% of API requests are failing with 5xx"
+
+      - alert: SlowApi
+        expr: |
+          histogram_quantile(0.95,
+            sum by (le) (rate(serptank_http_request_duration_seconds_bucket[10m]))) > 2
+        for: 15m
+        labels: { severity: ticket }
+        annotations:
+          summary: "API p95 latency above 2s"
+
+      - alert: AuthFailureSpike
+        expr: |
+          sum(rate(serptank_http_requests_total{route=~".*/auth/login", status=~"401|429"}[5m])) > 1
+        for: 10m
+        labels: { severity: ticket }
+        annotations:
+          summary: "Sustained failed or throttled sign-ins (possible credential stuffing)"
+
+      - alert: CsrfRejectionSpike
+        expr: sum(rate(serptank_http_requests_total{status="403"}[5m])) > 2
+        for: 15m
+        labels: { severity: ticket }
+        annotations:
+          summary: "Many 403 responses (CSRF/permission rejections)"

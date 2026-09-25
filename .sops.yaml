@@ -1,0 +1,7 @@
+# sops: production secrets are committed only in encrypted form (infra/secrets/*.enc).
+# Replace the age recipient with your team's public keys; the private keys never live
+# in the repository or on CI runners that don't deploy.
+creation_rules:
+  - path_regex: infra/secrets/.*\.enc$
+    age: >-
+      age1replacewithyourteampublickey000000000000000000000000000000000

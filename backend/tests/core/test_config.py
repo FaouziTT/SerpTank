@@ -76,3 +76,18 @@ def test_secrets_not_in_repr() -> None:
     settings = _prod()
     assert STRONG not in repr(settings)
     assert "s" * 40 not in repr(settings)
+
+
+def test_renderer_component_needs_only_its_token() -> None:
+    # The renderer container gets no app secrets in production (least privilege).
+    ok = Settings(
+        environment=Environment.PRODUCTION,
+        component="renderer",
+        renderer_token=SecretStr("r" * 40),
+    )
+    assert ok.component == "renderer"
+    with pytest.raises(ValueError, match="renderer_token"):
+        Settings(environment=Environment.PRODUCTION, component="renderer")
+    # The app component still fails closed without its secrets.
+    with pytest.raises(ValueError, match="session_secret"):
+        Settings(environment=Environment.PRODUCTION, renderer_token=SecretStr("r" * 40))

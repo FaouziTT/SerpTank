@@ -1,0 +1,67 @@
+# SerpTank edge (Caddy 2): automatic TLS, HTTP/3, one origin for app + API.
+#
+#   /api/*  -> api:8000   (FastAPI; applies its own CSP-free JSON headers)
+#   /*      -> web:3000   (Next.js; sets the per-request nonce CSP)
+#
+# Caddy is the only container that publishes ports. The app trusts X-Forwarded-For
+# only from Caddy's network (SERPTANK_TRUSTED_PROXIES), never from clients.
+{
+	email {$ACME_EMAIL}
+	# Keep the admin API off the network.
+	admin off
+	servers {
+		protocols h1 h2 h3
+		# Timeouts guard against slow-client resource exhaustion.
+		timeouts {
+			read_header 10s
+			idle 2m
+		}
+	}
+	log {
+		output stdout
+		format json
+	}
+}
+
+{$SITE_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		# HSTS: add "preload" only after verifying every subdomain serves HTTPS.
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+		Cross-Origin-Opener-Policy "same-origin"
+		Cross-Origin-Resource-Policy "same-origin"
+		X-Frame-Options "DENY"
+		-Server
+		-X-Powered-By
+	}
+
+	# Internal-only endpoints are never routed from the internet.
+	@internal path /metrics /metrics/* /api/v1/internal/*
+	respond @internal 404
+
+	# Request size ceiling at the edge (the API enforces tighter per-route limits).
+	request_body {
+		max_size 60MB
+	}
+
+	handle /api/* {
+		reverse_proxy api:8000 {
+			header_up X-Forwarded-Proto {scheme}
+			# Server-Sent Events: stream, don't buffer.
+			flush_interval -1
+			transport http {
+				read_timeout 6m
+			}
+		}
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
+}
+
+# Plain-HTTP requests to the bare domain are redirected by Caddy automatically.

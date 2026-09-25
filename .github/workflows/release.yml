@@ -1,0 +1,103 @@
+# Build, scan and publish release images to GHCR, then (manually approved) deploy.
+#
+#   Release:  push a tag "v*" (or run manually with a tag)  -> images :<tag>
+#   Deploy:   run this workflow manually with deploy=true; the "production" GitHub
+#             environment must require a reviewer's approval (repository settings).
+#
+# Every third-party action is pinned to a full commit SHA; registry login uses the
+# docker CLI with the job's short-lived GITHUB_TOKEN (no extra action to trust).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "Release tag to build/deploy (e.g. v2026.09.25-1)"
+        required: true
+      deploy:
+        description: "Deploy to production after building"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  images:
+    name: Image ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - { name: api, context: backend, file: backend/Dockerfile }
+          - { name: renderer, context: backend, file: backend/Dockerfile.renderer }
+          - { name: web, context: frontend, file: frontend/Dockerfile }
+    env:
+      RELEASE: ${{ inputs.release || github.ref_name }}
+      IMAGE: ghcr.io/${{ github.repository_owner }}/serptank-${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - name: Build (load for scanning)
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          load: true
+          push: false
+          tags: ${{ env.IMAGE }}:${{ env.RELEASE }}
+      - name: Trivy image scan (block on fixable HIGH/CRITICAL)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE }}:${{ env.RELEASE }}
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
+      - name: Push with SBOM and provenance
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          push: true
+          sbom: true
+          provenance: mode=max
+          tags: ${{ env.IMAGE }}:${{ env.RELEASE }}
+
+  deploy:
+    name: Deploy to production
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy }}
+    needs: images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - name: Deploy over SSH
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          RELEASE: ${{ inputs.release }}
+        run: |
+          set -euo pipefail
+          case "$RELEASE" in v[0-9]*) ;; *) echo "invalid release tag"; exit 1;; esac
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "/opt/serptank/infra/deploy/deploy.sh '$RELEASE'"

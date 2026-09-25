@@ -1,0 +1,12 @@
+# ZAP baseline rule config: <rule id>	<IGNORE|INFO|WARN|FAIL>	<note>
+# Fail the scan on anything that indicates a real weakness in our controls.
+10020	FAIL	Anti-clickjacking header (frame-ancestors / X-Frame-Options)
+10021	FAIL	X-Content-Type-Options missing
+10035	FAIL	Strict-Transport-Security missing
+10038	FAIL	Content-Security-Policy missing
+10054	FAIL	Cookie without SameSite
+10010	FAIL	Cookie without HttpOnly (session cookies)
+10011	FAIL	Cookie without Secure
+90022	FAIL	Application error disclosure
+10096	INFO	Timestamp disclosure (false positives on build ids)
+10027	INFO	Suspicious comments in JS bundles

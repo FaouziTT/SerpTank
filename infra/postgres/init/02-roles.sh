@@ -9,6 +9,9 @@
 # In production the same roles are created by the M14 provisioning script with
 # secrets from sops; the schema owner (POSTGRES_USER) only runs migrations.
 set -eu
+# Production passes Docker secrets as *_FILE paths; read them when present.
+if [ -n "${POSTGRES_APP_PASSWORD_FILE:-}" ]; then POSTGRES_APP_PASSWORD="$(cat "$POSTGRES_APP_PASSWORD_FILE")"; fi
+if [ -n "${POSTGRES_SCHED_PASSWORD_FILE:-}" ]; then POSTGRES_SCHED_PASSWORD="$(cat "$POSTGRES_SCHED_PASSWORD_FILE")"; fi
 : "${POSTGRES_APP_PASSWORD:?POSTGRES_APP_PASSWORD must be set}"
 : "${POSTGRES_SCHED_PASSWORD:?POSTGRES_SCHED_PASSWORD must be set}"
 

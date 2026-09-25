@@ -78,6 +78,20 @@ docker compose -f docker-compose.dev.yml up -d --wait
 
 This starts PostgreSQL 17 (with TimescaleDB, pgvector, pgcrypto, and citext) and Redis with a mandatory password. Both are bound to `127.0.0.1` only.
 
+### Production (Module 14)
+
+Single hardened VPS with Docker Compose (`docker-compose.prod.yml`): Caddy (TLS, the only
+published ports) -> web + api; Celery worker and beat; isolated renderer; Postgres and Redis on
+an internal network. Secrets are Docker secret files (`infra/secrets/README.md`).
+
+```bash
+infra/deploy/deploy.sh <release-tag>                     # pull, migrate, roll, health-check, auto-rollback
+docker compose -f docker-compose.prod.yml run --rm beat python -m serptank.maintenance rotate-keys
+```
+
+Runbooks live in `docs/runbooks/` (deploy, backup/restore drill, key rotation, incident response);
+`docs/launch-checklist.md` gates go-live. Releases are built by `.github/workflows/release.yml`.
+
 ### Repo hygiene
 
 ```bash

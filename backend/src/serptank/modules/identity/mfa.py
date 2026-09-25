@@ -31,6 +31,10 @@ def _aad(user_id: uuid.UUID) -> bytes:
     return f"mfa_totp:{user_id}".encode()
 
 
+# Public alias for maintenance jobs that re-encrypt TOTP seeds (key rotation).
+totp_associated_data = _aad
+
+
 def new_totp_secret() -> str:
     return pyotp.random_base32(length=32)
 

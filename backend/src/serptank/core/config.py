@@ -20,7 +20,7 @@ import binascii
 from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     )
 
     environment: Environment = Environment.DEVELOPMENT
+    # Which process this is: "app" (API, workers, beat) or "renderer" (isolated browser
+    # service, which is given only the renderer token - see _fail_closed).
+    component: Literal["app", "renderer"] = "app"
     app_name: str = "SerpTank"
     log_level: str = "INFO"
     log_json: bool = True
@@ -235,6 +238,21 @@ class Settings(BaseSettings):
             raise ValueError(msg)
         if not self.is_production_like:
             return self
+        problems = (
+            self._renderer_problems() if self.component == "renderer" else self._app_problems(keys)
+        )
+        if problems:
+            raise ValueError("Insecure production configuration: " + "; ".join(problems))
+        return self
+
+    def _renderer_problems(self) -> list[str]:
+        # The isolated renderer holds no app secrets (least privilege): it only needs
+        # the shared token the workers use to call it.
+        if len(self.renderer_token.get_secret_value()) < _MIN_SECRET_BYTES:
+            return [f"renderer_token must be >= {_MIN_SECRET_BYTES} bytes"]
+        return []
+
+    def _app_problems(self, keys: dict[str, bytes]) -> list[str]:
         problems: list[str] = []
         for name in ("session_secret", "csrf_secret", "api_key_pepper"):
             value: SecretStr = getattr(self, name)
@@ -255,9 +273,7 @@ class Settings(BaseSettings):
             problems.append("renderer_token must be >= 32 bytes when renderer_url is set")
         if self.email_backend != "smtp":
             problems.append("email_backend must be 'smtp' in staging/production")
-        if problems:
-            raise ValueError("Insecure production configuration: " + "; ".join(problems))
-        return self
+        return problems
 
 
 def _parse_keyring(raw: str) -> dict[str, bytes]:

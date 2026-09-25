@@ -1,0 +1,37 @@
+# OWASP ZAP baseline scan (passive) against a staging URL. Manual only: never scan
+# production or third-party sites. Rules tuned in infra/zap/rules.tsv.
+name: ZAP baseline
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Staging URL to scan (https://staging.example.com)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  zap:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Baseline scan
+        env:
+          TARGET: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          case "$TARGET" in https://*) ;; *) echo "target must be https"; exit 1;; esac
+          docker run --rm -v "$PWD/infra/zap:/zap/wrk:rw" ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py -t "$TARGET" -c rules.tsv -r report.html -J report.json -m 5
+      - name: Summary
+        if: always()
+        run: |
+          if [ -f infra/zap/report.json ]; then
+            jq -r '.site[].alerts[] | "\(.riskdesc)\t\(.alert)"' infra/zap/report.json \
+              | sort | uniq -c | tee -a "$GITHUB_STEP_SUMMARY"
+          fi

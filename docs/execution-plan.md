@@ -500,7 +500,7 @@ We keep Celery 5.5 (mature, already wired) with a Redis broker on its own ACL us
 | M11 ✅ | Search Presence dashboard, reports and exports, notifications and alerts, SSE realtime | M | M6–M10 |
 | M12 ✅ | Billing and entitlements (Stripe, plans, engine add-ons, metering) | M | M5 |
 | M13 ✅ | Compliance, marketing site, legal | S | M12 |
-| M14 | Production deployment and operations hardening | M | all |
+| M14 ✅ | Production deployment and operations hardening | M | all |
 
 ### 6.2 Module details
 
@@ -778,6 +778,29 @@ Each item follows the same module process.
 ---
 
 ## 9. Risks and open items
+
+### 9.0 Status after M14 (2026-09-25)
+
+All modules M0–M14 are implemented, committed and pushed on
+`claude/laughing-archimedes-9woi38` (one commit per module, ADRs 0001–0015). Items that
+could **not** be verified in the build environment, and need the owner's credentials,
+accounts or a real host:
+
+- **Live third-party calls:** Google (Search Console, Analytics, CrUX, Ads, OAuth), Bing
+  Webmaster Tools, IndexNow, DataForSEO / raw-HTML vendor, OpenAI and Perplexity sampling,
+  Stripe test/live mode, Cloudflare Turnstile, SMTP delivery. All are built against
+  documented request formats and recorded fixtures; run `scripts_ci/live_smoke.py`, the
+  Stripe CLI and the launch checklist.
+- **Real SERP markup:** the parser corpus is representative hand-made pages; capture real
+  SERPs through a vendor and add them.
+- **Renderer image build:** blocked here (no Debian mirror access); CI builds and scans it.
+- **Production host:** the compose file, Caddyfile, Prometheus rules, scripts and workflows
+  are validated (compose config, `caddy validate`, `promtool`, shellcheck, actionlint, k6
+  against a local API), but a real VPS deploy, TLS issuance, backups to object storage, ZAP
+  against staging and Lighthouse are still to do (`docs/launch-checklist.md`).
+- **Legal review** of the privacy policy, terms and DPA by counsel.
+- **Point-in-time recovery** (pgBackRest WAL archiving) is documented but not configured;
+  daily encrypted dumps give a 24-hour RPO.
 
 - **Choosing the SERP fetch vendors (before M8, low lock-in).** With our own parsers, router, and cache, no single choice is permanent. We start with the cheapest vendor that passes our quality tests (DataForSEO is pay-as-you-go at about $0.60 per 1,000 standard SERPs and covers every engine we need) plus a second, raw-HTML vendor for failover. Before M8 I'll bring a cost model per plan tier (keywords × engines × frequency × cache-hit rate × share covered free by GSC or Bing).
 - **Google Ads API Basic Access might be refused.** Google reviews each use case, and since Sept 2026 access is granted per Google Cloud project. If it's refused, keyword volume comes from the rented keyword-data adapter. The product works either way.

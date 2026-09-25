@@ -93,7 +93,7 @@ jobs:
         run: |
           test "$(docker run --rm --entrypoint id serptank-api:ci -u)" = "10001"
           docker run -d --name smoke -p 127.0.0.1:18000:8000 serptank-api:ci
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:18000/healthz && break; sleep 1; done
+          for _ in $(seq 1 30); do curl -fsS http://127.0.0.1:18000/healthz && break; sleep 1; done
           curl -fsSI http://127.0.0.1:18000/healthz | grep -i "x-content-type-options: nosniff"
           docker rm -f smoke
       - name: Trivy image scan
@@ -125,7 +125,7 @@ jobs:
         run: |
           test "$(docker run --rm --entrypoint id serptank-renderer:ci -u)" = "10002"
           docker run -d --name renderer -e SERPTANK_RENDERER_TOKEN=ci-token-ci-token-ci-token-ci-token -p 127.0.0.1:18100:8100 serptank-renderer:ci
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:18100/healthz && break; sleep 1; done
+          for _ in $(seq 1 30); do curl -fsS http://127.0.0.1:18100/healthz && break; sleep 1; done
           test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:18100/render -d '{}')" = "401"
           docker rm -f renderer
       - name: Trivy image scan

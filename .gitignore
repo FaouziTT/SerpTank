@@ -68,3 +68,6 @@ Thumbs.db
 cookies.txt
 tmp/
 *.tmp
+
+# Deployment-local config on the server (env files, current release marker).
+/config/
