@@ -84,4 +84,46 @@ describe("LoginForm", () => {
     await fillAndSubmit();
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/settings/security"));
   });
+
+  it("shows Turnstile after repeated failures and sends its token", async () => {
+    const bodies: Record<string, unknown>[] = [];
+    let attempts = 0;
+    server.use(
+      http.get("*/api/v1/public/config", () =>
+        HttpResponse.json({
+          turnstile_site_key: "0x4AAA",
+          billing_enabled: false,
+          subprocessors: [],
+        }),
+      ),
+      http.post("*/api/v1/auth/login", async ({ request }) => {
+        bodies.push((await request.json()) as Record<string, unknown>);
+        attempts += 1;
+        if (attempts === 1) {
+          return HttpResponse.json(
+            { type: "x", title: "Check", status: 400, code: "captcha_required", detail: "d" },
+            { status: 400 },
+          );
+        }
+        return HttpResponse.json({ status: "authenticated", csrf_token: "t2", user: null });
+      }),
+    );
+    // A stand-in for Cloudflare's script: renders and immediately solves.
+    window.turnstile = {
+      render: (_el, opts) => {
+        (opts.callback as (t: string) => void)("turnstile-token");
+        return "w1";
+      },
+      remove: vi.fn(),
+    };
+    render(<LoginForm googleEnabled={false} />);
+    await fillAndSubmit();
+    expect(await screen.findByText(/complete the security check/)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByRole("button", { name: "Sign in" })).toBeEnabled());
+    await userEvent.setup().click(screen.getByRole("button", { name: "Sign in" }));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/settings/security"));
+    expect(bodies[0]?.captcha_token).toBeUndefined();
+    expect(bodies[1]?.captcha_token).toBe("turnstile-token");
+    delete window.turnstile;
+  });
 });

@@ -4725,6 +4725,110 @@
         "title": "Provider",
         "type": "string"
       },
+      "PublicConfig": {
+        "properties": {
+          "billing_enabled": {
+            "title": "Billing Enabled",
+            "type": "boolean"
+          },
+          "subprocessors": {
+            "items": {
+              "$ref": "#/components/schemas/Subprocessor"
+            },
+            "title": "Subprocessors",
+            "type": "array"
+          },
+          "turnstile_site_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnstile Site Key"
+          }
+        },
+        "required": [
+          "turnstile_site_key",
+          "billing_enabled",
+          "subprocessors"
+        ],
+        "title": "PublicConfig",
+        "type": "object"
+      },
+      "PublicPlan": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "limits": {
+            "additionalProperties": true,
+            "title": "Limits",
+            "type": "object"
+          },
+          "monthly_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Monthly Price"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "monthly_price",
+          "currency",
+          "limits"
+        ],
+        "title": "PublicPlan",
+        "type": "object"
+      },
+      "PublicPricing": {
+        "properties": {
+          "addons": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Addons",
+            "type": "array"
+          },
+          "billing_enabled": {
+            "title": "Billing Enabled",
+            "type": "boolean"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PublicPlan"
+            },
+            "title": "Plans",
+            "type": "array"
+          }
+        },
+        "required": [
+          "plans",
+          "addons",
+          "billing_enabled"
+        ],
+        "title": "PublicPricing",
+        "type": "object"
+      },
       "PurposeUsage": {
         "properties": {
           "purpose": {
@@ -5538,6 +5642,29 @@
         "title": "SubmissionOut",
         "type": "object"
       },
+      "Subprocessor": {
+        "properties": {
+          "data": {
+            "title": "Data",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "purpose": {
+            "title": "Purpose",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "purpose",
+          "data"
+        ],
+        "title": "Subprocessor",
+        "type": "object"
+      },
       "TargetUpdate": {
         "additionalProperties": false,
         "properties": {
@@ -6234,6 +6361,34 @@
         "summary": "Logout All",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/me": {
+      "delete": {
+        "operationId": "delete_my_account_api_v1_auth_me_delete",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Delete My Account",
+        "tags": [
+          "account"
+        ]
+      }
+    },
+    "/api/v1/auth/me/export": {
+      "get": {
+        "operationId": "export_my_data_api_v1_auth_me_export_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Export My Data",
+        "tags": [
+          "account"
         ]
       }
     },
@@ -13390,6 +13545,48 @@
         "summary": "Vitals",
         "tags": [
           "integrations"
+        ]
+      }
+    },
+    "/api/v1/public/config": {
+      "get": {
+        "operationId": "public_config_api_v1_public_config_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicConfig"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Public Config",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/api/v1/public/plans": {
+      "get": {
+        "operationId": "public_plans_api_v1_public_plans_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicPricing"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Public Plans",
+        "tags": [
+          "public"
         ]
       }
     },

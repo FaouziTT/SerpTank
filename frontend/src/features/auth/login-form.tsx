@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRound } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Field, FormAlert } from "@/components/forms/field";
@@ -15,8 +15,9 @@ import { ensureCsrfToken } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/problem";
 import { getPasskeyAssertion, useWebAuthnSupport } from "@/lib/webauthn";
 
-import { authApi, safeNextPath } from "./api";
+import { authApi, publicConfig, safeNextPath } from "./api";
 import { loginSchema, type LoginValues } from "./schemas";
+import { Turnstile } from "./turnstile";
 
 const GOOGLE_ERRORS: Record<string, string> = {
   google_account_exists:
@@ -33,6 +34,10 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
     GOOGLE_ERRORS[params.get("error") ?? ""] ?? null,
   );
   const passkeysSupported = useWebAuthnSupport();
+  // After repeated failures the API asks for a CAPTCHA; show Turnstile when configured.
+  const [captchaKey, setCaptchaKey] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const onCaptcha = useCallback((token: string | null) => setCaptchaToken(token), []);
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "", remember_me: false },
@@ -48,13 +53,22 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
     setError(null);
     try {
       await ensureCsrfToken();
-      const result = await authApi.login(values);
+      const result = await authApi.login(
+        captchaToken ? { ...values, captcha_token: captchaToken } : values,
+      );
       await finish(result.status);
     } catch (err) {
       if (err instanceof ApiError && err.code === "email_not_verified") {
         setError("Please verify your email address first. Check your inbox for the link.");
       } else if (err instanceof ApiError && err.code === "captcha_required") {
-        setError("Too many failed attempts. Please wait a few minutes and try again.");
+        const config = await publicConfig().catch(() => null);
+        setCaptchaToken(null);
+        if (config?.turnstile_site_key) {
+          setCaptchaKey(config.turnstile_site_key);
+          setError("Please complete the security check, then sign in again.");
+        } else {
+          setError("Too many failed attempts. Please wait a few minutes and try again.");
+        }
       } else {
         setError(err instanceof ApiError ? err.userMessage : "Sign-in failed. Please try again.");
       }
@@ -117,7 +131,12 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
               Forgot password?
             </Link>
           </div>
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {captchaKey ? <Turnstile siteKey={captchaKey} onToken={onCaptcha} /> : null}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isSubmitting || (captchaKey !== null && !captchaToken)}
+          >
             {isSubmitting ? "Signing in…" : "Sign in"}
           </Button>
         </form>

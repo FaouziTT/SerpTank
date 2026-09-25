@@ -100,6 +100,7 @@ class Settings(BaseSettings):
     google_client_secret: SecretStr = SecretStr("")
     # Cloudflare Turnstile; when unset, repeated failures are throttled instead.
     turnstile_secret: SecretStr = SecretStr("")
+    turnstile_site_key: str = ""  # public; the login form renders the widget when set
     # Outbound email. "console" logs a redacted notice (dev); "smtp" sends for real.
     email_backend: str = "console"
     email_from: str = "SerpTank <no-reply@serptank.com>"
@@ -176,6 +177,13 @@ class Settings(BaseSettings):
     # Stripe price ids per plan/add-on: "pro=price_..,agency=price_..,engines_bing=price_.."
     stripe_prices: str = ""
     billing_grace_days: int = 7
+    # Display prices for the public pricing page ("pro=49,agency=199", monthly, in
+    # ``pricing_currency``). Stripe remains the source of truth at checkout.
+    pricing_display: str = ""
+    pricing_currency: str = "USD"
+
+    # --- Compliance (Module 13) -----------------------------------------------------
+    deletion_grace_days: int = 30  # soft-deleted orgs/accounts are purged after this
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"

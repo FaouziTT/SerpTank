@@ -18,6 +18,7 @@ import { ensureCsrfToken } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/problem";
 import { createPasskey, useWebAuthnSupport } from "@/lib/webauthn";
 
+import { YourDataCard } from "./your-data";
 import { useStepUp } from "./step-up";
 
 function errorText(err: unknown, fallback: string): string {
@@ -411,6 +412,7 @@ export function SecuritySettings({ session }: { session: SessionResponse }) {
       <PasskeysCard onChange={refresh} />
       <GoogleCard linked={session.user.google_linked} onChange={refresh} />
       <SessionsCard />
+      <YourDataCard />
     </div>
   );
 }

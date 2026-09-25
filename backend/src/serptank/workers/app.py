@@ -22,6 +22,7 @@ from serptank.core.db import create_engine, create_session_factory
 from serptank.core.logging import configure_logging
 from serptank.modules.ai_visibility.scheduling import enqueue_due_ai_sampling
 from serptank.modules.billing.service import expire_grace_periods
+from serptank.modules.compliance.service import purge_expired
 from serptank.modules.crawler.scheduling import enqueue_due_crawls, fail_stale_jobs
 from serptank.modules.integrations.scheduling import enqueue_due_syncs
 from serptank.modules.jobs.service import CeleryDispatcher, JobRuntime, execute_job
@@ -95,6 +96,8 @@ def schedule_due_work() -> None:
             await enqueue_due_alert_checks(system, _runtime().session_factory, dispatcher)
             async with system() as billing_session:
                 await expire_grace_periods(billing_session)
+            async with system() as retention_session:
+                await purge_expired(retention_session, settings.deletion_grace_days)
             await enqueue_due_syncs(
                 system,
                 _runtime().session_factory,

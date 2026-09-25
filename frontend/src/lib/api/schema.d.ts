@@ -126,6 +126,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/auth/me": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /** Delete My Account */
+    delete: operations["delete_my_account_api_v1_auth_me_delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/auth/me/export": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Export My Data */
+    get: operations["export_my_data_api_v1_auth_me_export_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/auth/mfa/recovery-codes": {
     parameters: {
       query?: never;
@@ -2070,6 +2104,40 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/public/config": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Public Config */
+    get: operations["public_config_api_v1_public_config_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/public/plans": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Public Plans */
+    get: operations["public_plans_api_v1_public_plans_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/healthz": {
     parameters: {
       query?: never;
@@ -3835,6 +3903,41 @@ export interface components {
      * @enum {string}
      */
     Provider: "google" | "bing";
+    /** PublicConfig */
+    PublicConfig: {
+      /** Billing Enabled */
+      billing_enabled: boolean;
+      /** Subprocessors */
+      subprocessors: components["schemas"]["Subprocessor"][];
+      /** Turnstile Site Key */
+      turnstile_site_key: string | null;
+    };
+    /** PublicPlan */
+    PublicPlan: {
+      /** Code */
+      code: string;
+      /** Currency */
+      currency: string;
+      /** Limits */
+      limits: {
+        [key: string]: unknown;
+      };
+      /** Monthly Price */
+      monthly_price: number | null;
+      /** Name */
+      name: string;
+    };
+    /** PublicPricing */
+    PublicPricing: {
+      /** Addons */
+      addons: {
+        [key: string]: unknown;
+      }[];
+      /** Billing Enabled */
+      billing_enabled: boolean;
+      /** Plans */
+      plans: components["schemas"]["PublicPlan"][];
+    };
     /** PurposeUsage */
     PurposeUsage: {
       /** Purpose */
@@ -4107,6 +4210,15 @@ export interface components {
       url_count: number;
       /** Urls */
       urls: string[];
+    };
+    /** Subprocessor */
+    Subprocessor: {
+      /** Data */
+      data: string;
+      /** Name */
+      name: string;
+      /** Purpose */
+      purpose: string;
     };
     /** TargetUpdate */
     TargetUpdate: {
@@ -4436,6 +4548,42 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  delete_my_account_api_v1_auth_me_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  export_my_data_api_v1_auth_me_export_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
         headers: {
           [name: string]: unknown;
         };
@@ -8732,6 +8880,46 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  public_config_api_v1_public_config_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PublicConfig"];
+        };
+      };
+    };
+  };
+  public_plans_api_v1_public_plans_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PublicPricing"];
         };
       };
     };

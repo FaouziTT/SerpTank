@@ -8,6 +8,7 @@ export const loginSchema = z.object({
   email: z.email("Enter a valid email address."),
   password: z.string().min(1, "Enter your password."),
   remember_me: z.boolean(),
+  captcha_token: z.string().optional(),
 });
 
 export const registerSchema = z.object({

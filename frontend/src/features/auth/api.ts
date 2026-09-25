@@ -62,3 +62,8 @@ export function safeNextPath(next: string | null | undefined, fallback = "/dashb
   }
   return next;
 }
+
+/** Public client configuration (Turnstile site key, billing availability). */
+export function publicConfig() {
+  return unwrap(api.GET("/api/v1/public/config"));
+}
