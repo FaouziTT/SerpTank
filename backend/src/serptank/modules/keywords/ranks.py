@@ -25,7 +25,7 @@ from sqlalchemy import delete, func, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from serptank.core.models import uuid7
-from serptank.modules.billing.entitlements import Plan, plan_for
+from serptank.modules.billing.entitlements import Plan, plan_of
 from serptank.modules.crawler.urls import site_hosts
 from serptank.modules.integrations.models import BingDaily, GscDaily
 from serptank.modules.jobs.service import JobContext, JobFailedError, register_handler
@@ -252,7 +252,7 @@ async def run_rank_check(ctx: JobContext) -> dict[str, Any]:
             ctx=ctx,
             router=ctx.runtime.extras.get("serp"),
             project=project,
-            plan=plan_for(org.plan_code),
+            plan=plan_of(org),
             competitors=list(
                 (
                     await db.execute(select(Competitor).where(Competitor.project_id == project.id))

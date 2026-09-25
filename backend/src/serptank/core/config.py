@@ -169,6 +169,13 @@ class Settings(BaseSettings):
     openai_search_model: str = "gpt-4.1-mini"
     perplexity_api_key: SecretStr = SecretStr("")
     perplexity_model: str = "sonar"
+
+    # --- Billing (Module 12) - optional; billing pages say "not configured" when unset --
+    stripe_secret_key: SecretStr = SecretStr("")
+    stripe_webhook_secret: SecretStr = SecretStr("")
+    # Stripe price ids per plan/add-on: "pro=price_..,agency=price_..,engines_bing=price_.."
+    stripe_prices: str = ""
+    billing_grace_days: int = 7
     # Internal-only Prometheus endpoint (None = disabled). Never published by Caddy.
     metrics_port: int | None = None
     metrics_bind_address: str = "127.0.0.1"

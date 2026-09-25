@@ -25,7 +25,7 @@ from serptank.core.db import bind_identity
 from serptank.core.email import EmailSender, OutgoingEmail
 from serptank.core.errors import AppError, ConflictError, NotFoundError, PermissionDeniedError
 from serptank.core.models import MemberRole, uuid7
-from serptank.modules.billing.entitlements import plan_for, require_below_limit
+from serptank.modules.billing.entitlements import plan_of, require_below_limit
 from serptank.modules.identity.models import User
 from serptank.modules.tenancy.deps import OrgContext
 from serptank.modules.tenancy.models import Invitation, Membership, Organization
@@ -162,7 +162,7 @@ async def invite(
     )
     if already.scalar_one_or_none() is not None:
         raise ConflictError("This person is already a member.")
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     members = await db.execute(
         select(func.count()).where(Membership.organization_id == ctx.organization_id)
     )

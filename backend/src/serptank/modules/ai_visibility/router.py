@@ -28,7 +28,7 @@ from serptank.modules.ai_visibility.schemas import (
     ReadinessOut,
     VisibilityOut,
 )
-from serptank.modules.billing.entitlements import PlanLimitError, plan_for
+from serptank.modules.billing.entitlements import PlanLimitError, plan_of
 from serptank.modules.identity.deps import DbSession
 from serptank.modules.jobs.schemas import JobOut
 from serptank.modules.jobs.service import JobDispatcher, create_job
@@ -81,7 +81,7 @@ async def get_settings(
 ) -> AiSettingsOut:
     project = await _project(db, ctx, project_id)
     profile = await service.get_profile(db, project)
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     selected = {e.value for m in await _markets(db, project) for e in m.ai_engines}
     available = service.available_engines(request.app.state.job_runtime.extras)
     entitled = {e.value for e in plan.ai_engines}

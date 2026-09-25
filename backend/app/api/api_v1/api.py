@@ -24,7 +24,6 @@ from app.api.api_v1.endpoints import (
     social_media,
     oauth,
     domain_verification,
-    subscriptions,
     organizations,
     projects,
     sites,
@@ -62,7 +61,6 @@ api_router.include_router(health.router, prefix="/health", tags=["Health Monitor
 api_router.include_router(oauth.router, prefix="/oauth", tags=["OAuth"])
 
 # Subscriptions and billing
-api_router.include_router(subscriptions.router, prefix="/subscriptions", tags=["Subscriptions"])
 
 # Organizations and multi-tenancy
 api_router.include_router(organizations.router, prefix="/organizations", tags=["Organizations"])

@@ -498,7 +498,7 @@ We keep Celery 5.5 (mature, already wired) with a Redis broker on its own ACL us
 | M9 ✅ | On-page optimization and SERP-based content briefs (Google-first) | M | M6, M8 |
 | M10 ✅ | AI visibility (GEO/AEO) + LLM gateway | M | M8, M9 |
 | M11 ✅ | Search Presence dashboard, reports and exports, notifications and alerts, SSE realtime | M | M6–M10 |
-| M12 | Billing and entitlements (Stripe, plans, engine add-ons, metering) | M | M5 |
+| M12 ✅ | Billing and entitlements (Stripe, plans, engine add-ons, metering) | M | M5 |
 | M13 | Compliance, marketing site, legal | S | M12 |
 | M14 | Production deployment and operations hardening | M | all |
 

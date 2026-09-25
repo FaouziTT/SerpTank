@@ -19,7 +19,7 @@ from serptank.core.errors import AppError
 from serptank.core.http import EgressPolicy
 from serptank.core.models import uuid7
 from serptank.modules.audit.service import run_audit
-from serptank.modules.billing.entitlements import PlanLimitError, plan_for
+from serptank.modules.billing.entitlements import PlanLimitError, plan_of
 from serptank.modules.crawler.engine import (
     CrawlAbortedError,
     CrawlConfig,
@@ -84,7 +84,7 @@ async def crawl_budget(
     unverified_max: int,
 ) -> int:
     """Pages this crawl may fetch: plan budget left this month, capped per crawl."""
-    plan = plan_for(organization.plan_code)
+    plan = plan_of(organization)
     left = plan.max_crawl_pages_per_month - await pages_used_this_month(db, organization.id)
     if left <= 0:
         raise PlanLimitError(

@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import DateTime, Enum, ForeignKey, String, UniqueConstraint
-from sqlalchemy.dialects.postgresql import CITEXT, UUID
+from sqlalchemy.dialects.postgresql import ARRAY, CITEXT, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from serptank.core.models import (
@@ -29,6 +29,10 @@ class Organization(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     slug: Mapped[str] = mapped_column(CITEXT, unique=True, nullable=False)
     plan_code: Mapped[str] = mapped_column(String(40), nullable=False, default="free")
+    # Purchased engine add-ons ("engines_bing", "engines_regional"), synced from billing.
+    addons: Mapped[list[str]] = mapped_column(
+        ARRAY(String(40)), nullable=False, default=list, server_default="{}"
+    )
     require_mfa: Mapped[bool] = mapped_column(nullable=False, default=False)
     created_by_user_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL")

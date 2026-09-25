@@ -4,6 +4,7 @@ import {
   Building2,
   Check,
   ChevronsUpDown,
+  CreditCard,
   FolderKanban,
   History,
   Plug,
@@ -98,6 +99,12 @@ export function orgNavItems(orgId: string, role: MemberRole) {
     { href: `${base}/members`, label: "Members", icon: Users, show: role !== "billing" },
     { href: `${base}/integrations`, label: "Integrations", icon: Plug, show: role !== "billing" },
     { href: `${base}/audit`, label: "Audit log", icon: History, show: can(role, "audit:read") },
+    {
+      href: `${base}/billing`,
+      label: "Billing",
+      icon: CreditCard,
+      show: can(role, "billing:manage"),
+    },
     { href: `${base}/settings`, label: "Settings", icon: Settings, show: true },
   ]
     .filter((item) => item.show)

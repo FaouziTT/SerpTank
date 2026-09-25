@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from serptank.core.errors import AppError, ConflictError, NotFoundError
 from serptank.core.ratelimit import Rate, rate_limit
-from serptank.modules.billing.entitlements import plan_for
+from serptank.modules.billing.entitlements import plan_of
 from serptank.modules.crawler.models import CrawlStatus
 from serptank.modules.crawler.urls import is_internal, normalize_url, site_hosts
 from serptank.modules.identity.deps import DbSession
@@ -207,7 +207,7 @@ async def suggest_rewrite(
     suggestion = await gateway.structured(
         db,
         organization_id=ctx.organization_id,
-        monthly_token_budget=plan_for(ctx.organization.plan_code).llm_tokens_per_month,
+        monthly_token_budget=plan_of(ctx.organization).llm_tokens_per_month,
         purpose="onpage_rewrite",
         instruction=REWRITE_INSTRUCTION,
         content=content,

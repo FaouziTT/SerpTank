@@ -124,6 +124,15 @@ test("create an org and project, verify instructions, invite an editor", async (
   expect(download.suggestedFilename()).toMatch(/^serptank-rankings-.*\.csv$/);
   await page.goto(projectUrl);
 
+  // Billing: no Stripe keys in e2e, so the page says so and shows usage.
+  await page
+    .getByRole("navigation", { name: "Organization" })
+    .getByRole("link", { name: "Billing" })
+    .click();
+  await expect(page.getByText("Billing isn't configured on this server")).toBeVisible();
+  await expect(page.getByText("Current plan: Free")).toBeVisible();
+  await page.goto(projectUrl);
+
   // Domain verification instructions (the check itself needs real DNS).
   await page.getByRole("button", { name: "Use a DNS TXT record" }).click();
   await expect(page.getByText(/serptank-site-verification=/)).toBeVisible();

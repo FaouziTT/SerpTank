@@ -19,7 +19,7 @@ from sqlalchemy import desc, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from serptank.core.http import EgressPolicy, SafeHttpClient
-from serptank.modules.billing.entitlements import plan_for
+from serptank.modules.billing.entitlements import plan_of
 from serptank.modules.crawler.models import Crawl, CrawlLink, CrawlPage, CrawlStatus
 from serptank.modules.crawler.urls import normalize_url, site_hosts
 from serptank.modules.jobs.service import JobContext, JobFailedError, register_handler
@@ -65,7 +65,7 @@ async def live_serp(
             db,
             request,
             organization_id=ctx.organization_id,
-            org_daily_cap=plan_for(org.plan_code).serp_requests_per_day,
+            org_daily_cap=plan_of(org).serp_requests_per_day,
             today=datetime.now(UTC).date(),
         )
     except SerpUnavailableError as exc:

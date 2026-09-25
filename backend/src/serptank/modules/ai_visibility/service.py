@@ -30,7 +30,7 @@ from serptank.modules.ai_visibility.detect import Entity, detect, entity_for
 from serptank.modules.ai_visibility.engines import AnswerEngine
 from serptank.modules.ai_visibility.models import AiObservation, AiProfile, AiPrompt
 from serptank.modules.ai_visibility.stats import wilson
-from serptank.modules.billing.entitlements import Plan, plan_for
+from serptank.modules.billing.entitlements import Plan, plan_of
 from serptank.modules.integrations.models import AiPerformanceDaily
 from serptank.modules.jobs.service import JobContext, JobFailedError, register_handler
 from serptank.modules.llm.gateway import (
@@ -245,7 +245,7 @@ async def run_ai_sampling(ctx: JobContext) -> dict[str, Any]:
         org = await db.get(Organization, ctx.organization_id)
         if project is None or project.deleted_at is not None or org is None:
             raise JobFailedError("project_gone", "The project no longer exists.")
-        plan = plan_for(org.plan_code)
+        plan = plan_of(org)
         profile = await get_profile(db, project)
         own, rivals = await entities(db, project, profile)
         run = _Run(

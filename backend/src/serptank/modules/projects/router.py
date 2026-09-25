@@ -15,7 +15,7 @@ from serptank.core.audit import record_audit_event
 from serptank.core.errors import ConflictError, NotFoundError
 from serptank.core.ratelimit import Rate, rate_limit
 from serptank.core.repository import TenantRepository
-from serptank.modules.billing.entitlements import plan_for, require_below_limit, require_engines
+from serptank.modules.billing.entitlements import plan_of, require_below_limit, require_engines
 from serptank.modules.identity.deps import DbSession, Identity
 from serptank.modules.projects.domains import normalize_domain, registrable_domain
 from serptank.modules.projects.models import Project, ProjectMarket
@@ -81,7 +81,7 @@ async def _out(db: AsyncSession, project: Project) -> ProjectOut:
 
 
 def _market(ctx: OrgContext, project: Project, body: MarketIn) -> ProjectMarket:
-    require_engines(plan_for(ctx.organization.plan_code), body.search_engines, body.ai_engines)
+    require_engines(plan_of(ctx.organization), body.search_engines, body.ai_engines)
     return ProjectMarket(
         organization_id=ctx.organization_id,
         project_id=project.id,
@@ -102,7 +102,7 @@ async def list_projects(ctx: ProjectRead, db: DbSession) -> list[ProjectOut]:
 
 @router.post("", response_model=ProjectOut, status_code=201)
 async def create_project(body: ProjectCreate, ctx: ProjectWrite, db: DbSession) -> ProjectOut:
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     repo = ProjectRepository(db, ctx.organization_id)
     require_below_limit(await repo.count(), plan.max_projects, "projects", plan)
     if len(body.markets) > plan.max_markets_per_project:
@@ -177,7 +177,7 @@ async def add_market(
     project_id: uuid.UUID, body: MarketIn, ctx: ProjectWrite, db: DbSession
 ) -> ProjectMarket:
     project = await ProjectRepository(db, ctx.organization_id).get(project_id)
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     count = await db.execute(select(func.count()).where(ProjectMarket.project_id == project.id))
     require_below_limit(
         int(count.scalar_one()), plan.max_markets_per_project, "markets per project", plan

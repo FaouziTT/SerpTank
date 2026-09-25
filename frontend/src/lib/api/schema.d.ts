@@ -500,6 +500,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/api/v1/billing/stripe/webhook": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Stripe Webhook */
+    post: operations["stripe_webhook_api_v1_billing_stripe_webhook_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/api/v1/exports/{org_id}/{export_id}": {
     parameters: {
       query?: never;
@@ -637,6 +654,74 @@ export interface paths {
     get: operations["org_audit_events_api_v1_orgs__org_id__audit_events_get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/billing": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Billing */
+    get: operations["get_billing_api_v1_orgs__org_id__billing_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/billing/checkout": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Checkout */
+    post: operations["checkout_api_v1_orgs__org_id__billing_checkout_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/billing/invoices": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Invoices */
+    get: operations["invoices_api_v1_orgs__org_id__billing_invoices_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/v1/orgs/{org_id}/billing/portal": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Portal */
+    post: operations["portal_api_v1_orgs__org_id__billing_portal_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -2346,6 +2431,35 @@ export interface components {
       /** Authorization Url */
       authorization_url: string;
     };
+    /** BillingOut */
+    BillingOut: {
+      /** Addons */
+      addons: string[];
+      /** Addons Catalog */
+      addons_catalog: {
+        [key: string]: unknown;
+      }[];
+      /** Cancel At Period End */
+      cancel_at_period_end: boolean;
+      /** Configured */
+      configured: boolean;
+      /** Current Period End */
+      current_period_end: string | null;
+      /** Grace Until */
+      grace_until: string | null;
+      /** Has Customer */
+      has_customer: boolean;
+      /** Plan */
+      plan: string;
+      /** Plans */
+      plans: components["schemas"]["PlanOut"][];
+      /** Status */
+      status: string;
+      /** Usage */
+      usage: {
+        [key: string]: components["schemas"]["Meter"];
+      };
+    };
     /** BingConnect */
     BingConnect: {
       /** Api Key */
@@ -2420,6 +2534,16 @@ export interface components {
       current_password: string;
       /** New Password */
       new_password: string;
+    };
+    /** CheckoutRequest */
+    CheckoutRequest: {
+      /** Addons */
+      addons?: ("engines_bing" | "engines_regional")[];
+      /**
+       * Plan
+       * @enum {string}
+       */
+      plan: "pro" | "agency";
     };
     /** CodeRequest */
     CodeRequest: {
@@ -2833,6 +2957,28 @@ export interface components {
       revoked_at: string | null;
       role: components["schemas"]["MemberRole"];
     };
+    /** InvoiceOut */
+    InvoiceOut: {
+      /**
+       * Created
+       * Format: date-time
+       */
+      created: string;
+      /** Currency */
+      currency: string;
+      /** Hosted Invoice Url */
+      hosted_invoice_url: string | null;
+      /** Id */
+      id: string;
+      /** Invoice Pdf */
+      invoice_pdf: string | null;
+      /** Number */
+      number: string | null;
+      /** Status */
+      status: string | null;
+      /** Total */
+      total: number;
+    };
     /** IssueOccurrence */
     IssueOccurrence: {
       /** Details */
@@ -3120,6 +3266,13 @@ export interface components {
       /** Organization Slug */
       organization_slug: string;
       role: components["schemas"]["MemberRole"];
+    };
+    /** Meter */
+    Meter: {
+      /** Limit */
+      limit: number;
+      /** Used */
+      used: number;
     };
     /** MetricRow */
     MetricRow: {
@@ -3466,6 +3619,19 @@ export interface components {
       /** Top Queries */
       top_queries: components["schemas"]["MetricRow"][];
     };
+    /** PlanOut */
+    PlanOut: {
+      /** Code */
+      code: string;
+      /** Limits */
+      limits: {
+        [key: string]: unknown;
+      };
+      /** Name */
+      name: string;
+      /** Purchasable */
+      purchasable: boolean;
+    };
     /** PositionOut */
     PositionOut: {
       /** Ai Cited */
@@ -3741,6 +3907,11 @@ export interface components {
     RecoveryCodesResponse: {
       /** Codes */
       codes: string[];
+    };
+    /** RedirectOut */
+    RedirectOut: {
+      /** Url */
+      url: string;
     };
     /** RegisterRequest */
     RegisterRequest: {
@@ -4877,6 +5048,28 @@ export interface operations {
       };
     };
   };
+  stripe_webhook_api_v1_billing_stripe_webhook_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: string;
+          };
+        };
+      };
+    };
+  };
   download_export_api_v1_exports__org_id___export_id__get: {
     parameters: {
       query: {
@@ -5239,6 +5432,134 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["AuditEventOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_billing_api_v1_orgs__org_id__billing_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["BillingOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  checkout_api_v1_orgs__org_id__billing_checkout_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CheckoutRequest"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RedirectOut"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  invoices_api_v1_orgs__org_id__billing_invoices_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["InvoiceOut"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  portal_api_v1_orgs__org_id__billing_portal_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        org_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["RedirectOut"];
         };
       };
       /** @description Validation Error */

@@ -17,7 +17,7 @@ from serptank.modules.audit.evaluate import SITE_LEVEL_RULES
 from serptank.modules.audit.models import AuditIssue
 from serptank.modules.audit.rules import CATEGORIES, RULES
 from serptank.modules.audit.scoring import priority
-from serptank.modules.billing.entitlements import plan_for
+from serptank.modules.billing.entitlements import plan_of
 from serptank.modules.crawler.models import Crawl, CrawlPage
 from serptank.modules.crawler.schemas import (
     CrawlOut,
@@ -65,7 +65,7 @@ async def crawl_usage(
 ) -> CrawlUsage:
     project = await ProjectRepository(db, ctx.organization_id).get(project_id)
     settings = request.app.state.settings
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     used = await pages_used_this_month(db, ctx.organization_id)
     cap = (
         settings.crawl_max_pages_per_crawl

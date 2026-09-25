@@ -13,6 +13,7 @@ Add-ons purchased separately (M12) extend a plan's engine set.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Protocol
 
 from serptank.core.errors import AppError
 from serptank.core.models import AIEngine, SearchEngine
@@ -106,6 +107,16 @@ def plan_for(code: str, addons: frozenset[str] = frozenset()) -> Plan:
     if "engines_regional" in addons:
         engines |= REGIONAL
     return Plan(**{**base.__dict__, "search_engines": frozenset(engines), "addons": addons})
+
+
+class HasPlan(Protocol):
+    plan_code: str
+    addons: list[str]
+
+
+def plan_of(org: HasPlan) -> Plan:
+    """The effective plan of an organization: its plan plus purchased add-ons."""
+    return plan_for(org.plan_code, frozenset(org.addons or []))
 
 
 def require_engines(plan: Plan, search: list[SearchEngine], ai: list[AIEngine]) -> None:

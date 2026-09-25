@@ -11,7 +11,8 @@ export type Permission =
   | "project:write"
   | "api_keys:manage"
   | "audit:read"
-  | "integrations:manage";
+  | "integrations:manage"
+  | "billing:manage";
 
 const ADMIN: ReadonlySet<Permission> = new Set([
   "org:update",
@@ -20,6 +21,7 @@ const ADMIN: ReadonlySet<Permission> = new Set([
   "api_keys:manage",
   "audit:read",
   "integrations:manage",
+  "billing:manage",
 ]);
 
 const MATRIX: Record<MemberRole, ReadonlySet<Permission>> = {
@@ -27,7 +29,7 @@ const MATRIX: Record<MemberRole, ReadonlySet<Permission>> = {
   admin: ADMIN,
   editor: new Set(["project:write"]),
   viewer: new Set(),
-  billing: new Set(),
+  billing: new Set(["billing:manage"]),
 };
 
 export function can(role: MemberRole | undefined, permission: Permission): boolean {

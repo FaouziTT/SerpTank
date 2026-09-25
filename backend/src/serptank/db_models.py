@@ -7,6 +7,7 @@ from serptank.core.audit import AuditEvent
 from serptank.core.models import Base
 from serptank.modules.ai_visibility.models import AiObservation, AiProfile, AiPrompt
 from serptank.modules.audit.models import AuditIssue
+from serptank.modules.billing.models import OrganizationBilling, StripeEvent
 from serptank.modules.crawler.models import Crawl, CrawlLink, CrawlPage
 from serptank.modules.identity.models import (
     ApiKey,
@@ -74,6 +75,7 @@ __all__ = [
     "MfaTotp",
     "Notification",
     "Organization",
+    "OrganizationBilling",
     "PageOptimization",
     "Project",
     "ProjectMarket",
@@ -83,6 +85,7 @@ __all__ = [
     "SerpSnapshot",
     "SerpUsage",
     "SerpValidation",
+    "StripeEvent",
     "TrackedKeyword",
     "UrlInspection",
     "User",

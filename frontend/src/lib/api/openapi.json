@@ -825,6 +825,98 @@
         "title": "AuthorizationUrl",
         "type": "object"
       },
+      "BillingOut": {
+        "properties": {
+          "addons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Addons",
+            "type": "array"
+          },
+          "addons_catalog": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Addons Catalog",
+            "type": "array"
+          },
+          "cancel_at_period_end": {
+            "title": "Cancel At Period End",
+            "type": "boolean"
+          },
+          "configured": {
+            "title": "Configured",
+            "type": "boolean"
+          },
+          "current_period_end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Period End"
+          },
+          "grace_until": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grace Until"
+          },
+          "has_customer": {
+            "title": "Has Customer",
+            "type": "boolean"
+          },
+          "plan": {
+            "title": "Plan",
+            "type": "string"
+          },
+          "plans": {
+            "items": {
+              "$ref": "#/components/schemas/PlanOut"
+            },
+            "title": "Plans",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "usage": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/Meter"
+            },
+            "title": "Usage",
+            "type": "object"
+          }
+        },
+        "required": [
+          "configured",
+          "plan",
+          "addons",
+          "status",
+          "current_period_end",
+          "cancel_at_period_end",
+          "grace_until",
+          "has_customer",
+          "plans",
+          "addons_catalog",
+          "usage"
+        ],
+        "title": "BillingOut",
+        "type": "object"
+      },
       "BingConnect": {
         "additionalProperties": false,
         "properties": {
@@ -1011,6 +1103,36 @@
           "new_password"
         ],
         "title": "ChangePasswordRequest",
+        "type": "object"
+      },
+      "CheckoutRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "addons": {
+            "items": {
+              "enum": [
+                "engines_bing",
+                "engines_regional"
+              ],
+              "type": "string"
+            },
+            "maxItems": 2,
+            "title": "Addons",
+            "type": "array"
+          },
+          "plan": {
+            "enum": [
+              "pro",
+              "agency"
+            ],
+            "title": "Plan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "plan"
+        ],
+        "title": "CheckoutRequest",
         "type": "object"
       },
       "CodeRequest": {
@@ -2174,6 +2296,83 @@
         "title": "InvitationOut",
         "type": "object"
       },
+      "InvoiceOut": {
+        "properties": {
+          "created": {
+            "format": "date-time",
+            "title": "Created",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "hosted_invoice_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hosted Invoice Url"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "invoice_pdf": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invoice Pdf"
+          },
+          "number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "total",
+          "currency",
+          "created",
+          "hosted_invoice_url",
+          "invoice_pdf"
+        ],
+        "title": "InvoiceOut",
+        "type": "object"
+      },
       "IssueOccurrence": {
         "properties": {
           "details": {
@@ -2968,6 +3167,24 @@
           "role"
         ],
         "title": "MembershipOut",
+        "type": "object"
+      },
+      "Meter": {
+        "properties": {
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "used": {
+            "title": "Used",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "used",
+          "limit"
+        ],
+        "title": "Meter",
         "type": "object"
       },
       "MetricRow": {
@@ -3917,6 +4134,35 @@
         "title": "PerformanceOut",
         "type": "object"
       },
+      "PlanOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "limits": {
+            "additionalProperties": true,
+            "title": "Limits",
+            "type": "object"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "purchasable": {
+            "title": "Purchasable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "purchasable",
+          "limits"
+        ],
+        "title": "PlanOut",
+        "type": "object"
+      },
       "PositionOut": {
         "properties": {
           "ai_cited": {
@@ -4731,6 +4977,19 @@
           "codes"
         ],
         "title": "RecoveryCodesResponse",
+        "type": "object"
+      },
+      "RedirectOut": {
+        "properties": {
+          "url": {
+            "title": "Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "title": "RedirectOut",
         "type": "object"
       },
       "RegisterRequest": {
@@ -6696,6 +6955,31 @@
         ]
       }
     },
+    "/api/v1/billing/stripe/webhook": {
+      "post": {
+        "operationId": "stripe_webhook_api_v1_billing_stripe_webhook_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Stripe Webhook Api V1 Billing Stripe Webhook Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stripe Webhook",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
     "/api/v1/exports/{org_id}/{export_id}": {
       "get": {
         "operationId": "download_export_api_v1_exports__org_id___export_id__get",
@@ -7260,6 +7544,192 @@
         "tags": [
           "api-keys",
           "audit"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/billing": {
+      "get": {
+        "operationId": "get_billing_api_v1_orgs__org_id__billing_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BillingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Billing",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/billing/checkout": {
+      "post": {
+        "operationId": "checkout_api_v1_orgs__org_id__billing_checkout_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedirectOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Checkout",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/billing/invoices": {
+      "get": {
+        "operationId": "invoices_api_v1_orgs__org_id__billing_invoices_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/InvoiceOut"
+                  },
+                  "title": "Response Invoices Api V1 Orgs  Org Id  Billing Invoices Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Invoices",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/orgs/{org_id}/billing/portal": {
+      "post": {
+        "operationId": "portal_api_v1_orgs__org_id__billing_portal_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "org_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Org Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedirectOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Portal",
+        "tags": [
+          "billing"
         ]
       }
     },

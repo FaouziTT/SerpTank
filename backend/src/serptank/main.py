@@ -39,6 +39,7 @@ from serptank.core.middleware import (
 from serptank.core.ratelimit import RateLimiter
 from serptank.core.redis import create_redis
 from serptank.modules.ai_visibility import router as ai_router
+from serptank.modules.billing import router as billing_router
 from serptank.modules.crawler import router as crawler_router
 from serptank.modules.identity import router as identity_router
 from serptank.modules.identity.brute_force import (
@@ -136,6 +137,8 @@ def _include_routers(app: FastAPI) -> None:
     app.include_router(reports_router.router, prefix=API_PREFIX)
     app.include_router(reports_router.org_router, prefix=API_PREFIX)
     app.include_router(reports_router.download_router, prefix=API_PREFIX)
+    app.include_router(billing_router.router, prefix=API_PREFIX)
+    app.include_router(billing_router.webhook_router, prefix=API_PREFIX)
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -196,7 +199,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(
         CsrfMiddleware,
         allowed_origins=[settings.public_origin, *settings.extra_allowed_origins],
-        exempt_paths=(),
+        exempt_paths=(billing_router.WEBHOOK_PATH,),  # Stripe-signature verified
         session_detector=session_detector,
         token_verifier=token_verifier,
     )

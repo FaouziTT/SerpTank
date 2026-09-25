@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
 from sqlalchemy import select
 
-from serptank.modules.billing.entitlements import plan_for
+from serptank.modules.billing.entitlements import plan_of
 from serptank.modules.identity.deps import DbSession
 from serptank.modules.llm.gateway import LlmGateway, month_start
 from serptank.modules.llm.models import LlmUsage
@@ -53,6 +53,6 @@ async def ai_usage(ctx: OrgRead, db: DbSession, request: Request) -> AiUsageOut:
         available=gateway.enabled and gateway.provider is not None,
         month=month_start().isoformat(),
         tokens_used=sum(p.tokens for p in by_purpose),
-        tokens_per_month=plan_for(ctx.organization.plan_code).llm_tokens_per_month,
+        tokens_per_month=plan_of(ctx.organization).llm_tokens_per_month,
         by_purpose=by_purpose,
     )

@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from serptank.core.errors import AppError, ConflictError, NotFoundError
 from serptank.core.ratelimit import Rate, rate_limit
-from serptank.modules.billing.entitlements import PlanLimitError, plan_for
+from serptank.modules.billing.entitlements import PlanLimitError, plan_of
 from serptank.modules.crawler.urls import site_hosts
 from serptank.modules.identity.deps import DbSession, Identity
 from serptank.modules.integrations.credentials import (
@@ -105,7 +105,7 @@ async def add_keywords(
 ) -> KeywordsAdded:
     project = await _project(db, ctx, project_id)
     market = await _market(db, project, body.market_id)
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     used = int(
         (
             await db.execute(
@@ -569,7 +569,7 @@ async def analyze(
     """Fetch (or reuse the cached) SERP for a keyword and explain it: KD, intent, features."""
     project = await _project(db, ctx, project_id)
     market = await _market(db, project, body.market_id)
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     if body.engine not in {e.value for e in plan.search_engines}:
         raise PlanLimitError(
             f"Your {plan.name} plan doesn't include {body.engine}.",

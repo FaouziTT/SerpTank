@@ -14,7 +14,7 @@ from serptank.core.audit import record_audit_event
 from serptank.core.errors import NotFoundError, PermissionDeniedError
 from serptank.core.models import AIEngine, SearchEngine
 from serptank.core.ratelimit import Rate, rate_limit
-from serptank.modules.billing.entitlements import plan_for
+from serptank.modules.billing.entitlements import plan_of
 from serptank.modules.identity.deps import CurrentUser, DbSession, Identity, RecentlyReauthenticated
 from serptank.modules.identity.models import User
 from serptank.modules.tenancy import service
@@ -231,7 +231,7 @@ class EntitlementsOut(BaseModel):
 @router.get("/orgs/{org_id}/entitlements", response_model=EntitlementsOut)
 async def get_entitlements(ctx: OrgRead) -> EntitlementsOut:
     """What the organization's plan includes (the UI uses this for upgrade prompts)."""
-    plan = plan_for(ctx.organization.plan_code)
+    plan = plan_of(ctx.organization)
     return EntitlementsOut(
         plan_code=plan.code,
         plan_name=plan.name,

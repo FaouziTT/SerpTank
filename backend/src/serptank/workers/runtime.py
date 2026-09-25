@@ -59,6 +59,8 @@ def build_runtime(
     extras["llm_http"] = llm_http
     extras["llm"] = build_gateway(settings, llm_http)
     extras["answer_engines"] = build_engines(settings, llm_http)
+    # Stripe calls get their own client too.
+    extras["billing_http"] = factory(EgressPolicy(), settings.crawler_user_agent)
     return JobRuntime(
         settings=settings,
         session_factory=session_factory,
@@ -72,7 +74,7 @@ async def close_runtime(runtime: JobRuntime) -> None:
     renderer = runtime.extras.get("renderer")
     if isinstance(renderer, RendererClient):
         await renderer.aclose()
-    for name in ("serp_http", "llm_http"):
+    for name in ("serp_http", "llm_http", "billing_http"):
         client = runtime.extras.get(name)
         if isinstance(client, SafeHttpClient):
             await client.aclose()

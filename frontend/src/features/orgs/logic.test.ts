@@ -61,10 +61,11 @@ describe("org navigation", () => {
       "Members",
       "Integrations",
       "Audit log",
+      "Billing",
       "Settings",
     ]);
     expect(labels("viewer")).toEqual(["Projects", "Members", "Integrations", "Settings"]);
-    expect(labels("billing")).toEqual(["Settings"]);
+    expect(labels("billing")).toEqual(["Billing", "Settings"]);
   });
 
   it("marks Projects active on project pages", () => {
